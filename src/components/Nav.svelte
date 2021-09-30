@@ -1,5 +1,6 @@
 <script lang="ts">
 	export let segment: string;
+	console.log('log');
 </script>
 
 <style>
