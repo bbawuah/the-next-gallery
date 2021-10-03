@@ -7,6 +7,7 @@ import sveltePreprocess from 'svelte-preprocess';
 import typescript from '@rollup/plugin-typescript';
 import css from 'rollup-plugin-css-only';
 import {sass} from 'svelte-preprocess-sass';
+import gltf from 'rollup-plugin-gltf';
 
 const production = !process.env.ROLLUP_WATCH;
 
@@ -47,6 +48,12 @@ export default {
         dev: !production
       },
       style: sass()
+    }),
+    gltf({
+      include: '**/*.gltf',
+      exclude: 'artwork/*.gltf',
+      inlineAssetLimit: 250 * 1024, // 250kb
+      inline: false
     }),
     // we'll extract any component CSS out into
     // a separate file - better for performance

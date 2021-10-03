@@ -1,5 +1,7 @@
 import * as THREE from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js';
+import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader';
+import {DRACOLoader} from 'three/examples/jsm/loaders/DRACOLoader';
 import type {Sizes} from './types';
 
 const sizes: Sizes = {
@@ -15,6 +17,10 @@ export class Scene {
   public geometry: THREE.BoxGeometry;
   public material: THREE.MeshBasicMaterial;
   public mesh: THREE.Mesh;
+  public gltfLoader: GLTFLoader;
+  public dracoLoader: DRACOLoader;
+  public textureLoader: THREE.TextureLoader;
+  public bakedTexture: THREE.Texture;
 
   constructor(el: HTMLCanvasElement) {
     this.renderer = new THREE.WebGLRenderer({
@@ -23,21 +29,37 @@ export class Scene {
 
     this.renderer.setSize(sizes.width, sizes.height);
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    this.renderer.outputEncoding = THREE.sRGBEncoding;
 
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(0x111111);
 
     this.camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100);
     this.camera.position.z = 4;
-    this.camera.position.y = 0;
+    this.camera.position.y = 1;
 
-    this.geometry = new THREE.BoxGeometry(1, 1, 1);
-    this.material = new THREE.MeshBasicMaterial({color: 0xff0000});
-    this.mesh = new THREE.Mesh(this.geometry, this.material);
+    this.textureLoader = new THREE.TextureLoader();
+    this.bakedTexture = this.textureLoader.load('./static/map.jpg');
+    this.bakedTexture.flipY = false;
+    this.bakedTexture.encoding = THREE.sRGBEncoding;
+
+    this.material = new THREE.MeshBasicMaterial({map: this.bakedTexture});
+
+    this.dracoLoader = new DRACOLoader();
+    this.dracoLoader.setDecoderPath('draco/');
+
+    this.gltfLoader = new GLTFLoader();
+    this.gltfLoader.load('./static/museum.glb', gltf => {
+      console.log(gltf.scene);
+      gltf.scene.traverse(child => {
+        (child as THREE.Mesh).material = this.material;
+      });
+      this.scene.add(gltf.scene);
+    });
+    this.gltfLoader.setDRACOLoader(this.dracoLoader);
 
     this.scene.add(this.mesh);
     this.controls = new OrbitControls(this.camera, el);
-    console.log(this.controls);
 
     this.resize();
     this.render();
@@ -60,11 +82,6 @@ export class Scene {
   }
 
   render(): void {
-    if (this.mesh) {
-      this.mesh.rotation.x += 0.01;
-      this.mesh.rotation.y += 0.01;
-    }
-
     this.renderer.render(this.scene, this.camera);
     window.requestAnimationFrame(() => this.render());
   }
