@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js';
 import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader';
+import type {GLTF} from 'three/examples/jsm/loaders/GLTFLoader';
 import {DRACOLoader} from 'three/examples/jsm/loaders/DRACOLoader';
 import type {Sizes} from './types';
 
@@ -8,6 +9,34 @@ const sizes: Sizes = {
   width: window.innerWidth,
   height: window.innerHeight
 };
+
+const portraitNames = [
+  'dalis',
+  'jamil',
+  'porchia',
+  'junior',
+  'kwame',
+  'soraja',
+  'samantha',
+  'darryl',
+  'les',
+  'terry-afram',
+  'tonny',
+  'kenneth',
+  'mirella',
+  'crystalina',
+  'bonsu',
+  'eben',
+  'jaysi',
+  'meester-kwame',
+  'crystalina',
+  'ronald',
+  'eoboafo',
+  'shaneequa',
+  'churchbwoygram',
+  'othnell',
+  'branco'
+];
 
 export class Scene {
   public renderer: THREE.WebGLRenderer;
@@ -32,7 +61,7 @@ export class Scene {
     this.renderer.outputEncoding = THREE.sRGBEncoding;
 
     this.scene = new THREE.Scene();
-    this.scene.background = new THREE.Color(0x111111);
+    this.scene.background = new THREE.Color(0xffffff);
 
     this.camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100);
     this.camera.position.z = 4;
@@ -50,15 +79,23 @@ export class Scene {
 
     this.gltfLoader = new GLTFLoader();
     this.gltfLoader.load('./static/museum.glb', gltf => {
-      console.log(gltf.scene);
       gltf.scene.traverse(child => {
         (child as THREE.Mesh).material = this.material;
       });
+
+      // Not sure if I am going to use this
+      const stairs = gltf.scene.children.find(child => child.name === 'treden') as THREE.Mesh;
+      stairs.material = new THREE.MeshBasicMaterial({color: new THREE.Color(0x9b9b9b)});
+
+      this.addPortrets(gltf);
+      this.addMeta(gltf);
       this.scene.add(gltf.scene);
     });
     this.gltfLoader.setDRACOLoader(this.dracoLoader);
 
-    this.scene.add(this.mesh);
+    if (this.mesh) {
+      this.scene.add(this.mesh);
+    }
     this.controls = new OrbitControls(this.camera, el);
 
     this.resize();
@@ -78,6 +115,29 @@ export class Scene {
       // Update renderer
       this.renderer.setSize(sizes.width, sizes.height);
       this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    });
+  }
+
+  addPortrets(gltfScene: GLTF): void {
+    portraitNames.forEach(name => {
+      const portrait = this.textureLoader.load(`./static/photos/${name}.jpg`);
+      portrait.flipY = false;
+      const material = new THREE.MeshBasicMaterial({map: portrait});
+
+      const mesh = gltfScene.scene.children.find(child => child.name === name) as THREE.Mesh;
+
+      mesh.material = material;
+    });
+  }
+
+  addMeta(gltfScene: GLTF): void {
+    portraitNames.forEach(name => {
+      const meta = this.textureLoader.load(`./static/photos/${name}-meta.png`);
+      meta.flipY = false;
+      const material = new THREE.MeshBasicMaterial({map: meta});
+
+      const mesh = gltfScene.scene.children.find(child => child.name === `${name}-meta`) as THREE.Mesh;
+      mesh.material = material;
     });
   }
 
