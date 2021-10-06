@@ -13,10 +13,12 @@
     "@rollup/plugin-node-resolve": "^11.0.0",
     "@rollup/plugin-typescript": "^8.0.0",
     "@tsconfig/svelte": "^2.0.0",
+    "@types/dat.gui": "^0.7.7",
     "@types/three": "^0.125.0",
     "@typescript-eslint/eslint-plugin": "^4.32.0",
     "@typescript-eslint/parser": "^4.32.0",
     "cannon-es": "^0.18.0",
+    "dat.gui": "^0.7.7",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-import": "^2.24.2",
@@ -40,6 +42,7 @@
     "typescript": "^4.0.0"
   },
   "dependencies": {
-    "sirv-cli": "^1.0.0"
+    "sirv-cli": "^1.0.0",
+    "stats-js": "^1.0.1"
   }
 }

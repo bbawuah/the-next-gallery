@@ -6,6 +6,7 @@ import {DRACOLoader} from 'three/examples/jsm/loaders/DRACOLoader';
 import type {Sizes} from './types';
 import {KeyEvents} from './Events/KeyEvents';
 import {PhysicsWorld} from './Physics/Physics';
+import Stats from 'stats-js';
 
 const sizes: Sizes = {
   width: window.innerWidth,
@@ -40,6 +41,10 @@ const portraitNames = [
   'branco'
 ];
 
+const stats = new Stats();
+
+stats.showPanel(1); // 0: fps, 1: ms, 2: mb, 3+: custom
+document.body.appendChild(stats.dom);
 export class Scene {
   private renderer: THREE.WebGLRenderer;
   private camera: THREE.PerspectiveCamera;
@@ -105,6 +110,7 @@ export class Scene {
     this.dracoLoader.setDecoderPath('draco/');
 
     this.gltfLoader = new GLTFLoader();
+    this.gltfLoader.setDRACOLoader(this.dracoLoader);
     this.gltfLoader.load('./static/museum.glb', gltf => {
       console.log(gltf.scenes);
       gltf.scene.traverse(child => {
@@ -112,12 +118,22 @@ export class Scene {
       });
 
       const darkGrey = new THREE.MeshBasicMaterial({color: new THREE.Color(0x9b9b9b)});
-      // Not sure if I am going to use this
+
       const stairs = gltf.scene.children.find(child => child.name === 'treden') as THREE.Mesh;
       stairs.material = darkGrey;
+      this.physics.createPhysics(stairs);
 
       const portraitsSides = gltf.scene.children.find(child => child.name === 'randen') as THREE.Mesh;
       portraitsSides.material = darkGrey;
+
+      const metaSides = gltf.scene.children.find(child => child.name === 'namenbordjes-randen') as THREE.Mesh;
+      metaSides.material = darkGrey;
+
+      const shaderSchilderij = gltf.scene.children.find(child => child.name === 'shader-schilderij') as THREE.Mesh;
+      shaderSchilderij.material = new THREE.MeshBasicMaterial({color: 0xff0000});
+
+      const looseWalls = gltf.scene.children.find(child => child.name === 'losse-muren') as THREE.Mesh;
+      this.physics.createPhysics(looseWalls);
 
       this.addPortrets(gltf);
       this.addMeta(gltf);
@@ -125,8 +141,6 @@ export class Scene {
     });
 
     this.clock = new THREE.Clock();
-
-    this.gltfLoader.setDRACOLoader(this.dracoLoader);
 
     this.resize();
     this.keyEvents.handleKeyUpEvents();
@@ -175,6 +189,7 @@ export class Scene {
   }
 
   render(): void {
+    stats.begin();
     this.frontVector = new THREE.Vector3(0, 0, Number(this.keyEvents.backward) - Number(this.keyEvents.forward));
     this.sideVector = new THREE.Vector3(Number(this.keyEvents.left) - Number(this.keyEvents.right), 0, 0);
 
@@ -188,18 +203,19 @@ export class Scene {
 
     if (this.physics) {
       this.physics.cannonDebugRenderer.update();
-      // this.camera.position.copy(
-      //   new THREE.Vector3(
-      //     this.physics.sphereBody.position.x,
-      //     this.physics.sphereBody.position.y,
-      //     this.physics.sphereBody.position.z
-      //   )
-      // );
+      this.camera.position.copy(
+        new THREE.Vector3(
+          this.physics.sphereBody.position.x,
+          this.physics.sphereBody.position.y + 0.75,
+          this.physics.sphereBody.position.z
+        )
+      );
       this.physics.sphereBody.velocity.set(this.userDirection.x, 0, this.userDirection.z);
       this.physics.physicsWorld.step(Math.min(this.clock.getDelta(), 0.1));
     }
 
     this.renderer.render(this.scene, this.camera);
+    stats.end();
     window.requestAnimationFrame(() => this.render());
   }
 }
