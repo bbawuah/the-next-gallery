@@ -4,10 +4,8 @@ import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader';
 import type {GLTF} from 'three/examples/jsm/loaders/GLTFLoader';
 import {DRACOLoader} from 'three/examples/jsm/loaders/DRACOLoader';
 import type {Sizes} from './types';
-import * as CANNON from 'cannon-es';
-import CannonDebugRenderer from '../../cannonDebugger/cannonDebuger';
 import {KeyEvents} from './Events/KeyEvents';
-import type {PhysicsWorld} from './Physics/Physics';
+import {PhysicsWorld} from './Physics/Physics';
 
 const sizes: Sizes = {
   width: window.innerWidth,
@@ -46,7 +44,10 @@ export class Scene {
   private renderer: THREE.WebGLRenderer;
   private camera: THREE.PerspectiveCamera;
   private scene: THREE.Scene;
+
+  // Development
   private controls: OrbitControls;
+
   private material: THREE.MeshBasicMaterial;
   private mesh: THREE.Mesh;
 
@@ -60,9 +61,6 @@ export class Scene {
 
   // Physics
   private physics: PhysicsWorld;
-
-  // Debugger
-  private cannonDebugRenderer: CannonDebugRenderer;
 
   private frontVector: THREE.Vector3;
   private sideVector: THREE.Vector3;
@@ -93,6 +91,7 @@ export class Scene {
     this.bakedTexture.encoding = THREE.sRGBEncoding;
 
     this.keyEvents = new KeyEvents(this.camera, el);
+    this.physics = new PhysicsWorld(this.scene);
 
     this.material = new THREE.MeshBasicMaterial({map: this.bakedTexture});
 
@@ -126,8 +125,6 @@ export class Scene {
     });
 
     this.clock = new THREE.Clock();
-
-    this.cannonDebugRenderer = new CannonDebugRenderer(this.scene, this.physics.physicsWorld);
 
     this.gltfLoader.setDRACOLoader(this.dracoLoader);
 
@@ -189,9 +186,8 @@ export class Scene {
       .multiplyScalar(this.keyEvents.walkingSpeed)
       .applyEuler(this.camera.rotation);
 
-    this.cannonDebugRenderer.update();
-
-    if (this.physics.physicsWorld) {
+    if (this.physics) {
+      this.physics.cannonDebugRenderer.update();
       // this.camera.position.copy(
       //   new THREE.Vector3(
       //     this.physics.sphereBody.position.x,

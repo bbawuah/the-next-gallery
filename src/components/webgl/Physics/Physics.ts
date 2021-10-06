@@ -1,4 +1,5 @@
 import * as CANNON from 'cannon-es';
+import CannonDebugRenderer from '../../../cannonDebugger/cannonDebuger';
 
 export class PhysicsWorld {
   // Physics
@@ -6,8 +7,9 @@ export class PhysicsWorld {
   public sphereBody: CANNON.Body;
   public planeBody: CANNON.Body;
   public planeShape: CANNON.Shape;
+  public cannonDebugRenderer: CannonDebugRenderer;
 
-  constructor() {
+  constructor(scene: THREE.Scene) {
     this.physicsWorld = new CANNON.World();
     this.physicsWorld.broadphase = new CANNON.SAPBroadphase(this.physicsWorld);
     this.physicsWorld.gravity = new CANNON.Vec3(0, -30, 0);
@@ -28,5 +30,7 @@ export class PhysicsWorld {
 
     this.physicsWorld.addBody(this.sphereBody);
     this.physicsWorld.addBody(this.planeBody);
+
+    this.cannonDebugRenderer = new CannonDebugRenderer(scene, this.physicsWorld);
   }
 }
