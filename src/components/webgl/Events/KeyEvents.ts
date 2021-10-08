@@ -14,12 +14,12 @@ export class KeyEvents {
     this.left = false;
     this.right = false;
 
-    this.walkingSpeed = 7.5;
+    this.walkingSpeed = 5;
 
     this.pointerLockerControls = new PointerLockControls(camera, el);
   }
 
-  handleKeyUpEvents(): void {
+  public handleKeyUpEvents(): void {
     window.addEventListener('keyup', e => {
       if (e.key === 'Enter') {
         this.pointerLockerControls.lock();

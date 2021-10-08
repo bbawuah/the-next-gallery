@@ -112,7 +112,6 @@ export class Scene {
     this.gltfLoader = new GLTFLoader();
     this.gltfLoader.setDRACOLoader(this.dracoLoader);
     this.gltfLoader.load('./static/museum.glb', gltf => {
-      console.log(gltf.scenes);
       gltf.scene.traverse(child => {
         (child as THREE.Mesh).material = this.material;
       });
@@ -135,6 +134,9 @@ export class Scene {
       const looseWalls = gltf.scene.children.find(child => child.name === 'losse-muren') as THREE.Mesh;
       this.physics.createPhysics(looseWalls);
 
+      const handrail = gltf.scene.children.find(child => child.name === 'trapLeuning') as THREE.Mesh;
+      handrail.material = darkGrey;
+
       this.addPortrets(gltf);
       this.addMeta(gltf);
       this.scene.add(gltf.scene);
@@ -142,29 +144,26 @@ export class Scene {
 
     this.clock = new THREE.Clock();
 
-    this.resize();
     this.keyEvents.handleKeyUpEvents();
     this.keyEvents.handleKeyDownEvents();
+    this.resize();
     this.render();
   }
 
-  resize(): void {
+  private resize(): void {
     window.addEventListener('resize', () => {
-      // Update sizes
       sizes.width = window.innerWidth;
       sizes.height = window.innerHeight;
 
-      // Update camera
       this.camera.aspect = sizes.width / sizes.height;
       this.camera.updateProjectionMatrix();
 
-      // Update renderer
       this.renderer.setSize(sizes.width, sizes.height);
       this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     });
   }
 
-  addPortrets(gltfScene: GLTF): void {
+  private addPortrets(gltfScene: GLTF): void {
     portraitNames.forEach(name => {
       const portrait = this.textureLoader.load(`./static/photos/${name}.jpg`);
       portrait.flipY = false;
@@ -177,7 +176,7 @@ export class Scene {
     });
   }
 
-  addMeta(gltfScene: GLTF): void {
+  private addMeta(gltfScene: GLTF): void {
     portraitNames.forEach(name => {
       const meta = this.textureLoader.load(`./static/photos/${name}-meta.png`);
       meta.flipY = false;
@@ -188,8 +187,9 @@ export class Scene {
     });
   }
 
-  render(): void {
+  private render(): void {
     stats.begin();
+
     this.frontVector = new THREE.Vector3(0, 0, Number(this.keyEvents.backward) - Number(this.keyEvents.forward));
     this.sideVector = new THREE.Vector3(Number(this.keyEvents.left) - Number(this.keyEvents.right), 0, 0);
 
@@ -202,16 +202,22 @@ export class Scene {
       .applyEuler(this.camera.rotation);
 
     if (this.physics) {
+      let oldElapsedTime = 0;
+      const elapsedTime = this.clock.getElapsedTime();
+      const deltaTime = elapsedTime - oldElapsedTime;
+      oldElapsedTime = elapsedTime;
+
       this.physics.cannonDebugRenderer.update();
       this.camera.position.copy(
         new THREE.Vector3(
           this.physics.sphereBody.position.x,
-          this.physics.sphereBody.position.y + 0.75,
+          this.physics.sphereBody.position.y + 0.5,
           this.physics.sphereBody.position.z
         )
       );
-      this.physics.sphereBody.velocity.set(this.userDirection.x, 0, this.userDirection.z);
-      this.physics.physicsWorld.step(Math.min(this.clock.getDelta(), 0.1));
+      this.physics.sphereBody.velocity.set(this.userDirection.x, -2.0, this.userDirection.z);
+
+      this.physics.physicsWorld.step(1 / 60, deltaTime, 2);
     }
 
     this.renderer.render(this.scene, this.camera);
