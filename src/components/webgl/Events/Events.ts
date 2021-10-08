@@ -1,7 +1,10 @@
 import {PointerLockControls} from 'three/examples/jsm/controls/PointerLockControls';
+import {DeviceOrientationControls} from 'three/examples/jsm/controls/DeviceOrientationControls.js';
 
-export class KeyEvents {
+export class Events {
   private pointerLockerControls: PointerLockControls;
+  public deviceOrientationControls: DeviceOrientationControls;
+  private isMobile: boolean;
 
   public forward: boolean;
   public backward: boolean;
@@ -17,7 +20,11 @@ export class KeyEvents {
 
     this.walkingSpeed = 5;
 
-    this.pointerLockerControls = new PointerLockControls(camera, el);
+    if (this.isMobile) {
+      this.deviceOrientationControls = new DeviceOrientationControls(camera);
+    } else {
+      this.pointerLockerControls = new PointerLockControls(camera, el);
+    }
   }
 
   public handleKeyUpEvents(): void {

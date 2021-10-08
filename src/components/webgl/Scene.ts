@@ -4,7 +4,7 @@ import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader';
 import type {GLTF} from 'three/examples/jsm/loaders/GLTFLoader';
 import {DRACOLoader} from 'three/examples/jsm/loaders/DRACOLoader';
 import type {Sizes} from './types';
-import {KeyEvents} from './Events/KeyEvents';
+import {Events} from './Events/Events';
 import {PhysicsWorld} from './Physics/Physics';
 import Stats from 'stats-js';
 import {RenderTarget} from './RenderTarget/RenderTarget';
@@ -75,7 +75,7 @@ export class Scene {
   private sideVector: THREE.Vector3;
   private userDirection: THREE.Vector3;
   private clock: THREE.Clock;
-  private keyEvents: KeyEvents;
+  private events: Events;
 
   // ShaderPainting
   private shaderPainting: THREE.Mesh;
@@ -102,7 +102,7 @@ export class Scene {
     this.bakedTexture.flipY = false;
     this.bakedTexture.encoding = THREE.sRGBEncoding;
 
-    this.keyEvents = new KeyEvents(this.camera, el);
+    this.events = new Events(this.camera, el);
     this.physics = new PhysicsWorld(this.scene);
 
     this.material = new THREE.MeshBasicMaterial({map: this.bakedTexture});
@@ -152,8 +152,8 @@ export class Scene {
 
     this.clock = new THREE.Clock();
 
-    this.keyEvents.handleKeyUpEvents();
-    this.keyEvents.handleKeyDownEvents();
+    this.events.handleKeyUpEvents();
+    this.events.handleKeyDownEvents();
     this.resize();
     this.render();
   }
@@ -200,6 +200,11 @@ export class Scene {
     stats.begin();
     this.handleUserDirection();
 
+    //Mobile orientation
+    if (this.events.deviceOrientationControls) {
+      this.events.deviceOrientationControls.update();
+    }
+
     if (this.physics) {
       this.handlePhysics(elapsedTime);
     }
@@ -223,15 +228,15 @@ export class Scene {
   }
 
   private handleUserDirection(): void {
-    this.frontVector = new THREE.Vector3(0, 0, Number(this.keyEvents.backward) - Number(this.keyEvents.forward));
-    this.sideVector = new THREE.Vector3(Number(this.keyEvents.left) - Number(this.keyEvents.right), 0, 0);
+    this.frontVector = new THREE.Vector3(0, 0, Number(this.events.backward) - Number(this.events.forward));
+    this.sideVector = new THREE.Vector3(Number(this.events.left) - Number(this.events.right), 0, 0);
 
     this.userDirection = new THREE.Vector3();
 
     this.userDirection
       .subVectors(this.frontVector, this.sideVector)
       .normalize()
-      .multiplyScalar(this.keyEvents.walkingSpeed)
+      .multiplyScalar(this.events.walkingSpeed)
       .applyEuler(this.camera.rotation);
   }
 
