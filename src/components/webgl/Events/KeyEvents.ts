@@ -1,12 +1,13 @@
 import {PointerLockControls} from 'three/examples/jsm/controls/PointerLockControls';
 
 export class KeyEvents {
+  private pointerLockerControls: PointerLockControls;
+
   public forward: boolean;
   public backward: boolean;
   public left: boolean;
   public right: boolean;
   public walkingSpeed: number;
-  private pointerLockerControls: PointerLockControls;
 
   constructor(camera: THREE.PerspectiveCamera, el: HTMLCanvasElement) {
     this.forward = false;
@@ -43,7 +44,7 @@ export class KeyEvents {
     });
   }
 
-  handleKeyDownEvents(): void {
+  public handleKeyDownEvents(): void {
     window.addEventListener('keydown', e => {
       if (e.key === 'ArrowDown') {
         this.backward = true;

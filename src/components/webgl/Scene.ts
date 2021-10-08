@@ -7,8 +7,7 @@ import type {Sizes} from './types';
 import {KeyEvents} from './Events/KeyEvents';
 import {PhysicsWorld} from './Physics/Physics';
 import Stats from 'stats-js';
-import {vertex} from './Shaders/BigPainting/vertex';
-import {fragment} from './Shaders/BigPainting/fragment';
+import {RenderTarget} from './RenderTarget/RenderTarget';
 
 const sizes: Sizes = {
   width: window.innerWidth,
@@ -45,9 +44,11 @@ const portraitNames = [
 
 const stats = new Stats();
 
-stats.showPanel(1); // 0: fps, 1: ms, 2: mb, 3+: custom
+stats.showPanel(1);
 document.body.appendChild(stats.dom);
+
 export class Scene {
+  // Scene
   private renderer: THREE.WebGLRenderer;
   private camera: THREE.PerspectiveCamera;
   private scene: THREE.Scene;
@@ -69,15 +70,16 @@ export class Scene {
   // Physics
   private physics: PhysicsWorld;
 
+  // Movement
   private frontVector: THREE.Vector3;
   private sideVector: THREE.Vector3;
   private userDirection: THREE.Vector3;
   private clock: THREE.Clock;
-
   private keyEvents: KeyEvents;
 
   // ShaderPainting
   private shaderPainting: THREE.Mesh;
+  private bitmapText: RenderTarget;
 
   constructor(el: HTMLCanvasElement) {
     this.renderer = new THREE.WebGLRenderer({
@@ -109,7 +111,7 @@ export class Scene {
       this.scene.add(this.mesh);
     }
 
-    this.controls = new OrbitControls(this.camera, el);
+    this.controls = new OrbitControls(this.camera, el); //Development
 
     this.dracoLoader = new DRACOLoader();
     this.dracoLoader.setDecoderPath('draco/');
@@ -134,13 +136,8 @@ export class Scene {
       metaSides.material = darkGrey;
 
       this.shaderPainting = gltf.scene.children.find(child => child.name === 'shader-schilderij') as THREE.Mesh;
-      this.shaderPainting.material = new THREE.RawShaderMaterial({
-        uniforms: {
-          u_time: {value: 0}
-        },
-        vertexShader: vertex,
-        fragmentShader: fragment
-      });
+      this.shaderPainting.material = new THREE.MeshBasicMaterial({color: 0xff0000});
+      this.bitmapText = new RenderTarget(this.shaderPainting);
 
       const looseWalls = gltf.scene.children.find(child => child.name === 'losse-muren') as THREE.Mesh;
       this.physics.createPhysics(looseWalls);
@@ -203,12 +200,21 @@ export class Scene {
     stats.begin();
     this.handleUserDirection();
 
-    if (this.shaderPainting) {
-      (this.shaderPainting.material as THREE.RawShaderMaterial).uniforms.u_time.value = elapsedTime;
-    }
-
     if (this.physics) {
       this.handlePhysics(elapsedTime);
+    }
+
+    if (this.bitmapText) {
+      if (this.bitmapText.renderTarget) {
+        if (this.bitmapText.renderTargetMaterial) {
+          (this.bitmapText.renderTargetMaterial as THREE.RawShaderMaterial).uniforms.u_time.value = elapsedTime;
+        }
+      }
+
+      this.renderer.setRenderTarget(this.bitmapText.renderTarget);
+
+      this.renderer.render(this.bitmapText.renderTargetScene, this.bitmapText.renderTargetCamera);
+      this.renderer.setRenderTarget(null);
     }
 
     this.renderer.render(this.scene, this.camera);
@@ -216,7 +222,7 @@ export class Scene {
     window.requestAnimationFrame(() => this.render());
   }
 
-  private handleUserDirection() {
+  private handleUserDirection(): void {
     this.frontVector = new THREE.Vector3(0, 0, Number(this.keyEvents.backward) - Number(this.keyEvents.forward));
     this.sideVector = new THREE.Vector3(Number(this.keyEvents.left) - Number(this.keyEvents.right), 0, 0);
 
@@ -235,6 +241,7 @@ export class Scene {
     oldElapsedTime = elapsedTime;
 
     // this.physics.cannonDebugRenderer.update();
+
     this.camera.position.copy(
       new THREE.Vector3(
         this.physics.sphereBody.position.x,

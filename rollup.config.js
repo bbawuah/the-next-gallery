@@ -38,7 +38,11 @@ export default {
     sourcemap: true,
     format: 'iife',
     name: 'app',
-    file: 'public/build/bundle.js'
+    file: 'public/build/bundle.js',
+    globals: {
+      three: 'THREE',
+      buffer: 'Buffer'
+    }
   },
   plugins: [
     svelte({
@@ -66,7 +70,8 @@ export default {
     // https://github.com/rollup/plugins/tree/master/packages/commonjs
     resolve({
       browser: true,
-      dedupe: ['svelte']
+      dedupe: ['svelte'],
+      preferBuiltins: false
     }),
     commonjs(),
     typescript({

@@ -17,9 +17,7 @@ export class PhysicsWorld {
 
   public physicsWorld: CANNON.World;
   public sphereBody: CANNON.Body;
-  public isUpstairs: boolean;
   public cannonDebugRenderer: CannonDebugRenderer;
-  public gui: dat.GUI;
 
   constructor(scene: THREE.Scene) {
     this.physicsWorld = new CANNON.World({
@@ -86,11 +84,6 @@ export class PhysicsWorld {
       shape: new CANNON.Box(new CANNON.Vec3(6, 0.5, 0.2)),
       position: new CANNON.Vec3(9.2, 9.3, 20)
     });
-
-    this.gui = new dat.GUI({width: 340});
-    this.gui.add(this.fenceThree.position, 'x').step(0.1).name('position x');
-    this.gui.add(this.fenceThree.position, 'y').step(0.1).name('position y');
-    this.gui.add(this.fenceThree.position, 'z').step(0.1).name('position z');
 
     this.physicsWorld.addBody(this.sphereBody);
     this.physicsWorld.addBody(this.planeBody);
