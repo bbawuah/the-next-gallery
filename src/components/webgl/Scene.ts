@@ -7,6 +7,8 @@ import type {Sizes} from './types';
 import {KeyEvents} from './Events/KeyEvents';
 import {PhysicsWorld} from './Physics/Physics';
 import Stats from 'stats-js';
+import {vertex} from './Shaders/BigPainting/vertex';
+import {fragment} from './Shaders/BigPainting/fragment';
 
 const sizes: Sizes = {
   width: window.innerWidth,
@@ -74,6 +76,9 @@ export class Scene {
 
   private keyEvents: KeyEvents;
 
+  // ShaderPainting
+  private shaderPainting: THREE.Mesh;
+
   constructor(el: HTMLCanvasElement) {
     this.renderer = new THREE.WebGLRenderer({
       canvas: el
@@ -128,8 +133,14 @@ export class Scene {
       const metaSides = gltf.scene.children.find(child => child.name === 'namenbordjes-randen') as THREE.Mesh;
       metaSides.material = darkGrey;
 
-      const shaderSchilderij = gltf.scene.children.find(child => child.name === 'shader-schilderij') as THREE.Mesh;
-      shaderSchilderij.material = new THREE.MeshBasicMaterial({color: 0xff0000});
+      this.shaderPainting = gltf.scene.children.find(child => child.name === 'shader-schilderij') as THREE.Mesh;
+      this.shaderPainting.material = new THREE.RawShaderMaterial({
+        uniforms: {
+          u_time: {value: 0}
+        },
+        vertexShader: vertex,
+        fragmentShader: fragment
+      });
 
       const looseWalls = gltf.scene.children.find(child => child.name === 'losse-muren') as THREE.Mesh;
       this.physics.createPhysics(looseWalls);
@@ -188,8 +199,24 @@ export class Scene {
   }
 
   private render(): void {
+    const elapsedTime = this.clock.getElapsedTime();
     stats.begin();
+    this.handleUserDirection();
 
+    if (this.shaderPainting) {
+      (this.shaderPainting.material as THREE.RawShaderMaterial).uniforms.u_time.value = elapsedTime;
+    }
+
+    if (this.physics) {
+      this.handlePhysics(elapsedTime);
+    }
+
+    this.renderer.render(this.scene, this.camera);
+    stats.end();
+    window.requestAnimationFrame(() => this.render());
+  }
+
+  private handleUserDirection() {
     this.frontVector = new THREE.Vector3(0, 0, Number(this.keyEvents.backward) - Number(this.keyEvents.forward));
     this.sideVector = new THREE.Vector3(Number(this.keyEvents.left) - Number(this.keyEvents.right), 0, 0);
 
@@ -200,28 +227,23 @@ export class Scene {
       .normalize()
       .multiplyScalar(this.keyEvents.walkingSpeed)
       .applyEuler(this.camera.rotation);
+  }
 
-    if (this.physics) {
-      let oldElapsedTime = 0;
-      const elapsedTime = this.clock.getElapsedTime();
-      const deltaTime = elapsedTime - oldElapsedTime;
-      oldElapsedTime = elapsedTime;
+  private handlePhysics(elapsedTime: number): void {
+    let oldElapsedTime = 0;
+    const deltaTime = elapsedTime - oldElapsedTime;
+    oldElapsedTime = elapsedTime;
 
-      this.physics.cannonDebugRenderer.update();
-      this.camera.position.copy(
-        new THREE.Vector3(
-          this.physics.sphereBody.position.x,
-          this.physics.sphereBody.position.y + 0.5,
-          this.physics.sphereBody.position.z
-        )
-      );
-      this.physics.sphereBody.velocity.set(this.userDirection.x, -2.0, this.userDirection.z);
+    // this.physics.cannonDebugRenderer.update();
+    this.camera.position.copy(
+      new THREE.Vector3(
+        this.physics.sphereBody.position.x,
+        this.physics.sphereBody.position.y + 0.5,
+        this.physics.sphereBody.position.z
+      )
+    );
+    this.physics.sphereBody.velocity.set(this.userDirection.x, -2.0, this.userDirection.z);
 
-      this.physics.physicsWorld.step(1 / 60, deltaTime, 2);
-    }
-
-    this.renderer.render(this.scene, this.camera);
-    stats.end();
-    window.requestAnimationFrame(() => this.render());
+    this.physics.physicsWorld.step(1 / 60, deltaTime, 2);
   }
 }
