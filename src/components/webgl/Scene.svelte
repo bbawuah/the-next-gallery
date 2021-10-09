@@ -4,6 +4,10 @@
   import IconWithText from '../Navigation/Generic/IconWithText.svelte';
   import {Scene} from './Scene';
   import {IconType} from '../../utils/icons/types/IconType';
+  import {mobileCheck} from '../../utils/mobileCheck';
+  import NavigationContainer from '../Navigation/NavigationContainer.svelte';
+
+  const isMobileDevice = mobileCheck();
 
   let canvasElement: HTMLCanvasElement;
 
@@ -17,12 +21,16 @@
 <div class="canvas-container">
   <canvas class="webgl__canvas" bind:this={canvasElement} />
 
-  <div class="navigation-container">
-    <Keys />
-    <IconWithText icon={IconType.mouse} message={'Use your mouse to look around'} />
-    <IconWithText icon={IconType.escape} message={'Press escape to leave the gallery'} />
-  </div>
-  <div />
+  <NavigationContainer>
+    <Keys {isMobileDevice} />
+
+    {#if !isMobileDevice}
+      <IconWithText icon={IconType.mouse} message={'Use your mouse to look around'} />
+      <IconWithText icon={IconType.escape} message={'Press escape to leave the gallery'} />
+    {:else}
+      <IconWithText icon={IconType.phone} message={'Rotate your device to look around'} />
+    {/if}
+  </NavigationContainer>
 </div>
 
 <style type="text/scss">
@@ -37,15 +45,6 @@
       height: 100%;
       top: 0;
       left: 0;
-      z-index: 1;
-    }
-    .navigation-container {
-      display: grid;
-      grid-template-columns: 130px 130px 130px;
-      grid-gap: 10px;
-      position: absolute;
-      bottom: 50px;
-      left: 50px;
       z-index: 1;
     }
   }

@@ -75,11 +75,13 @@ export class Scene {
   private sideVector: THREE.Vector3;
   private userDirection: THREE.Vector3;
   private clock: THREE.Clock;
-  private events: Events;
 
   // ShaderPainting
   private shaderPainting: THREE.Mesh;
   private bitmapText: RenderTarget;
+
+  //Events
+  public events: Events;
 
   constructor(el: HTMLCanvasElement) {
     this.renderer = new THREE.WebGLRenderer({

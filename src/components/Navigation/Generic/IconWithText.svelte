@@ -30,7 +30,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 140px;
+    max-width: 140px;
     .wrapper {
       width: 100%;
       height: 100px;
@@ -49,7 +49,14 @@
       font-family: $font-text-light;
       color: #363636;
       margin: 0;
+      font-size: 11px;
       text-align: center;
+    }
+
+    @media screen and (min-width: 600px) {
+      p {
+        font-size: 16px;
+      }
     }
   }
 </style>

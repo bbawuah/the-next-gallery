@@ -1,6 +1,8 @@
 <script lang="ts">
   import {IconType} from '../../../utils/icons/types/IconType';
   import Icon from '../../Icon/Icon.svelte';
+
+  export let isMobileDevice: boolean;
 </script>
 
 <div class="keys-container">
@@ -22,7 +24,9 @@
     </div>
   </div>
 
-  <p>Use the arrows to navigate</p>
+  {#if !isMobileDevice}
+    <p>Use the arrows to navigate</p>
+  {/if}
 </div>
 
 <style type="text/scss">
