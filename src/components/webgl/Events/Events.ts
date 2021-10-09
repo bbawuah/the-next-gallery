@@ -29,7 +29,7 @@ export class Events {
 
   public handleKeyUpEvents(): void {
     window.addEventListener('keyup', e => {
-      if (e.key === 'Enter') {
+      if (this.pointerLockerControls && e.key === 'Enter') {
         this.pointerLockerControls.lock();
       }
 

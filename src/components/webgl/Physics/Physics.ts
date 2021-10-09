@@ -1,7 +1,7 @@
 import * as CANNON from 'cannon-es';
-import CannonDebugRenderer from '../../../cannonDebugger/cannonDebuger';
+import CannonDebugRenderer from '../cannonDebugger/cannonDebuger';
 import * as dat from 'dat.gui';
-import CannonUtils from '../../../cannonDebugger/cannonUtils';
+import CannonUtils from '../cannonDebugger/cannonUtils';
 export class PhysicsWorld {
   private planeBody: CANNON.Body;
   private planeShape: CANNON.Shape;

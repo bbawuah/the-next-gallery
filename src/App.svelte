@@ -6,5 +6,8 @@
   <Scene />
 </main>
 
-<style>
+<style type="text/scss">
+  :global(body) {
+    padding: 0;
+  }
 </style>

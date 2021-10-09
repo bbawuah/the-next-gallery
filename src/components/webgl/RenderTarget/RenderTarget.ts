@@ -18,7 +18,7 @@ export class RenderTarget {
   public renderTargetMaterial: THREE.RawShaderMaterial;
 
   constructor(el: THREE.Mesh) {
-    this.text = 'Next';
+    this.text = 'NEXT';
 
     this.createRenderTarget();
     this.initializeShader(el);
@@ -52,7 +52,7 @@ export class RenderTarget {
   }
 
   public initializeShader(mesh: THREE.Mesh): void {
-    loadFont('/fonts/horizon.fnt', (error, font) => {
+    loadFont('/fonts/helvetica.fnt', (error, font) => {
       this.geometry = createGeometry({
         font,
         text: this.text
@@ -60,7 +60,7 @@ export class RenderTarget {
 
       const loader = new THREE.TextureLoader();
 
-      loader.load('/fonts/horizon.png', texture => {
+      loader.load('/fonts/helvetica.png', texture => {
         this.material = new THREE.RawShaderMaterial(
           MSDFShader({
             map: texture,
