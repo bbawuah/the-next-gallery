@@ -40,7 +40,11 @@ export default {
     sourcemap: true,
     format: 'iife',
     name: 'app',
-    file: 'public/build/bundle.js'
+    file: 'public/build/bundle.js',
+    globals: {
+      three: 'THREE',
+      buffer: 'Buffer'
+    }
   },
   external: ['three, buffer'],
   plugins: [
