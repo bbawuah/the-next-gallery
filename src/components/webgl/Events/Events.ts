@@ -4,7 +4,6 @@ import {DeviceOrientationControls} from 'three/examples/jsm/controls/DeviceOrien
 export class Events {
   private pointerLockerControls: PointerLockControls;
   public deviceOrientationControls: DeviceOrientationControls;
-  private isMobile: boolean;
 
   private _forward: boolean;
   private _backward: boolean;
@@ -13,7 +12,7 @@ export class Events {
 
   public walkingSpeed: number;
 
-  constructor(camera: THREE.PerspectiveCamera, el: HTMLCanvasElement) {
+  constructor(camera: THREE.PerspectiveCamera, el: HTMLCanvasElement, isMobileDevice: boolean) {
     this._forward = false;
     this._backward = false;
     this._left = false;
@@ -21,7 +20,7 @@ export class Events {
 
     this.walkingSpeed = 5;
 
-    if (this.isMobile) {
+    if (isMobileDevice) {
       this.deviceOrientationControls = new DeviceOrientationControls(camera);
     } else {
       this.pointerLockerControls = new PointerLockControls(camera, el);

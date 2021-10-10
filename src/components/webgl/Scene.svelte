@@ -7,7 +7,6 @@
   import NavigationContainer from '../Navigation/NavigationContainer.svelte';
   import {mobileCheck} from '../../utils/mobileCheck';
   import Icon from '../Icon/Icon.svelte';
-  import {Events} from './Events/Events';
   import ProgressMeter from '../ProgressMeter/ProgressMeter.svelte';
   import {progressRatio} from '../../store/store';
 
@@ -48,54 +47,57 @@
   {/if}
 
   <canvas class="webgl__canvas" bind:this={canvasElement} />
-  <NavigationContainer>
-    <Keys>
-      <div class="keys">
-        <div
-          ontouchstart={() => onTouchStart(scene.events.forward)}
-          ontouchend={() => onTouchEnd(scene.events.forward)}
-          class="up"
-        >
-          <Icon icon={IconType.up} />
+
+  {#if progress === 100}
+    <NavigationContainer>
+      <Keys>
+        <div class="keys">
+          <div
+            ontouchstart={() => onTouchStart(scene.events.forward)}
+            ontouchend={() => onTouchEnd(scene.events.forward)}
+            class="up"
+          >
+            <Icon icon={IconType.up} />
+          </div>
+
+          <div
+            class="bottom"
+            ontouchstart={() => onTouchStart(scene.events.backward)}
+            ontouchend={() => onTouchEnd(scene.events.backward)}
+          >
+            <Icon icon={IconType.bottom} />
+          </div>
+
+          <div
+            class="left"
+            ontouchstart={() => onTouchStart(scene.events.left)}
+            ontouchend={() => onTouchEnd(scene.events.left)}
+          >
+            <Icon icon={IconType.left} />
+          </div>
+
+          <div
+            class="right"
+            ontouchstart={() => onTouchStart(scene.events.right)}
+            ontouchend={() => onTouchEnd(scene.events.left)}
+          >
+            <Icon icon={IconType.right} />
+          </div>
         </div>
 
-        <div
-          class="bottom"
-          ontouchstart={() => onTouchStart(scene.events.backward)}
-          ontouchend={() => onTouchEnd(scene.events.backward)}
-        >
-          <Icon icon={IconType.bottom} />
-        </div>
-
-        <div
-          class="left"
-          ontouchstart={() => onTouchStart(scene.events.left)}
-          ontouchend={() => onTouchEnd(scene.events.left)}
-        >
-          <Icon icon={IconType.left} />
-        </div>
-
-        <div
-          class="right"
-          ontouchstart={() => onTouchStart(scene.events.right)}
-          ontouchend={() => onTouchEnd(scene.events.left)}
-        >
-          <Icon icon={IconType.right} />
-        </div>
-      </div>
+        {#if !isMobileDevice}
+          <p>Use the arrows to navigate</p>
+        {/if}
+      </Keys>
 
       {#if !isMobileDevice}
-        <p>Use the arrows to navigate</p>
+        <IconWithText icon={IconType.mouse} message={'Use your mouse to look around'} />
+        <IconWithText icon={IconType.escape} message={'Press escape to leave the gallery'} />
+      {:else}
+        <IconWithText icon={IconType.phone} message={'Rotate your device to look around'} />
       {/if}
-    </Keys>
-
-    {#if !isMobileDevice}
-      <IconWithText icon={IconType.mouse} message={'Use your mouse to look around'} />
-      <IconWithText icon={IconType.escape} message={'Press escape to leave the gallery'} />
-    {:else}
-      <IconWithText icon={IconType.phone} message={'Rotate your device to look around'} />
-    {/if}
-  </NavigationContainer>
+    </NavigationContainer>
+  {/if}
 </div>
 
 <style type="text/scss">

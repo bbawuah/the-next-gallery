@@ -2,20 +2,34 @@
   export let number: number;
 </script>
 
-<p class="progress-meter">{number}</p>
+<div class="container">
+  <p class="progress-meter">{number}%</p>
+  <p class="text">Loading the gallery..</p>
+</div>
 
 <style type="text/scss">
   @import '../../styles/styles.scss';
 
-  .progress-meter {
+  .container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     font-family: $font-text-bold;
-    font-size: 8rem;
-    z-index: 2;
     position: absolute;
     left: 50%;
     top: 50%;
-    margin: 0;
     transform: translate(-50%, -50%);
+    z-index: 2;
     color: #383838;
+
+    .progress-meter {
+      font-size: 3.5rem;
+      margin: 0;
+    }
+
+    .text {
+      text-align: center;
+      font-size: 1.75rem;
+    }
   }
 </style>

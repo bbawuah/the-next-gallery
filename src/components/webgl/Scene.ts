@@ -156,7 +156,7 @@ export class Scene {
     this.material = new THREE.MeshBasicMaterial({map: this.bakedTexture});
 
     // Events
-    this.events = new Events(this.camera, el);
+    this.events = new Events(this.camera, el, isMobile);
 
     // Physics
     this.physics = new PhysicsWorld(this.scene);
