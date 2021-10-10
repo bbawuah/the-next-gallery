@@ -7,6 +7,9 @@ import sveltePreprocess from 'svelte-preprocess';
 import typescript from '@rollup/plugin-typescript';
 import css from 'rollup-plugin-css-only';
 import {sass} from 'svelte-preprocess-sass';
+import gltf from 'rollup-plugin-gltf';
+import json from '@rollup/plugin-json';
+import scss from 'rollup-plugin-scss';
 
 const production = !process.env.ROLLUP_WATCH;
 
@@ -37,16 +40,41 @@ export default {
     sourcemap: true,
     format: 'iife',
     name: 'app',
-    file: 'public/build/bundle.js'
+    file: 'public/build/bundle.js',
+    globals: {
+      three: 'THREE',
+      buffer: 'Buffer'
+    }
   },
   plugins: [
     svelte({
-      preprocess: sveltePreprocess({sourceMap: !production}),
+      preprocess: sveltePreprocess({
+        sourceMap: !production,
+        dev: !production,
+        scss: {prependData: `@import './src/styles/styles.scss';`},
+        postcss: {
+          plugins: [require('autoprefixer')()]
+        }
+      }),
       compilerOptions: {
         // enable run-time checks when not in production
         dev: !production
       },
-      style: sass()
+      style: sass(),
+      onwarn: (warning, handler) => {
+        const {code, frame} = warning;
+        console.log(warning);
+        if (code === 'css-unused-selector') return;
+
+        handler(warning);
+      }
+    }),
+    scss(),
+    gltf({
+      include: '**/*.gltf',
+      exclude: 'artwork/*.gltf',
+      inlineAssetLimit: 250 * 1024, // 250kb
+      inline: false
     }),
     // we'll extract any component CSS out into
     // a separate file - better for performance
@@ -59,7 +87,8 @@ export default {
     // https://github.com/rollup/plugins/tree/master/packages/commonjs
     resolve({
       browser: true,
-      dedupe: ['svelte']
+      dedupe: ['svelte'],
+      preferBuiltins: false
     }),
     commonjs(),
     typescript({
@@ -77,7 +106,8 @@ export default {
 
     // If we're building for production (npm run build
     // instead of npm run dev), minify
-    production && terser()
+    production && terser(),
+    json()
   ],
   watch: {
     clearScreen: false
