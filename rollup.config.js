@@ -40,12 +40,9 @@ export default {
     sourcemap: true,
     format: 'iife',
     name: 'app',
-    file: 'public/build/bundle.js',
-    globals: {
-      // three: 'THREE',
-      buffer: 'Buffer'
-    }
+    file: 'public/build/bundle.js'
   },
+  external: ['three, buffer'],
   plugins: [
     svelte({
       preprocess: sveltePreprocess({
