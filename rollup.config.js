@@ -42,8 +42,8 @@ export default {
     name: 'app',
     file: 'public/build/bundle.js',
     globals: {
-      three: 'THREE',
-      buffer: 'Buffer'
+      // three: 'THREE',
+      // buffer: 'Buffer'
     }
   },
   plugins: [
