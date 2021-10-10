@@ -43,7 +43,7 @@ export default {
     file: 'public/build/bundle.js',
     globals: {
       // three: 'THREE',
-      // buffer: 'Buffer'
+      buffer: 'Buffer'
     }
   },
   plugins: [
