@@ -41,8 +41,9 @@
   },
   "dependencies": {
     "@rollup/plugin-json": "^4.1.0",
+    "autoprefixer": "^10.3.7",
     "load-bmfont": "^1.4.1",
-    "rollup-plugin-root-import": "^1.0.0",
+    "postcss": "^8.3.9",
     "rollup-plugin-scss": "^3.0.0",
     "sirv-cli": "^1.0.0",
     "stats-js": "^1.0.1",

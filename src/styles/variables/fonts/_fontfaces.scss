@@ -1,16 +1,16 @@
 @font-face {
   font-family: 'HelveticaNeue-regular';
-  src: url('./fonts/HelveticaNeue-01.ttf') format('truetype');
+  src: url('/fonts/HelveticaNeue-01.ttf') format('truetype');
 }
 
 @font-face {
   font-family: 'HelveticaNeue-light';
-  src: url('./fonts/HelveticaNeue-Light-08.ttf') format('truetype');
+  src: url('/fonts/HelveticaNeue-Light-08.ttf') format('truetype');
 }
 
 @font-face {
   font-family: 'HelveticaNeue-Bold-02';
-  src: url('./fonts/HelveticaNeue-Bold-02.ttf') format('truetype');
+  src: url('/fonts/HelveticaNeue-Bold-02.ttf') format('truetype');
 }
 
 $font-fallback: 'OpenSans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell',

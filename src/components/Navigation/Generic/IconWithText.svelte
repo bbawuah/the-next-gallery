@@ -17,14 +17,7 @@
 </div>
 
 <style type="text/scss">
-  @font-face {
-    font-family: 'HelveticaNeue-light';
-    src: url('/fonts/HelveticaNeue-Light-08.ttf') format('truetype');
-  }
-
-  $font-fallback: 'OpenSans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell',
-    'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-  $font-text-light: 'HelveticaNeue-light', $font-fallback;
+  @import '../../../styles/styles.scss';
 
   .container {
     display: flex;
@@ -55,7 +48,7 @@
 
     @media screen and (min-width: 600px) {
       p {
-        font-size: 16px;
+        font-size: 12px;
       }
     }
   }

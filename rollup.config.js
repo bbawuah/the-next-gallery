@@ -9,7 +9,6 @@ import css from 'rollup-plugin-css-only';
 import {sass} from 'svelte-preprocess-sass';
 import gltf from 'rollup-plugin-gltf';
 import json from '@rollup/plugin-json';
-import rootImport from 'rollup-plugin-root-import';
 import scss from 'rollup-plugin-scss';
 
 const production = !process.env.ROLLUP_WATCH;
@@ -50,17 +49,25 @@ export default {
   plugins: [
     svelte({
       preprocess: sveltePreprocess({
-        sourceMap: !production
-        // scss: {prependData: `@import 'src/styles/styles.scss';`},
-        // postcss: {
-        //   plugins: [require('autoprefixer')()]
-        // }
+        sourceMap: !production,
+        dev: !production,
+        scss: {prependData: `@import './src/styles/styles.scss';`},
+        postcss: {
+          plugins: [require('autoprefixer')()]
+        }
       }),
       compilerOptions: {
         // enable run-time checks when not in production
         dev: !production
       },
-      style: sass()
+      style: sass(),
+      onwarn: (warning, handler) => {
+        const {code, frame} = warning;
+        console.log(warning);
+        if (code === 'css-unused-selector') return;
+
+        handler(warning);
+      }
     }),
     scss(),
     gltf({
@@ -100,12 +107,7 @@ export default {
     // If we're building for production (npm run build
     // instead of npm run dev), minify
     production && terser(),
-    json(),
-    rootImport({
-      root: `${__dirname}/src`,
-      useInput: 'prepend',
-      extensions: ['.ts', '.scss']
-    })
+    json()
   ],
   watch: {
     clearScreen: false

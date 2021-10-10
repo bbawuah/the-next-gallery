@@ -4,16 +4,17 @@
   import IconWithText from '../Navigation/Generic/IconWithText.svelte';
   import {Scene} from './Scene';
   import {IconType} from '../../utils/icons/types/IconType';
-  import {mobileCheck} from '../../utils/mobileCheck';
   import NavigationContainer from '../Navigation/NavigationContainer.svelte';
+  import {mobileCheck} from '../../utils/mobileCheck';
 
   const isMobileDevice = mobileCheck();
 
   let canvasElement: HTMLCanvasElement;
+  let scene: Scene;
 
   onMount(() => {
     if (canvasElement) {
-      new Scene(canvasElement);
+      scene = new Scene(canvasElement);
     }
   });
 </script>
