@@ -1,4 +1,6 @@
 import * as THREE from 'three';
+import GSAP from 'gsap';
+import Stats from 'stats-js';
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js';
 import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader';
 import type {GLTF} from 'three/examples/jsm/loaders/GLTFLoader';
@@ -6,8 +8,8 @@ import {DRACOLoader} from 'three/examples/jsm/loaders/DRACOLoader';
 import type {Sizes} from './types';
 import {Events} from './Events/Events';
 import {PhysicsWorld} from './Physics/Physics';
-import Stats from 'stats-js';
 import {RenderTarget} from './RenderTarget/RenderTarget';
+import {progressRatio} from '../../store/store';
 
 const sizes: Sizes = {
   width: window.innerWidth,
@@ -83,31 +85,81 @@ export class Scene {
   //Events
   public events: Events;
 
-  constructor(el: HTMLCanvasElement) {
+  // Overlay
+  private overlayGeometry: THREE.PlaneGeometry;
+  private overlayMaterial: THREE.RawShaderMaterial;
+  private overlayMesh: THREE.Mesh;
+  private loadingManager: THREE.LoadingManager;
+
+  //Progress ratio
+
+  constructor(el: HTMLCanvasElement, isMobile: boolean) {
+    // Renderer
     this.renderer = new THREE.WebGLRenderer({
       canvas: el
     });
-
     this.renderer.setSize(sizes.width, sizes.height);
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.renderer.outputEncoding = THREE.sRGBEncoding;
 
+    // Scene
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(0xffffff);
 
+    // Camera
     this.camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100);
-    this.camera.position.z = 4;
-    this.camera.position.y = 1;
+    this.camera.position.z = -1;
 
-    this.textureLoader = new THREE.TextureLoader();
+    // Overlay
+    this.overlayGeometry = new THREE.PlaneGeometry(2, 2, 1, 1);
+    this.overlayMaterial = new THREE.RawShaderMaterial({
+      uniforms: {
+        u_alpha: {value: 1.0}
+      },
+      vertexShader: `
+          attribute vec3 position;
+          uniform mat4 projectionMatrix;
+          uniform mat4 modelViewMatrix;
+    
+    
+          void main() {
+            gl_Position = vec4(position, 1.0);
+          }
+          `,
+      fragmentShader: `
+          precision mediump float;
+    
+          uniform float u_alpha;
+    
+          void main() {
+            gl_FragColor = vec4(.8, 0.8, 0.8, u_alpha);
+          }
+          `,
+      transparent: true
+    });
+    this.overlayMesh = new THREE.Mesh(this.overlayGeometry, this.overlayMaterial);
+    this.scene.add(this.overlayMesh);
+
+    // Loading Manager
+    this.loadingManager = new THREE.LoadingManager(
+      () => this.onLoadedAssets(this.overlayMaterial),
+      this.onProgressLoadAssets
+    );
+
+    // Textures
+    this.textureLoader = new THREE.TextureLoader(this.loadingManager);
     this.bakedTexture = this.textureLoader.load('./static/map.jpg');
     this.bakedTexture.flipY = false;
     this.bakedTexture.encoding = THREE.sRGBEncoding;
 
-    this.events = new Events(this.camera, el);
-    this.physics = new PhysicsWorld(this.scene);
-
+    // Texture material
     this.material = new THREE.MeshBasicMaterial({map: this.bakedTexture});
+
+    // Events
+    this.events = new Events(this.camera, el);
+
+    // Physics
+    this.physics = new PhysicsWorld(this.scene);
 
     if (this.mesh) {
       this.scene.add(this.mesh);
@@ -115,47 +167,23 @@ export class Scene {
 
     this.controls = new OrbitControls(this.camera, el); //Development
 
-    this.dracoLoader = new DRACOLoader();
+    // DRACO Loader
+    this.dracoLoader = new DRACOLoader(this.loadingManager);
     this.dracoLoader.setDecoderPath('draco/');
 
-    this.gltfLoader = new GLTFLoader();
+    // GLTF Loader
+    this.gltfLoader = new GLTFLoader(this.loadingManager);
     this.gltfLoader.setDRACOLoader(this.dracoLoader);
-    this.gltfLoader.load('./static/museum.glb', gltf => {
-      gltf.scene.traverse(child => {
-        (child as THREE.Mesh).material = this.material;
-      });
+    this.gltfLoader.load('./static/museum.glb', gltf => this.handleGltf(gltf));
 
-      const darkGrey = new THREE.MeshBasicMaterial({color: new THREE.Color(0x9b9b9b)});
-
-      const stairs = gltf.scene.children.find(child => child.name === 'treden') as THREE.Mesh;
-      stairs.material = darkGrey;
-      this.physics.createPhysics(stairs);
-
-      const portraitsSides = gltf.scene.children.find(child => child.name === 'randen') as THREE.Mesh;
-      portraitsSides.material = darkGrey;
-
-      const metaSides = gltf.scene.children.find(child => child.name === 'namenbordjes-randen') as THREE.Mesh;
-      metaSides.material = darkGrey;
-
-      this.shaderPainting = gltf.scene.children.find(child => child.name === 'shader-schilderij') as THREE.Mesh;
-      this.shaderPainting.material = new THREE.MeshBasicMaterial({color: 0xff0000});
-      this.bitmapText = new RenderTarget(this.shaderPainting);
-
-      const looseWalls = gltf.scene.children.find(child => child.name === 'losse-muren') as THREE.Mesh;
-      this.physics.createPhysics(looseWalls);
-
-      const handrail = gltf.scene.children.find(child => child.name === 'trapLeuning') as THREE.Mesh;
-      handrail.material = darkGrey;
-
-      this.addPortrets(gltf);
-      this.addMeta(gltf);
-      this.scene.add(gltf.scene);
-    });
-
+    // Clock
     this.clock = new THREE.Clock();
 
-    this.events.handleKeyUpEvents();
-    this.events.handleKeyDownEvents();
+    if (!isMobile) {
+      this.events.handleKeyUpEvents();
+      this.events.handleKeyDownEvents();
+    }
+
     this.resize();
     this.render();
   }
@@ -173,7 +201,47 @@ export class Scene {
     });
   }
 
-  private addPortrets(gltfScene: GLTF): void {
+  private onLoadedAssets(material: THREE.RawShaderMaterial): void {
+    GSAP.to(material.uniforms.u_alpha, {duration: 3, value: 0.0});
+  }
+
+  private onProgressLoadAssets(url: string, loaded: number, total: number): void {
+    progressRatio.update(() => Math.floor((loaded / total) * 100));
+  }
+
+  private handleGltf(gltf: GLTF): void {
+    gltf.scene.traverse(child => {
+      (child as THREE.Mesh).material = this.material;
+    });
+
+    const darkGrey = new THREE.MeshBasicMaterial({color: new THREE.Color(0x9b9b9b)});
+
+    const stairs = gltf.scene.children.find(child => child.name === 'treden') as THREE.Mesh;
+    stairs.material = darkGrey;
+    this.physics.createPhysics(stairs);
+
+    const portraitsSides = gltf.scene.children.find(child => child.name === 'randen') as THREE.Mesh;
+    portraitsSides.material = darkGrey;
+
+    const metaSides = gltf.scene.children.find(child => child.name === 'namenbordjes-randen') as THREE.Mesh;
+    metaSides.material = darkGrey;
+
+    this.shaderPainting = gltf.scene.children.find(child => child.name === 'shader-schilderij') as THREE.Mesh;
+    this.shaderPainting.material = new THREE.MeshBasicMaterial({color: 0xff0000});
+    this.bitmapText = new RenderTarget(this.shaderPainting);
+
+    const looseWalls = gltf.scene.children.find(child => child.name === 'losse-muren') as THREE.Mesh;
+    this.physics.createPhysics(looseWalls);
+
+    const handrail = gltf.scene.children.find(child => child.name === 'trapLeuning') as THREE.Mesh;
+    handrail.material = darkGrey;
+
+    this.addPortraits(gltf);
+    this.addMeta(gltf);
+    this.scene.add(gltf.scene);
+  }
+
+  private addPortraits(gltfScene: GLTF): void {
     portraitNames.forEach(name => {
       const portrait = this.textureLoader.load(`./static/photos/${name}.jpg`);
       portrait.flipY = false;
@@ -195,38 +263,6 @@ export class Scene {
       const mesh = gltfScene.scene.children.find(child => child.name === `${name}-meta`) as THREE.Mesh;
       mesh.material = material;
     });
-  }
-
-  private render(): void {
-    const elapsedTime = this.clock.getElapsedTime();
-    stats.begin();
-    this.handleUserDirection();
-
-    //Mobile orientation
-    if (this.events.deviceOrientationControls) {
-      this.events.deviceOrientationControls.update();
-    }
-
-    if (this.physics) {
-      this.handlePhysics(elapsedTime);
-    }
-
-    if (this.bitmapText) {
-      if (this.bitmapText.renderTarget) {
-        if (this.bitmapText.renderTargetMaterial) {
-          (this.bitmapText.renderTargetMaterial as THREE.RawShaderMaterial).uniforms.u_time.value = elapsedTime;
-        }
-      }
-
-      this.renderer.setRenderTarget(this.bitmapText.renderTarget);
-
-      this.renderer.render(this.bitmapText.renderTargetScene, this.bitmapText.renderTargetCamera);
-      this.renderer.setRenderTarget(null);
-    }
-
-    this.renderer.render(this.scene, this.camera);
-    stats.end();
-    window.requestAnimationFrame(() => this.render());
   }
 
   private handleUserDirection(): void {
@@ -259,5 +295,37 @@ export class Scene {
     this.physics.sphereBody.velocity.set(this.userDirection.x, -2.0, this.userDirection.z);
 
     this.physics.physicsWorld.step(1 / 60, deltaTime, 2);
+  }
+
+  private render(): void {
+    const elapsedTime = this.clock.getElapsedTime();
+    stats.begin();
+    this.handleUserDirection();
+
+    //Mobile orientation
+    if (this.events.deviceOrientationControls) {
+      this.events.deviceOrientationControls.update();
+    }
+
+    if (this.physics) {
+      this.handlePhysics(elapsedTime);
+    }
+
+    if (this.bitmapText) {
+      if (this.bitmapText.renderTarget) {
+        if (this.bitmapText.renderTargetMaterial) {
+          (this.bitmapText.renderTargetMaterial as THREE.RawShaderMaterial).uniforms.u_time.value = elapsedTime;
+        }
+      }
+
+      this.renderer.setRenderTarget(this.bitmapText.renderTarget);
+
+      this.renderer.render(this.bitmapText.renderTargetScene, this.bitmapText.renderTargetCamera);
+      this.renderer.setRenderTarget(null);
+    }
+
+    this.renderer.render(this.scene, this.camera);
+    stats.end();
+    window.requestAnimationFrame(() => this.render());
   }
 }

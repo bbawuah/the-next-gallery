@@ -6,17 +6,18 @@ export class Events {
   public deviceOrientationControls: DeviceOrientationControls;
   private isMobile: boolean;
 
-  public forward: boolean;
-  public backward: boolean;
-  public left: boolean;
-  public right: boolean;
+  private _forward: boolean;
+  private _backward: boolean;
+  private _left: boolean;
+  private _right: boolean;
+
   public walkingSpeed: number;
 
   constructor(camera: THREE.PerspectiveCamera, el: HTMLCanvasElement) {
-    this.forward = false;
-    this.backward = false;
-    this.left = false;
-    this.right = false;
+    this._forward = false;
+    this._backward = false;
+    this._left = false;
+    this._right = false;
 
     this.walkingSpeed = 5;
 
@@ -25,6 +26,38 @@ export class Events {
     } else {
       this.pointerLockerControls = new PointerLockControls(camera, el);
     }
+  }
+
+  get backward(): boolean {
+    return this._backward;
+  }
+
+  set backward(value: boolean) {
+    this._backward = value;
+  }
+
+  get forward(): boolean {
+    return this._forward;
+  }
+
+  set forward(value: boolean) {
+    this._forward = value;
+  }
+
+  get left(): boolean {
+    return this._left;
+  }
+
+  set left(value: boolean) {
+    this._left = value;
+  }
+
+  get right(): boolean {
+    return this._right;
+  }
+
+  set right(value: boolean) {
+    this._right = value;
   }
 
   public handleKeyUpEvents(): void {
