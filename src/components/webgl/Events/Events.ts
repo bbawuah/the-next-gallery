@@ -1,9 +1,7 @@
 import {PointerLockControls} from 'three/examples/jsm/controls/PointerLockControls';
-import {DeviceOrientationControls} from 'three/examples/jsm/controls/DeviceOrientationControls.js';
 
 export class Events {
   private pointerLockerControls: PointerLockControls;
-  public deviceOrientationControls: DeviceOrientationControls;
 
   private _forward: boolean;
   private _backward: boolean;
@@ -20,9 +18,7 @@ export class Events {
 
     this.walkingSpeed = 5;
 
-    if (isMobileDevice) {
-      this.deviceOrientationControls = new DeviceOrientationControls(camera);
-    } else {
+    if (!isMobileDevice) {
       this.pointerLockerControls = new PointerLockControls(camera, el);
     }
   }

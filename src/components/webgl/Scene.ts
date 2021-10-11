@@ -10,6 +10,7 @@ import {Events} from './Events/Events';
 import {PhysicsWorld} from './Physics/Physics';
 import {RenderTarget} from './RenderTarget/RenderTarget';
 import {progressRatio} from '../../store/store';
+import {DeviceOrientationControls} from 'three/examples/jsm/controls/DeviceOrientationControls.js';
 
 const sizes: Sizes = {
   width: window.innerWidth,
@@ -46,8 +47,8 @@ const portraitNames = [
 
 const stats = new Stats();
 
-stats.showPanel(1);
-document.body.appendChild(stats.dom);
+// stats.showPanel(1);
+// document.body.appendChild(stats.dom);
 
 export class Scene {
   // Scene
@@ -82,16 +83,15 @@ export class Scene {
   private shaderPainting: THREE.Mesh;
   private bitmapText: RenderTarget;
 
-  //Events
-  public events: Events;
-
   // Overlay
   private overlayGeometry: THREE.PlaneGeometry;
   private overlayMaterial: THREE.RawShaderMaterial;
   private overlayMesh: THREE.Mesh;
   private loadingManager: THREE.LoadingManager;
+  public deviceOrientationControls: DeviceOrientationControls;
 
-  //Progress ratio
+  //Events
+  public events: Events;
 
   constructor(el: HTMLCanvasElement, isMobile: boolean) {
     // Renderer
@@ -166,6 +166,7 @@ export class Scene {
     }
 
     this.controls = new OrbitControls(this.camera, el); //Development
+    this.deviceOrientationControls = new DeviceOrientationControls(this.camera);
 
     // DRACO Loader
     this.dracoLoader = new DRACOLoader(this.loadingManager);
@@ -185,7 +186,7 @@ export class Scene {
     }
 
     this.resize();
-    this.render();
+    this.render(isMobile);
   }
 
   private resize(): void {
@@ -297,14 +298,15 @@ export class Scene {
     this.physics.physicsWorld.step(1 / 60, deltaTime, 2);
   }
 
-  private render(): void {
+  private render(isMobileDevice: boolean): void {
+    const isMobile = isMobileDevice;
     const elapsedTime = this.clock.getElapsedTime();
     stats.begin();
     this.handleUserDirection();
 
     //Mobile orientation
-    if (this.events.deviceOrientationControls) {
-      this.events.deviceOrientationControls.update();
+    if (isMobileDevice) {
+      this.deviceOrientationControls.update();
     }
 
     if (this.physics) {
@@ -326,6 +328,6 @@ export class Scene {
 
     this.renderer.render(this.scene, this.camera);
     stats.end();
-    window.requestAnimationFrame(() => this.render());
+    window.requestAnimationFrame(() => this.render(isMobile));
   }
 }

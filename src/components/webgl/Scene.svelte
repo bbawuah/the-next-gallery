@@ -42,12 +42,7 @@
 </script>
 
 <div class="canvas-container">
-  {#if progress !== 100}
-    <ProgressMeter number={progress} />
-  {/if}
-
   <canvas class="webgl__canvas" bind:this={canvasElement} />
-
   {#if progress === 100}
     <NavigationContainer>
       <Keys>
