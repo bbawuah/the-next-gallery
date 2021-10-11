@@ -1,5 +1,5 @@
 <script lang="ts">
-  import {onMount, afterUpdate} from 'svelte';
+  import {onMount} from 'svelte';
   import Keys from '../Navigation/Keys/Keys.svelte';
   import IconWithText from '../Navigation/Generic/IconWithText.svelte';
   import {Scene} from './Scene';
@@ -7,7 +7,6 @@
   import NavigationContainer from '../Navigation/NavigationContainer.svelte';
   import {mobileCheck} from '../../utils/mobileCheck';
   import Icon from '../Icon/Icon.svelte';
-  import ProgressMeter from '../ProgressMeter/ProgressMeter.svelte';
   import {progressRatio} from '../../store/store';
 
   const isMobileDevice = mobileCheck();
@@ -42,12 +41,7 @@
 </script>
 
 <div class="canvas-container">
-  {#if progress !== 100}
-    <ProgressMeter number={progress} />
-  {/if}
-
   <canvas class="webgl__canvas" bind:this={canvasElement} />
-
   {#if progress === 100}
     <NavigationContainer>
       <Keys>

@@ -40,7 +40,7 @@
 
     p {
       font-family: $font-text-light;
-      color: #363636;
+      color: $color-dark-grey;
       margin: 0;
       font-size: 11px;
       text-align: center;

@@ -1,13 +1,129 @@
 <script lang="ts">
+  import Button from './components/Button/Button.svelte';
+
+  import Icon from './components/Icon/Icon.svelte';
+
+  import Layout from './components/Layout/Layout.svelte';
+  import Link from './components/Link/Link.svelte';
+  import ParagraphContainer from './components/ParagraphContainer/ParagraphContainer.svelte';
+  import ProgressMeter from './components/ProgressMeter/ProgressMeter.svelte';
+
   import Scene from './components/webgl/Scene.svelte';
+  import {progressRatio} from './store/store';
+  import {IconType} from './utils/icons/types/IconType';
+
+  let progress: number;
+
+  const year = new Date().getFullYear();
+
+  progressRatio.subscribe(value => {
+    progress = value;
+  });
 </script>
 
 <main>
+  <Layout>
+    <div class="content-left-wrapper" slot="content-left">
+      <ParagraphContainer>
+        <p class="text">A digital showcase of creatives and talents in a way you’ve never seen before.</p>
+      </ParagraphContainer>
+
+      <ParagraphContainer>
+        <p class="text">
+          The Next Gallery is an immersive digital experience that showcases a selection of creatives and talents based
+          in the Netherlands in a unique way using emerging technologies.
+        </p>
+      </ParagraphContainer>
+
+      <ParagraphContainer>
+        <div>
+          <p class="text">
+            Emerging technologies, from artificial intelligence and machine learning to virtual and augmented reality,
+            are beginning to impact our societies and shape our public discourse.
+          </p>
+          <p class="text">
+            But the conversations in our community around how these tools are influencing, and will continue to mould,
+            the creative fields of art and design are still really in their infancy.
+          </p>
+        </div>
+      </ParagraphContainer>
+
+      <ParagraphContainer>
+        <div>
+          <p class="text">
+            The Next Gallery overwrites virtual information onto your real-world environment using Augmented and Virtual
+            Reality.
+          </p>
+          <p class="text">
+            It opens a new virtual world as a source of inspiration for creatives who want to express their talent and
+            art in unique ways.
+          </p>
+        </div>
+      </ParagraphContainer>
+
+      <ParagraphContainer>
+        <div class="outro">
+          <p class="text">Special thanks to all the creatives that participated in this gallery.</p>
+          <p class="text">Enjoy the gallery ❤️</p>
+        </div>
+        <Button onClick={() => console.log('clicked')} text={'Enter gallery'} type={'button'} />
+        <footer class="footer">
+          <p class="copyright">Copyright &copy; {year} <Link href="https://github.com/bbawuah">Brian Bawuah</Link></p>
+        </footer>
+      </ParagraphContainer>
+    </div>
+
+    <div slot="content-right">
+      {#if progress !== 100}
+        <ProgressMeter slot="content-right" number={progress} />
+      {/if}
+    </div>
+  </Layout>
+
   <Scene />
 </main>
 
 <style type="text/scss">
+  @import './styles/styles.scss';
+
   :global(body) {
     padding: 0;
+  }
+
+  .content-left-wrapper {
+    height: 100%;
+  }
+
+  .text {
+    width: 100%;
+    max-width: 650px;
+    font-size: 25px;
+    line-height: 129.49%;
+    font-family: $font-text-light;
+    letter-spacing: -0.025em;
+    color: $color-light-grey;
+    text-align: center;
+  }
+
+  .footer {
+    align-self: flex-end;
+    margin-bottom: 50px;
+    .copyright {
+      margin: 0;
+      font-family: $font-text-light;
+      font-weight: 300;
+    }
+  }
+
+  // @media screen and (min-width: 600px) {
+  //     p {
+  //       font-size: 12px;
+  //     }
+  //   }
+
+  @media screen and (min-width: 1450px) {
+    .text {
+      font-size: 33px;
+    }
   }
 </style>
