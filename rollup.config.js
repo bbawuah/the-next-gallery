@@ -10,7 +10,6 @@ import {sass} from 'svelte-preprocess-sass';
 import gltf from 'rollup-plugin-gltf';
 import json from '@rollup/plugin-json';
 import scss from 'rollup-plugin-scss';
-import inject from '@rollup/plugin-inject';
 import nodePolyfills from 'rollup-plugin-node-polyfills';
 
 const production = !process.env.ROLLUP_WATCH;
