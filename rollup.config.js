@@ -107,7 +107,7 @@ export default {
     production && terser(),
     json(),
     inject({
-      three: 'THREE'
+      THREE: 'three'
     }),
     nodePolyfills()
   ],
