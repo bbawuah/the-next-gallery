@@ -42,9 +42,7 @@ export default {
     format: 'iife',
     name: 'app',
     file: 'public/build/bundle.js',
-    globals: {
-      buffer: 'Buffer'
-    }
+    strict: false
   },
   plugins: [
     svelte({
@@ -109,8 +107,7 @@ export default {
     production && terser(),
     json(),
     inject({
-      three: 'THREE',
-      buffer: 'buffer'
+      three: 'THREE'
     })
   ],
   watch: {
