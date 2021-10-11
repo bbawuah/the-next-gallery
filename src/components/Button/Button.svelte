@@ -17,7 +17,7 @@
     color: $color-white;
     align-self: start;
     width: 50%;
-    font-size: 30px;
+    font-size: 25px;
     margin: 0;
     cursor: pointer;
   }

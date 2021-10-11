@@ -3,23 +3,34 @@
   import Icon from '../Icon/Icon.svelte';
   import GSAP from 'gsap';
   import {onMount} from 'svelte';
-  import {progressRatio} from '../../store/store';
+  import {playerIsInScene, pointerLockerControls, progressRatio} from '../../store/store';
+  import type {PointerLockControls} from 'three/examples/jsm/controls/PointerLockControls';
 
-  let callToAction: HTMLElement;
-  let isHovered: boolean = false;
+  let callToAction: HTMLParagraphElement;
+  let layoutContainer: HTMLElement;
 
   let onMouseOver: () => void;
   let onMouseLeave: () => void;
+  let onClick: () => void;
 
   let progress: number;
+  let pointerLockerctrls: PointerLockControls;
+  let isPlaying: boolean;
 
   progressRatio.subscribe(value => {
-    console.log(value);
     progress = value;
   });
 
+  pointerLockerControls.subscribe(value => {
+    pointerLockerctrls = value;
+  });
+
+  playerIsInScene.subscribe(value => {
+    isPlaying = value;
+  });
+
   onMount(() => {
-    if (callToAction) {
+    if (callToAction && layoutContainer) {
       onMouseOver = () => {
         if (progress === 100) {
           GSAP.to(callToAction, {duration: 0.5, opacity: 1});
@@ -29,11 +40,27 @@
       onMouseLeave = () => {
         GSAP.to(callToAction, {duration: 0.5, opacity: 0});
       };
+
+      onClick = () => {
+        GSAP.to(layoutContainer, {duration: 0.5, opacity: 0});
+        layoutContainer.style.display = 'none';
+
+        pointerLockerctrls.lock();
+
+        pointerLockerctrls.addEventListener('unlock', () => {
+          GSAP.to(layoutContainer, {duration: 0.5, opacity: 1});
+          layoutContainer.style.display = 'grid';
+
+          playerIsInScene.update(() => false);
+        });
+
+        playerIsInScene.update(() => true);
+      };
     }
   });
 </script>
 
-<section class="container">
+<section class="container" bind:this={layoutContainer}>
   <section class="column-left">
     <div class="icon-container">
       <Icon icon={IconType.logo} />
@@ -42,7 +69,13 @@
     <slot name="content-left" />
   </section>
 
-  <section class="column-right" on:mouseover={onMouseOver} on:focus={onMouseOver} on:mouseleave={onMouseLeave}>
+  <section
+    class="column-right"
+    on:mouseover={onMouseOver}
+    on:focus={onMouseOver}
+    on:mouseleave={onMouseLeave}
+    on:click={onClick}
+  >
     <slot name="content-right" />
 
     <p class="call-to-action" bind:this={callToAction}>Enter gallery</p>
@@ -59,6 +92,7 @@
     width: 100%;
     height: 100%;
     z-index: 2;
+    opacity: 1;
 
     .column-left,
     .column-right {

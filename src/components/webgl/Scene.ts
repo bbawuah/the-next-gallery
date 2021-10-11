@@ -9,8 +9,9 @@ import type {Sizes} from './types';
 import {Events} from './Events/Events';
 import {PhysicsWorld} from './Physics/Physics';
 import {RenderTarget} from './RenderTarget/RenderTarget';
-import {progressRatio} from '../../store/store';
+import {pointerLockerControls, progressRatio} from '../../store/store';
 import {DeviceOrientationControls} from 'three/examples/jsm/controls/DeviceOrientationControls.js';
+import {PointerLockControls} from 'three/examples/jsm/controls/PointerLockControls';
 
 const sizes: Sizes = {
   width: window.innerWidth,
@@ -156,7 +157,7 @@ export class Scene {
     this.material = new THREE.MeshBasicMaterial({map: this.bakedTexture});
 
     // Events
-    this.events = new Events(this.camera, el, isMobile);
+    this.events = new Events();
 
     // Physics
     this.physics = new PhysicsWorld(this.scene);
@@ -181,6 +182,7 @@ export class Scene {
     this.clock = new THREE.Clock();
 
     if (!isMobile) {
+      pointerLockerControls.update(() => new PointerLockControls(this.camera, el));
       this.events.handleKeyUpEvents();
       this.events.handleKeyDownEvents();
     }

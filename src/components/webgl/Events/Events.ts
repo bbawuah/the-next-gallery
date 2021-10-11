@@ -1,16 +1,15 @@
-import {PointerLockControls} from 'three/examples/jsm/controls/PointerLockControls';
+import {playerIsInScene} from '../../../store/store';
 
 export class Events {
-  private pointerLockerControls: PointerLockControls;
-
   private _forward: boolean;
   private _backward: boolean;
   private _left: boolean;
   private _right: boolean;
+  private playerIsInScene: boolean;
 
   public walkingSpeed: number;
 
-  constructor(camera: THREE.PerspectiveCamera, el: HTMLCanvasElement, isMobileDevice: boolean) {
+  constructor() {
     this._forward = false;
     this._backward = false;
     this._left = false;
@@ -18,9 +17,9 @@ export class Events {
 
     this.walkingSpeed = 5;
 
-    if (!isMobileDevice) {
-      this.pointerLockerControls = new PointerLockControls(camera, el);
-    }
+    playerIsInScene.subscribe(value => {
+      this.playerIsInScene = value;
+    });
   }
 
   get backward(): boolean {
@@ -57,10 +56,6 @@ export class Events {
 
   public handleKeyUpEvents(): void {
     window.addEventListener('keyup', e => {
-      if (this.pointerLockerControls && e.key === 'Enter') {
-        this.pointerLockerControls.lock();
-      }
-
       if (e.key === 'ArrowDown') {
         this.backward = false;
       }
@@ -81,20 +76,22 @@ export class Events {
 
   public handleKeyDownEvents(): void {
     window.addEventListener('keydown', e => {
-      if (e.key === 'ArrowDown') {
-        this.backward = true;
-      }
+      if (this.playerIsInScene) {
+        if (e.key === 'ArrowDown') {
+          this.backward = true;
+        }
 
-      if (e.key === 'ArrowUp') {
-        this.forward = true;
-      }
+        if (e.key === 'ArrowUp') {
+          this.forward = true;
+        }
 
-      if (e.key === 'ArrowLeft') {
-        this.left = true;
-      }
+        if (e.key === 'ArrowLeft') {
+          this.left = true;
+        }
 
-      if (e.key === 'ArrowRight') {
-        this.right = true;
+        if (e.key === 'ArrowRight') {
+          this.right = true;
+        }
       }
     });
   }
