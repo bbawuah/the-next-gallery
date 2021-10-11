@@ -20,7 +20,7 @@
     top: 50%;
     transform: translate(-50%, -50%);
     z-index: 2;
-    color: #383838;
+    color: $color-white;
 
     .progress-meter {
       font-size: 3.5rem;
