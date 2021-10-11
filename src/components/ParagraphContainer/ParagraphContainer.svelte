@@ -6,8 +6,8 @@
   .content-section {
     width: 100%;
     height: 100%;
-    display: flex;
-    justify-content: center;
+    display: grid;
+    justify-items: center;
     align-items: center;
   }
 </style>

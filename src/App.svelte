@@ -1,6 +1,10 @@
 <script lang="ts">
+  import Button from './components/Button/Button.svelte';
+
   import Icon from './components/Icon/Icon.svelte';
+
   import Layout from './components/Layout/Layout.svelte';
+  import Link from './components/Link/Link.svelte';
   import ParagraphContainer from './components/ParagraphContainer/ParagraphContainer.svelte';
   import ProgressMeter from './components/ProgressMeter/ProgressMeter.svelte';
 
@@ -9,6 +13,8 @@
   import {IconType} from './utils/icons/types/IconType';
 
   let progress: number;
+
+  const year = new Date().getFullYear();
 
   progressRatio.subscribe(value => {
     progress = value;
@@ -56,10 +62,14 @@
       </ParagraphContainer>
 
       <ParagraphContainer>
-        <div>
+        <div class="outro">
           <p class="text">Special thanks to all the creatives that participated in this gallery.</p>
           <p class="text">Enjoy the gallery ❤️</p>
         </div>
+        <Button onClick={() => console.log('clicked')} text={'Enter gallery'} type={'button'} />
+        <footer class="footer">
+          <p class="copyright">Copyright &copy; {year} <Link href="https://github.com/bbawuah">Brian Bawuah</Link></p>
+        </footer>
       </ParagraphContainer>
     </div>
 
@@ -67,7 +77,6 @@
       {#if progress !== 100}
         <ProgressMeter slot="content-right" number={progress} />
       {/if}
-      <p>Some text</p>
     </div>
   </Layout>
 
@@ -86,12 +95,35 @@
   }
 
   .text {
-    width: 650px;
-    font-size: 35px;
+    width: 100%;
+    max-width: 650px;
+    font-size: 25px;
     line-height: 129.49%;
-    font-family: $font-text-regular;
-    letter-spacing: -0.05em;
-    color: #696969;
+    font-family: $font-text-light;
+    letter-spacing: -0.025em;
+    color: $color-light-grey;
     text-align: center;
+  }
+
+  .footer {
+    align-self: flex-end;
+    margin-bottom: 50px;
+    .copyright {
+      margin: 0;
+      font-family: $font-text-light;
+      font-weight: 300;
+    }
+  }
+
+  // @media screen and (min-width: 600px) {
+  //     p {
+  //       font-size: 12px;
+  //     }
+  //   }
+
+  @media screen and (min-width: 1450px) {
+    .text {
+      font-size: 33px;
+    }
   }
 </style>

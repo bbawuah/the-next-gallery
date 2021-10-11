@@ -132,7 +132,7 @@ export class Scene {
           uniform float u_alpha;
     
           void main() {
-            gl_FragColor = vec4(.8, 0.8, 0.8, u_alpha);
+            gl_FragColor = vec4(.6, 0.6, 0.6, u_alpha);
           }
           `,
       transparent: true
