@@ -11,6 +11,7 @@ import gltf from 'rollup-plugin-gltf';
 import json from '@rollup/plugin-json';
 import scss from 'rollup-plugin-scss';
 import inject from '@rollup/plugin-inject';
+import nodePolyfills from 'rollup-plugin-node-polyfills';
 
 const production = !process.env.ROLLUP_WATCH;
 
@@ -41,8 +42,7 @@ export default {
     sourcemap: true,
     format: 'iife',
     name: 'app',
-    file: 'public/build/bundle.js',
-    strict: false
+    file: 'public/build/bundle.js'
   },
   plugins: [
     svelte({
@@ -108,7 +108,8 @@ export default {
     json(),
     inject({
       three: 'THREE'
-    })
+    }),
+    nodePolyfills()
   ],
   watch: {
     clearScreen: false
