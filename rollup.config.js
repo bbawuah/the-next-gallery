@@ -10,6 +10,7 @@ import {sass} from 'svelte-preprocess-sass';
 import gltf from 'rollup-plugin-gltf';
 import json from '@rollup/plugin-json';
 import scss from 'rollup-plugin-scss';
+import inject from '@rollup/plugin-inject';
 
 const production = !process.env.ROLLUP_WATCH;
 
@@ -40,13 +41,8 @@ export default {
     sourcemap: true,
     format: 'iife',
     name: 'app',
-    file: 'public/build/bundle.js',
-    globals: {
-      three: 'THREE',
-      buffer: 'Buffer'
-    }
+    file: 'public/build/bundle.js'
   },
-  external: ['three, buffer'],
   plugins: [
     svelte({
       preprocess: sveltePreprocess({
@@ -108,7 +104,11 @@ export default {
     // If we're building for production (npm run build
     // instead of npm run dev), minify
     production && terser(),
-    json()
+    json(),
+    inject({
+      three: 'THREE',
+      buffer: 'buffer'
+    })
   ],
   watch: {
     clearScreen: false
