@@ -1,5 +1,4 @@
-export const fragmentShader = `
-precision mediump float;
+export const fragmentShader = `precision mediump float;
 uniform sampler2D u_texture;
 
 
