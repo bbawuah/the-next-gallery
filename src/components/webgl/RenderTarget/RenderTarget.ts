@@ -1,10 +1,10 @@
 import * as THREE from 'three';
 import createGeometry from 'three-bmfont-text';
-import MSDFShader from 'three-bmfont-text/shaders/msdf';
 import loadFont from 'load-bmfont';
 import type {BufferGeometry} from 'three';
 import {vertexShader} from '../Shaders/KinecticText/vertex';
 import {fragmentShader} from '../Shaders/KinecticText/fragment';
+import {createMSDFShader} from '../Shaders/msdf';
 
 export class RenderTarget {
   private text: string;
@@ -62,10 +62,8 @@ export class RenderTarget {
 
       loader.load('/fonts/helvetica.png', texture => {
         this.material = new THREE.RawShaderMaterial(
-          MSDFShader({
+          createMSDFShader({
             map: texture,
-            side: THREE.FrontSide,
-            transparent: true,
             negate: false,
             color: 0x383838
           })
