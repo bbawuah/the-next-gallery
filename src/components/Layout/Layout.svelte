@@ -43,7 +43,11 @@
 
       onClick = () => {
         GSAP.to(layoutContainer, {duration: 0.5, opacity: 0});
-        layoutContainer.style.display = 'none';
+
+        // Add small delay before setting display to none
+        setTimeout(() => {
+          layoutContainer.style.display = 'none';
+        }, 500);
 
         pointerLockerctrls.lock();
 
