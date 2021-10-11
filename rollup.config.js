@@ -106,9 +106,6 @@ export default {
     // instead of npm run dev), minify
     production && terser(),
     json(),
-    inject({
-      THREE: ['three', '*']
-    }),
     nodePolyfills()
   ],
   watch: {
