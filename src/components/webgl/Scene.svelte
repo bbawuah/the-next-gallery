@@ -7,7 +7,7 @@
   import NavigationContainer from '../Navigation/NavigationContainer.svelte';
   import {mobileCheck} from '../../utils/mobileCheck';
   import Icon from '../Icon/Icon.svelte';
-  import {progressRatio} from '../../store/store';
+  import {playerIsInScene, progressRatio} from '../../store/store';
 
   const isMobileDevice = mobileCheck();
 
@@ -15,7 +15,11 @@
   let scene: Scene;
 
   let progress: number;
+  let isPlaying: boolean;
 
+  playerIsInScene.subscribe(value => {
+    isPlaying = value;
+  });
   progressRatio.subscribe(value => {
     progress = value;
   });
@@ -42,7 +46,7 @@
 
 <div class="canvas-container">
   <canvas class="webgl__canvas" bind:this={canvasElement} />
-  {#if progress === 100}
+  {#if progress === 100 && isPlaying}
     <NavigationContainer>
       <Keys>
         <div class="keys">

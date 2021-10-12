@@ -23,13 +23,25 @@
     color: $color-white;
 
     .progress-meter {
-      font-size: 3.5rem;
+      font-size: 2rem;
       margin: 0;
     }
 
     .text {
       text-align: center;
-      font-size: 1.75rem;
+      font-size: 1rem;
+    }
+  }
+
+  @media screen and (min-width: 870px) {
+    .container {
+      .progress-meter {
+        font-size: 3.5rem;
+      }
+
+      .text {
+        font-size: 1.75rem;
+      }
     }
   }
 </style>
