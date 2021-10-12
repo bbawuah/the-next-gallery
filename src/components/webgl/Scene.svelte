@@ -7,9 +7,9 @@
   import NavigationContainer from '../Navigation/NavigationContainer.svelte';
   import {mobileCheck} from '../../utils/mobileCheck';
   import Icon from '../Icon/Icon.svelte';
-  import {playerIsInScene, progressRatio} from '../../store/store';
+  import {playerIsInScene, progressRatio, isMobileDevice as mobileDeviceSubscriber} from '../../store/store';
 
-  const isMobileDevice = mobileCheck();
+  let isMobileDevice: boolean;
 
   let canvasElement: HTMLCanvasElement;
   let scene: Scene;
@@ -24,9 +24,13 @@
     progress = value;
   });
 
+  mobileDeviceSubscriber.subscribe(value => {
+    isMobileDevice = value;
+  });
+
   onMount(() => {
     if (canvasElement) {
-      scene = new Scene(canvasElement, isMobileDevice);
+      scene = new Scene(canvasElement);
     }
   });
 

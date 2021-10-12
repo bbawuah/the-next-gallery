@@ -9,7 +9,7 @@ import type {Sizes} from './types';
 import {Events} from './Events/Events';
 import {PhysicsWorld} from './Physics/Physics';
 import {RenderTarget} from './RenderTarget/RenderTarget';
-import {pointerLockerControls, progressRatio} from '../../store/store';
+import {deviceOrientation, isMobileDevice, pointerLockerControls, progressRatio} from '../../store/store';
 import {DeviceOrientationControls} from 'three/examples/jsm/controls/DeviceOrientationControls.js';
 import {PointerLockControls} from 'three/examples/jsm/controls/PointerLockControls';
 
@@ -89,12 +89,16 @@ export class Scene {
   private overlayMaterial: THREE.RawShaderMaterial;
   private overlayMesh: THREE.Mesh;
   private loadingManager: THREE.LoadingManager;
+
+  // IsMobile device?
+  public isMobile: boolean;
+
   public deviceOrientationControls: DeviceOrientationControls;
 
   //Events
   public events: Events;
 
-  constructor(el: HTMLCanvasElement, isMobile: boolean) {
+  constructor(el: HTMLCanvasElement) {
     // Renderer
     this.renderer = new THREE.WebGLRenderer({
       canvas: el
@@ -169,6 +173,8 @@ export class Scene {
     this.controls = new OrbitControls(this.camera, el); //Development
     this.deviceOrientationControls = new DeviceOrientationControls(this.camera);
 
+    deviceOrientation.update(() => this.deviceOrientationControls);
+
     // DRACO Loader
     this.dracoLoader = new DRACOLoader(this.loadingManager);
     this.dracoLoader.setDecoderPath('draco/');
@@ -181,14 +187,16 @@ export class Scene {
     // Clock
     this.clock = new THREE.Clock();
 
-    if (!isMobile) {
+    isMobileDevice.subscribe(v => (this.isMobile = v));
+
+    if (!this.isMobile) {
       pointerLockerControls.update(() => new PointerLockControls(this.camera, el));
       this.events.handleKeyUpEvents();
       this.events.handleKeyDownEvents();
     }
 
     this.resize();
-    this.render(isMobile);
+    this.render(this.isMobile);
   }
 
   private resize(): void {
@@ -307,7 +315,7 @@ export class Scene {
     this.handleUserDirection();
 
     //Mobile orientation
-    if (isMobileDevice) {
+    if (isMobile) {
       this.deviceOrientationControls.update();
     }
 
