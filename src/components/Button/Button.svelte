@@ -16,9 +16,21 @@
     background-color: $color-dark-grey;
     color: $color-white;
     align-self: start;
-    width: 50%;
-    font-size: 25px;
-    margin: 0;
+    width: 100%;
+    font-size: 20px;
+    margin-top: 25px;
     cursor: pointer;
+  }
+
+  @media screen and (min-width: 870px) {
+    .button {
+      max-width: 450px;
+    }
+  }
+
+  @media screen and (min-width: 1450px) {
+    .button {
+      font-size: 35px;
+    }
   }
 </style>

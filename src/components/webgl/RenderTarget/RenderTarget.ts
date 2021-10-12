@@ -34,7 +34,7 @@ export class RenderTarget {
     this.renderTargetScene.background = new THREE.Color(0xe8e8e8);
   }
 
-  private addShader(mesh: THREE.Mesh): void {
+  private addShader(mesh: THREE.Mesh | undefined): void {
     this.renderTargetMaterial = new THREE.RawShaderMaterial({
       vertexShader,
       fragmentShader,

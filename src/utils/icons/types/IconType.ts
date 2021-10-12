@@ -7,5 +7,6 @@ export enum IconType {
   mouse = 'mouse',
   phone = 'phone',
   instagram = 'instagram',
-  logo = 'logo'
+  logo = 'logo',
+  arrowDown = 'arrowDown'
 }

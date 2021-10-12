@@ -1,6 +1,5 @@
 <script lang="ts">
   import Button from './components/Button/Button.svelte';
-
   import Icon from './components/Icon/Icon.svelte';
 
   import Layout from './components/Layout/Layout.svelte';
@@ -23,7 +22,7 @@
 
 <main>
   <Layout>
-    <div class="content-left-wrapper" slot="content-left">
+    <section class="content-left-wrapper" slot="content-left">
       <ParagraphContainer>
         <p class="text">A digital showcase of creatives and talents in a way you’ve never seen before.</p>
       </ParagraphContainer>
@@ -71,13 +70,13 @@
           <p class="copyright">Copyright &copy; {year} <Link href="https://github.com/bbawuah">Brian Bawuah</Link></p>
         </footer>
       </ParagraphContainer>
-    </div>
+    </section>
 
-    <div slot="content-right">
+    <section slot="content-right">
       {#if progress !== 100}
         <ProgressMeter slot="content-right" number={progress} />
       {/if}
-    </div>
+    </section>
   </Layout>
 
   <Scene />
@@ -97,7 +96,7 @@
   .text {
     width: 100%;
     max-width: 650px;
-    font-size: 25px;
+    font-size: 20px;
     line-height: 129.49%;
     font-family: $font-text-light;
     letter-spacing: -0.025em;
@@ -105,9 +104,13 @@
     text-align: center;
   }
 
+  .outro {
+    align-self: flex-end;
+  }
+
   .footer {
     align-self: flex-end;
-    margin-bottom: 50px;
+    margin-bottom: 20px;
     .copyright {
       margin: 0;
       font-family: $font-text-light;
@@ -123,7 +126,7 @@
 
   @media screen and (min-width: 1450px) {
     .text {
-      font-size: 33px;
+      font-size: 35px;
     }
   }
 </style>
