@@ -3,34 +3,25 @@
   import Icon from '../Icon/Icon.svelte';
   import GSAP from 'gsap';
   import {onMount} from 'svelte';
-  import {playerIsInScene, pointerLockerControls, progressRatio} from '../../store/store';
-  import type {PointerLockControls} from 'three/examples/jsm/controls/PointerLockControls';
+  import {progressRatio, layoutContainer as layoutContainerSubscriber} from '../../store/store';
+  import {onEnter} from '../../utils/onEnter';
 
   let callToAction: HTMLParagraphElement;
   let layoutContainer: HTMLElement;
 
   let onMouseOver: () => void;
   let onMouseLeave: () => void;
-  let onClick: () => void;
 
   let progress: number;
-  let pointerLockerctrls: PointerLockControls;
-  let isPlaying: boolean;
 
   progressRatio.subscribe(value => {
     progress = value;
   });
 
-  pointerLockerControls.subscribe(value => {
-    pointerLockerctrls = value;
-  });
-
-  playerIsInScene.subscribe(value => {
-    isPlaying = value;
-  });
-
   onMount(() => {
     if (callToAction && layoutContainer) {
+      layoutContainerSubscriber.update(() => layoutContainer);
+
       onMouseOver = () => {
         if (progress === 100) {
           GSAP.to(callToAction, {duration: 0.5, opacity: 1});
@@ -39,26 +30,6 @@
 
       onMouseLeave = () => {
         GSAP.to(callToAction, {duration: 0.5, opacity: 0});
-      };
-
-      onClick = () => {
-        GSAP.to(layoutContainer, {duration: 0.5, opacity: 0});
-
-        // Add small delay before setting display to none
-        setTimeout(() => {
-          layoutContainer.style.display = 'none';
-        }, 500);
-
-        pointerLockerctrls.lock();
-
-        pointerLockerctrls.addEventListener('unlock', () => {
-          GSAP.to(layoutContainer, {duration: 0.5, opacity: 1});
-          layoutContainer.style.display = 'grid';
-
-          playerIsInScene.update(() => false);
-        });
-
-        playerIsInScene.update(() => true);
       };
     }
   });
@@ -83,7 +54,7 @@
     on:mouseover={onMouseOver}
     on:focus={onMouseOver}
     on:mouseleave={onMouseLeave}
-    on:click={onClick}
+    on:click={() => onEnter(layoutContainer)}
   >
     <slot name="content-right" />
 
