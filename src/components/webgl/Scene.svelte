@@ -149,6 +149,8 @@
       z-index: 1;
       margin-left: 25px;
       padding: 5px;
+      transition: 0.175s ease-in-out;
+
       :global(svg) {
         transform: rotate(90deg);
       }
@@ -168,7 +170,10 @@
       &:hover {
         background-color: #363636;
         border: unset;
-        color: #fff;
+
+        .exit-text {
+          color: #fff;
+        }
       }
     }
 
