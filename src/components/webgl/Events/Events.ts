@@ -21,7 +21,7 @@ export class Events {
     this._left = false;
     this._right = false;
 
-    this.walkingSpeed = 2.5;
+    this.walkingSpeed = 3;
 
     playerIsInScene.subscribe(value => {
       this.playerIsInScene = value;
