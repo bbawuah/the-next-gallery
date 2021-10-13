@@ -8,12 +8,17 @@
   import ProgressMeter from './components/ProgressMeter/ProgressMeter.svelte';
 
   import Scene from './components/webgl/Scene.svelte';
-  import {progressRatio} from './store/store';
-  import {IconType} from './utils/icons/types/IconType';
+  import {layoutContainer, progressRatio} from './store/store';
+  import {onEnter} from './utils/onEnter';
 
   let progress: number;
+  let layoutElement: HTMLElement;
 
   const year = new Date().getFullYear();
+
+  layoutContainer.subscribe(value => {
+    layoutElement = value;
+  });
 
   progressRatio.subscribe(value => {
     progress = value;
@@ -65,7 +70,7 @@
           <p class="text">Special thanks to all the creatives that participated in this gallery.</p>
           <p class="text">Enjoy the gallery ❤️</p>
         </div>
-        <Button onClick={() => console.log('clicked')} text={'Enter gallery'} type={'button'} />
+        <Button onClick={() => onEnter(layoutElement)} text={'Enter gallery'} type={'button'} />
         <footer class="footer">
           <p class="copyright">Copyright &copy; {year} <Link href="https://github.com/bbawuah">Brian Bawuah</Link></p>
         </footer>
@@ -87,6 +92,13 @@
 
   :global(body) {
     padding: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  main {
+    height: 100%;
+    width: 100%;
   }
 
   .content-left-wrapper {
@@ -118,11 +130,11 @@
     }
   }
 
-  // @media screen and (min-width: 600px) {
-  //     p {
-  //       font-size: 12px;
-  //     }
-  //   }
+  @media screen and (min-width: 870px) {
+    .text {
+      font-size: 25px;
+    }
+  }
 
   @media screen and (min-width: 1450px) {
     .text {
