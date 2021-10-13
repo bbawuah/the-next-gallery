@@ -166,15 +166,6 @@
         -ms-user-select: none;
         user-select: none;
       }
-
-      &:hover {
-        background-color: #363636;
-        border: unset;
-
-        .exit-text {
-          color: #fff;
-        }
-      }
     }
 
     .keys {
