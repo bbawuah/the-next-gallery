@@ -135,7 +135,8 @@ export class PhysicsWorld {
     camera.position.copy(
       new THREE.Vector3(this.sphereBody.position.x, this.sphereBody.position.y + 0.5, this.sphereBody.position.z)
     );
-    this.sphereBody.velocity.set(userDirection.x, -2.0, userDirection.z);
+
+    this.sphereBody.velocity.set(userDirection.x, this.sphereBody.velocity.y, userDirection.z);
 
     this.physicsWorld.step(1 / 60, deltaTime, 2);
   }
