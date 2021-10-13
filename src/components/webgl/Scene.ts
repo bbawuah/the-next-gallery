@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import GSAP from 'gsap';
 import Stats from 'stats-js';
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js';
 import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader';
@@ -9,9 +8,10 @@ import type {Sizes} from './types';
 import {Events} from './Events/Events';
 import {PhysicsWorld} from './Physics/Physics';
 import {RenderTarget} from './RenderTarget/RenderTarget';
-import {deviceOrientation, isMobileDevice, pointerLockerControls, progressRatio} from '../../store/store';
+import {deviceOrientation, isMobileDevice, pointerLockerControls} from '../../store/store';
 import {DeviceOrientationControls} from 'three/examples/jsm/controls/DeviceOrientationControls.js';
 import {PointerLockControls} from 'three/examples/jsm/controls/PointerLockControls';
+import {LoadingManager} from './LoadingManager/LoadingManager';
 
 const sizes: Sizes = {
   width: window.innerWidth,
@@ -80,11 +80,8 @@ export class Scene {
   private shaderPainting: THREE.Mesh;
   private bitmapText: RenderTarget;
 
-  // Overlay
-  private overlayGeometry: THREE.PlaneGeometry;
-  private overlayMaterial: THREE.RawShaderMaterial;
-  private overlayMesh: THREE.Mesh;
-  private loadingManager: THREE.LoadingManager;
+  // Loading manager
+  private loadingManager: LoadingManager;
 
   // IsMobile device?
   public isMobile: boolean;
@@ -111,44 +108,10 @@ export class Scene {
     this.camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100);
     this.camera.position.z = -1;
 
-    // Overlay
-    this.overlayGeometry = new THREE.PlaneGeometry(2, 2, 1, 1);
-    this.overlayMaterial = new THREE.RawShaderMaterial({
-      uniforms: {
-        u_alpha: {value: 1.0}
-      },
-      vertexShader: `
-          attribute vec3 position;
-          uniform mat4 projectionMatrix;
-          uniform mat4 modelViewMatrix;
-    
-    
-          void main() {
-            gl_Position = vec4(position, 1.0);
-          }
-          `,
-      fragmentShader: `
-          precision mediump float;
-    
-          uniform float u_alpha;
-    
-          void main() {
-            gl_FragColor = vec4(.6, 0.6, 0.6, u_alpha);
-          }
-          `,
-      transparent: true
-    });
-    this.overlayMesh = new THREE.Mesh(this.overlayGeometry, this.overlayMaterial);
-    this.scene.add(this.overlayMesh);
-
-    // Loading Manager
-    this.loadingManager = new THREE.LoadingManager(
-      () => this.onLoadedAssets(this.overlayMaterial),
-      this.onProgressLoadAssets
-    );
+    this.loadingManager = new LoadingManager(this.scene);
 
     // Textures
-    this.textureLoader = new THREE.TextureLoader(this.loadingManager);
+    this.textureLoader = new THREE.TextureLoader(this.loadingManager.loadingManager);
     this.bakedTexture = this.textureLoader.load('./static/map.jpg');
     this.bakedTexture.flipY = false;
     this.bakedTexture.encoding = THREE.sRGBEncoding;
@@ -176,11 +139,11 @@ export class Scene {
     deviceOrientation.update(() => this.deviceOrientationControls);
 
     // DRACO Loader
-    this.dracoLoader = new DRACOLoader(this.loadingManager);
+    this.dracoLoader = new DRACOLoader(this.loadingManager.loadingManager);
     this.dracoLoader.setDecoderPath('draco/');
 
     // GLTF Loader
-    this.gltfLoader = new GLTFLoader(this.loadingManager);
+    this.gltfLoader = new GLTFLoader(this.loadingManager.loadingManager);
     this.gltfLoader.setDRACOLoader(this.dracoLoader);
     this.gltfLoader.load('./static/museum.glb', gltf => this.handleGltf(gltf));
 
@@ -207,14 +170,6 @@ export class Scene {
       this.renderer.setSize(sizes.width, sizes.height);
       this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     });
-  }
-
-  private onLoadedAssets(material: THREE.RawShaderMaterial): void {
-    GSAP.to(material.uniforms.u_alpha, {duration: 3, value: 0.0});
-  }
-
-  private onProgressLoadAssets(url: string, loaded: number, total: number): void {
-    progressRatio.update(() => Math.floor((loaded / total) * 100));
   }
 
   private handleGltf(gltf: GLTF): void {
