@@ -10,6 +10,7 @@
     position: absolute;
     display: flex;
     justify-content: space-around;
+    flex-direction: row-reverse;
     bottom: 50px;
     left: 0;
     width: 100%;
@@ -20,6 +21,7 @@
     .navigation-container {
       display: grid;
       justify-content: initial;
+      flex-direction: unset;
       grid-template-columns: 130px 130px 130px;
       grid-gap: 10px;
       position: absolute;

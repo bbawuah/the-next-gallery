@@ -5,7 +5,6 @@
   import {Scene} from './Scene';
   import {IconType} from '../../utils/icons/types/IconType';
   import NavigationContainer from '../Navigation/NavigationContainer.svelte';
-  import {mobileCheck} from '../../utils/mobileCheck';
   import Icon from '../Icon/Icon.svelte';
   import {playerIsInScene, progressRatio, isMobileDevice as mobileDeviceSubscriber} from '../../store/store';
 
@@ -35,13 +34,16 @@
   });
 
   const onTouchStart = (value: boolean) => {
-    console.log('clicked');
+    console.log('touch started');
     if (isMobileDevice) {
       value = true;
+      console.log(value);
     }
   };
 
   const onTouchEnd = (value: boolean) => {
+    console.log('touch ended');
+
     if (isMobileDevice) {
       value = false;
     }
@@ -55,8 +57,12 @@
       <Keys>
         <div class="keys">
           <div
-            on:touchstart={() => onTouchStart(scene.events.forward)}
-            on:touchend={() => onTouchEnd(scene.events.forward)}
+            on:touchstart={() => {
+              scene.events.forward = true;
+            }}
+            on:touchend={() => {
+              scene.events.forward = false;
+            }}
             class="up"
           >
             <Icon icon={IconType.up} />
@@ -64,24 +70,36 @@
 
           <div
             class="bottom"
-            on:touchstart={() => onTouchStart(scene.events.backward)}
-            on:touchend={() => onTouchEnd(scene.events.backward)}
+            on:touchstart={() => {
+              scene.events.backward = true;
+            }}
+            on:touchend={() => {
+              scene.events.backward = false;
+            }}
           >
             <Icon icon={IconType.bottom} />
           </div>
 
           <div
             class="left"
-            on:touchstart={() => onTouchStart(scene.events.left)}
-            on:touchend={() => onTouchEnd(scene.events.left)}
+            on:touchstart={() => {
+              scene.events.left = true;
+            }}
+            on:touchend={() => {
+              scene.events.left = false;
+            }}
           >
             <Icon icon={IconType.left} />
           </div>
 
           <div
             class="right"
-            on:touchstart={() => onTouchStart(scene.events.right)}
-            on:touchend={() => onTouchEnd(scene.events.left)}
+            on:touchstart={() => {
+              scene.events.right = true;
+            }}
+            on:touchend={() => {
+              scene.events.right = false;
+            }}
           >
             <Icon icon={IconType.right} />
           </div>
@@ -120,15 +138,15 @@
 
     .keys {
       position: relative;
-      width: 120px;
-      height: 120px;
+      width: 155px;
+      height: 155px;
       margin-bottom: 8px;
 
       .up {
         position: absolute;
         top: 35%;
         left: 50%;
-        width: 35px;
+        width: 45px;
         transform: translate(-50%, 0);
       }
 
@@ -136,7 +154,7 @@
         position: absolute;
         bottom: 0;
         left: 50%;
-        width: 35px;
+        width: 45px;
         transform: translate(-50%, 0);
       }
 
@@ -144,14 +162,14 @@
         position: absolute;
         bottom: 0;
         left: 0;
-        width: 35px;
+        width: 45px;
       }
 
       .right {
         position: absolute;
         bottom: 0;
         right: 0;
-        width: 35px;
+        width: 45px;
       }
     }
 
@@ -161,6 +179,22 @@
       margin: 0;
       text-align: center;
       font-size: 12px;
+    }
+  }
+
+  @media screen and (min-width: 870px) {
+    .canvas-container {
+      .keys {
+        width: 100px;
+        height: 100px;
+
+        .up,
+        .left,
+        .right,
+        .bottom {
+          width: unset;
+        }
+      }
     }
   }
 </style>
