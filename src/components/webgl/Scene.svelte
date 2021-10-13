@@ -6,7 +6,14 @@
   import {IconType} from '../../utils/icons/types/IconType';
   import NavigationContainer from '../Navigation/NavigationContainer.svelte';
   import Icon from '../Icon/Icon.svelte';
-  import {playerIsInScene, progressRatio, isMobileDevice as mobileDeviceSubscriber} from '../../store/store';
+  import {
+    playerIsInScene,
+    progressRatio,
+    isMobileDevice as mobileDeviceSubscriber,
+    layoutContainer
+  } from '../../store/store';
+  import GSAP from 'gsap';
+  import {onExit} from '../../utils/onEnter';
 
   let isMobileDevice: boolean;
 
@@ -15,6 +22,7 @@
 
   let progress: number;
   let isPlaying: boolean;
+  let layoutElement: HTMLElement;
 
   playerIsInScene.subscribe(value => {
     isPlaying = value;
@@ -27,31 +35,27 @@
     isMobileDevice = value;
   });
 
+  layoutContainer.subscribe(value => {
+    layoutElement = value;
+  });
+
   onMount(() => {
     if (canvasElement) {
       scene = new Scene(canvasElement);
     }
   });
-
-  const onTouchStart = (value: boolean) => {
-    console.log('touch started');
-    if (isMobileDevice) {
-      value = true;
-      console.log(value);
-    }
-  };
-
-  const onTouchEnd = (value: boolean) => {
-    console.log('touch ended');
-
-    if (isMobileDevice) {
-      value = false;
-    }
-  };
 </script>
 
 <div class="canvas-container" ontouchstart={() => console.log('clicked')}>
   <canvas class="webgl__canvas" bind:this={canvasElement} />
+
+  {#if isMobileDevice && isPlaying}
+    <div on:click={() => onExit(layoutElement)} class="exit-container">
+      <Icon icon={IconType.arrowDown} />
+      <p class="exit-text">Leave gallery</p>
+    </div>
+  {/if}
+
   {#if progress === 100 && isPlaying}
     <NavigationContainer>
       <Keys>
@@ -136,17 +140,42 @@
       z-index: 1;
     }
 
+    .exit-container {
+      position: absolute;
+      display: flex;
+      top: 85px;
+      align-items: center;
+      padding: 0 25px;
+      left: 0;
+      width: 70px;
+      z-index: 1;
+
+      :global(svg) {
+        transform: rotate(90deg);
+      }
+
+      .exit-text {
+        margin-left: 15px;
+        width: max-content;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+    }
     .keys {
       position: relative;
-      width: 155px;
-      height: 155px;
+      width: 175px;
+      height: 172px;
       margin-bottom: 8px;
 
       .up {
         position: absolute;
         top: 35%;
         left: 50%;
-        width: 45px;
+        width: 50px;
         transform: translate(-50%, 0);
       }
 
@@ -154,7 +183,7 @@
         position: absolute;
         bottom: 0;
         left: 50%;
-        width: 45px;
+        width: 50px;
         transform: translate(-50%, 0);
       }
 
@@ -162,14 +191,14 @@
         position: absolute;
         bottom: 0;
         left: 0;
-        width: 45px;
+        width: 50px;
       }
 
       .right {
         position: absolute;
         bottom: 0;
         right: 0;
-        width: 45px;
+        width: 50px;
       }
     }
 

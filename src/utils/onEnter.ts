@@ -49,3 +49,17 @@ export const onEnter = (el: HTMLElement): void => {
 
   playerIsInScene.update(() => true);
 };
+
+export const onExit = (el: HTMLElement): void => {
+  let deviceOrientation: DeviceOrientationControls;
+
+  deviceOrientationSubscriber.subscribe(value => {
+    deviceOrientation = value;
+  });
+
+  deviceOrientation.disconnect();
+
+  GSAP.to(el, {duration: 0.5, opacity: 1});
+  el.style.display = 'grid';
+  playerIsInScene.update(() => false);
+};
