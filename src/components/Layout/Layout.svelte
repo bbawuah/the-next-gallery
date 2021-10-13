@@ -8,18 +8,26 @@
 
   let callToAction: HTMLParagraphElement;
   let layoutContainer: HTMLElement;
+  let scrollDownArrow: HTMLElement;
+  let columnLeft: HTMLElement;
 
   let onMouseOver: () => void;
   let onMouseLeave: () => void;
 
   let progress: number;
-
+  let test: boolean;
   progressRatio.subscribe(value => {
     progress = value;
   });
 
+  const renderScrollIndicator = (el: HTMLElement) => {
+    setTimeout(() => {
+      GSAP.to(el, {duration: 0.5, opacity: 1});
+    }, 3000);
+  };
+
   onMount(() => {
-    if (callToAction && layoutContainer) {
+    if (callToAction && layoutContainer && scrollDownArrow && columnLeft) {
       layoutContainerSubscriber.update(() => layoutContainer);
 
       onMouseOver = () => {
@@ -31,19 +39,29 @@
       onMouseLeave = () => {
         GSAP.to(callToAction, {duration: 0.5, opacity: 0});
       };
+
+      renderScrollIndicator(scrollDownArrow);
+
+      columnLeft.addEventListener('scroll', () => {
+        GSAP.to(scrollDownArrow, {duration: 0.5, opacity: 0});
+
+        columnLeft.removeEventListener('scroll', () => {
+          GSAP.to(scrollDownArrow, {duration: 0.5, opacity: 0});
+        });
+      });
     }
   });
 </script>
 
 <section class="container" bind:this={layoutContainer}>
-  <section class="column-left">
+  <section class="column-left" bind:this={columnLeft}>
     <div class="logo-container">
       <Icon icon={IconType.logo} size={'small'} />
     </div>
 
     <slot name="content-left" />
 
-    <div class="arrow-container">
+    <div class="arrow-container" bind:this={scrollDownArrow}>
       <p class="scroll-text">scroll</p>
       <Icon size={'small'} icon={IconType.arrowDown} />
     </div>
@@ -93,6 +111,7 @@
       .arrow-container {
         position: absolute;
         bottom: 0;
+        opacity: 0;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -100,11 +119,32 @@
         left: 50%;
         transform: translate(-50%, 0);
 
+        :global(svg) {
+          position: relative;
+          transition: 0.175s ease-in-out;
+          position: 0.125px;
+          animation: lineairAnimation 0.95s infinite;
+        }
+
         .scroll-text {
           margin: 0;
           font-family: $font-text-light;
           font-size: 15px;
         }
+      }
+    }
+
+    @keyframes lineairAnimation {
+      0% {
+        top: 0.125px;
+      }
+
+      50% {
+        top: 4px;
+      }
+
+      100% {
+        top: 0.125px;
       }
     }
 

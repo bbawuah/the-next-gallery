@@ -48,15 +48,15 @@
   };
 </script>
 
-<div class="canvas-container">
+<div class="canvas-container" ontouchstart={() => console.log('clicked')}>
   <canvas class="webgl__canvas" bind:this={canvasElement} />
   {#if progress === 100 && isPlaying}
     <NavigationContainer>
       <Keys>
         <div class="keys">
           <div
-            ontouchstart={() => onTouchStart(scene.events.forward)}
-            ontouchend={() => onTouchEnd(scene.events.forward)}
+            on:touchstart={() => onTouchStart(scene.events.forward)}
+            on:touchend={() => onTouchEnd(scene.events.forward)}
             class="up"
           >
             <Icon icon={IconType.up} />
@@ -64,24 +64,24 @@
 
           <div
             class="bottom"
-            ontouchstart={() => onTouchStart(scene.events.backward)}
-            ontouchend={() => onTouchEnd(scene.events.backward)}
+            on:touchstart={() => onTouchStart(scene.events.backward)}
+            on:touchend={() => onTouchEnd(scene.events.backward)}
           >
             <Icon icon={IconType.bottom} />
           </div>
 
           <div
             class="left"
-            ontouchstart={() => onTouchStart(scene.events.left)}
-            ontouchend={() => onTouchEnd(scene.events.left)}
+            on:touchstart={() => onTouchStart(scene.events.left)}
+            on:touchend={() => onTouchEnd(scene.events.left)}
           >
             <Icon icon={IconType.left} />
           </div>
 
           <div
             class="right"
-            ontouchstart={() => onTouchStart(scene.events.right)}
-            ontouchend={() => onTouchEnd(scene.events.left)}
+            on:touchstart={() => onTouchStart(scene.events.right)}
+            on:touchend={() => onTouchEnd(scene.events.left)}
           >
             <Icon icon={IconType.right} />
           </div>
@@ -120,14 +120,15 @@
 
     .keys {
       position: relative;
-      width: 100px;
-      height: 100px;
+      width: 120px;
+      height: 120px;
       margin-bottom: 8px;
 
       .up {
         position: absolute;
         top: 35%;
         left: 50%;
+        width: 35px;
         transform: translate(-50%, 0);
       }
 
@@ -135,6 +136,7 @@
         position: absolute;
         bottom: 0;
         left: 50%;
+        width: 35px;
         transform: translate(-50%, 0);
       }
 
@@ -142,12 +144,14 @@
         position: absolute;
         bottom: 0;
         left: 0;
+        width: 35px;
       }
 
       .right {
         position: absolute;
         bottom: 0;
         right: 0;
+        width: 35px;
       }
     }
 

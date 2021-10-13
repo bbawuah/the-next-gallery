@@ -136,6 +136,7 @@ export class Scene {
     this.controls = new OrbitControls(this.camera, el); //Development
     this.deviceOrientationControls = new DeviceOrientationControls(this.camera);
 
+    // Svelte store
     deviceOrientation.update(() => this.deviceOrientationControls);
 
     // DRACO Loader

@@ -10,7 +10,7 @@
     position: absolute;
     display: flex;
     justify-content: space-around;
-    bottom: 18px;
+    bottom: 50px;
     left: 0;
     width: 100%;
     z-index: 1;
@@ -24,6 +24,7 @@
       grid-gap: 10px;
       position: absolute;
       left: 25px;
+      bottom: 20px;
     }
   }
 </style>
