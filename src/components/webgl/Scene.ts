@@ -243,11 +243,9 @@ export class Scene {
       this.physics.handlePhysics({elapsedTime, camera: this.camera, userDirection: this.events.userDirection});
     }
 
-    if (this.bitmapText) {
-      if (this.bitmapText.renderTarget) {
-        if (this.bitmapText.renderTargetMaterial) {
-          (this.bitmapText.renderTargetMaterial as THREE.RawShaderMaterial).uniforms.u_time.value = elapsedTime;
-        }
+    if (this.bitmapText && this.bitmapText.renderTarget && this.bitmapText.renderTargetMaterial) {
+      if (!isMobile) {
+        (this.bitmapText.renderTargetMaterial as THREE.RawShaderMaterial).uniforms.u_time.value = elapsedTime;
       }
 
       this.renderer.setRenderTarget(this.bitmapText.renderTarget);
