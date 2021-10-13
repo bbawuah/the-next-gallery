@@ -51,7 +51,6 @@
 
   {#if isMobileDevice && isPlaying}
     <div on:click={() => onExit(layoutElement)} class="exit-container">
-      <Icon icon={IconType.arrowDown} />
       <p class="exit-text">Leave gallery</p>
     </div>
   {/if}
@@ -143,19 +142,20 @@
     .exit-container {
       position: absolute;
       display: flex;
-      top: 85px;
+      top: 55px;
+      border: 0.5px solid #363636;
       align-items: center;
-      padding: 0 25px;
       left: 0;
-      width: 70px;
       z-index: 1;
-
+      margin-left: 25px;
+      padding: 5px;
       :global(svg) {
         transform: rotate(90deg);
       }
 
       .exit-text {
-        margin-left: 15px;
+        width: 70px;
+        text-align: center;
         width: max-content;
         -webkit-touch-callout: none;
         -webkit-user-select: none;
@@ -164,12 +164,18 @@
         -ms-user-select: none;
         user-select: none;
       }
+
+      &:hover {
+        background-color: #363636;
+        border: unset;
+        color: #fff;
+      }
     }
+
     .keys {
       position: relative;
       width: 175px;
       height: 172px;
-      margin-bottom: 8px;
 
       .up {
         position: absolute;
@@ -211,7 +217,7 @@
     }
   }
 
-  @media screen and (min-width: 870px) {
+  @media screen and (min-width: 665px) {
     .canvas-container {
       .keys {
         width: 100px;
