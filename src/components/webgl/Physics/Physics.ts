@@ -1,10 +1,19 @@
 import * as CANNON from 'cannon-es';
+import * as THREE from 'three';
 import CannonDebugRenderer from '../cannonDebugger/cannonDebuger';
 import CannonUtils from '../cannonDebugger/cannonUtils';
 
+interface RenderProps {
+  camera: THREE.PerspectiveCamera;
+  elapsedTime: number;
+  userDirection: THREE.Vector3;
+}
+
+interface SceneProps {
+  scene: THREE.Scene;
+}
 export class PhysicsWorld {
   private planeBody: CANNON.Body;
-  private planeShape: CANNON.Shape;
   private leftWall: CANNON.Body;
   private rightWall: CANNON.Body;
   private frontWall: CANNON.Body;
@@ -19,7 +28,7 @@ export class PhysicsWorld {
   public sphereBody: CANNON.Body;
   public cannonDebugRenderer: CannonDebugRenderer;
 
-  constructor(scene: THREE.Scene) {
+  constructor(props: SceneProps) {
     this.physicsWorld = new CANNON.World({
       gravity: new CANNON.Vec3(0, -9.82, 0)
     });
@@ -97,7 +106,7 @@ export class PhysicsWorld {
     this.physicsWorld.addBody(this.fenceTwo);
     this.physicsWorld.addBody(this.fenceThree);
 
-    this.cannonDebugRenderer = new CannonDebugRenderer(scene, this.physicsWorld);
+    this.cannonDebugRenderer = new CannonDebugRenderer(props.scene, this.physicsWorld);
   }
 
   public createPhysics(mesh: THREE.Mesh): void {
@@ -113,5 +122,21 @@ export class PhysicsWorld {
     physicsBody.position.z = mesh.position.z;
 
     this.physicsWorld.addBody(physicsBody);
+  }
+
+  public handlePhysics(props: RenderProps): void {
+    const {camera, userDirection, elapsedTime} = props;
+    let oldElapsedTime = 0;
+    const deltaTime = elapsedTime - oldElapsedTime;
+    oldElapsedTime = elapsedTime;
+
+    // this.physics.cannonDebugRenderer.update();
+
+    camera.position.copy(
+      new THREE.Vector3(this.sphereBody.position.x, this.sphereBody.position.y + 0.5, this.sphereBody.position.z)
+    );
+    this.sphereBody.velocity.set(userDirection.x, -2.0, userDirection.z);
+
+    this.physicsWorld.step(1 / 60, deltaTime, 2);
   }
 }

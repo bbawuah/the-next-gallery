@@ -74,10 +74,6 @@ export class Scene {
   // Physics
   private physics: PhysicsWorld;
 
-  // Movement
-  private frontVector: THREE.Vector3;
-  private sideVector: THREE.Vector3;
-  private userDirection: THREE.Vector3;
   private clock: THREE.Clock;
 
   // ShaderPainting
@@ -161,10 +157,14 @@ export class Scene {
     this.material = new THREE.MeshBasicMaterial({map: this.bakedTexture});
 
     // Events
-    this.events = new Events();
+    this.events = new Events(this.camera);
 
+    // Clock
+    this.clock = new THREE.Clock();
     // Physics
-    this.physics = new PhysicsWorld(this.scene);
+    this.physics = new PhysicsWorld({
+      scene: this.scene
+    });
 
     if (this.mesh) {
       this.scene.add(this.mesh);
@@ -183,9 +183,6 @@ export class Scene {
     this.gltfLoader = new GLTFLoader(this.loadingManager);
     this.gltfLoader.setDRACOLoader(this.dracoLoader);
     this.gltfLoader.load('./static/museum.glb', gltf => this.handleGltf(gltf));
-
-    // Clock
-    this.clock = new THREE.Clock();
 
     isMobileDevice.subscribe(v => (this.isMobile = v));
 
@@ -276,43 +273,10 @@ export class Scene {
     });
   }
 
-  private handleUserDirection(): void {
-    this.frontVector = new THREE.Vector3(0, 0, Number(this.events.backward) - Number(this.events.forward));
-    this.sideVector = new THREE.Vector3(Number(this.events.left) - Number(this.events.right), 0, 0);
-
-    this.userDirection = new THREE.Vector3();
-
-    this.userDirection
-      .subVectors(this.frontVector, this.sideVector)
-      .normalize()
-      .multiplyScalar(this.events.walkingSpeed)
-      .applyEuler(this.camera.rotation);
-  }
-
-  private handlePhysics(elapsedTime: number): void {
-    let oldElapsedTime = 0;
-    const deltaTime = elapsedTime - oldElapsedTime;
-    oldElapsedTime = elapsedTime;
-
-    // this.physics.cannonDebugRenderer.update();
-
-    this.camera.position.copy(
-      new THREE.Vector3(
-        this.physics.sphereBody.position.x,
-        this.physics.sphereBody.position.y + 0.5,
-        this.physics.sphereBody.position.z
-      )
-    );
-    this.physics.sphereBody.velocity.set(this.userDirection.x, -2.0, this.userDirection.z);
-
-    this.physics.physicsWorld.step(1 / 60, deltaTime, 2);
-  }
-
   private render(isMobileDevice: boolean): void {
     const isMobile = isMobileDevice;
     const elapsedTime = this.clock.getElapsedTime();
     stats.begin();
-    this.handleUserDirection();
 
     //Mobile orientation
     if (isMobile) {
@@ -320,7 +284,7 @@ export class Scene {
     }
 
     if (this.physics) {
-      this.handlePhysics(elapsedTime);
+      this.physics.handlePhysics({elapsedTime, camera: this.camera, userDirection: this.events.userDirection});
     }
 
     if (this.bitmapText) {
