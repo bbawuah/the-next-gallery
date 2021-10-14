@@ -117,7 +117,7 @@ export class Events {
       .applyEuler(camera.rotation);
   }
 
-  private render(camera: THREE.PerspectiveCamera) {
+  private render(camera: THREE.PerspectiveCamera): void {
     const _camera = camera;
     this.handleUserDirection(camera);
 

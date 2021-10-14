@@ -1,6 +1,5 @@
 <script lang="ts">
   import Button from './components/Button/Button.svelte';
-  import Icon from './components/Icon/Icon.svelte';
 
   import Layout from './components/Layout/Layout.svelte';
   import Link from './components/Link/Link.svelte';
