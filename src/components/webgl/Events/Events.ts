@@ -62,6 +62,26 @@ export class Events {
     this._right = value;
   }
 
+  private handleUserDirection(camera: THREE.PerspectiveCamera): void {
+    this.frontVector = new THREE.Vector3(0, 0, Number(this.backward) - Number(this.forward));
+    this.sideVector = new THREE.Vector3(Number(this.left) - Number(this.right), 0, 0);
+
+    this.userDirection = new THREE.Vector3();
+
+    this.userDirection
+      .subVectors(this.frontVector, this.sideVector)
+      .normalize()
+      .multiplyScalar(this.walkingSpeed)
+      .applyEuler(camera.rotation);
+  }
+
+  private render(camera: THREE.PerspectiveCamera): void {
+    const _camera = camera;
+    this.handleUserDirection(camera);
+
+    window.requestAnimationFrame(() => this.render(_camera));
+  }
+
   public handleKeyUpEvents(): void {
     window.addEventListener('keyup', e => {
       if (e.key === 'ArrowDown') {
@@ -102,25 +122,5 @@ export class Events {
         }
       }
     });
-  }
-
-  private handleUserDirection(camera: THREE.PerspectiveCamera): void {
-    this.frontVector = new THREE.Vector3(0, 0, Number(this.backward) - Number(this.forward));
-    this.sideVector = new THREE.Vector3(Number(this.left) - Number(this.right), 0, 0);
-
-    this.userDirection = new THREE.Vector3();
-
-    this.userDirection
-      .subVectors(this.frontVector, this.sideVector)
-      .normalize()
-      .multiplyScalar(this.walkingSpeed)
-      .applyEuler(camera.rotation);
-  }
-
-  private render(camera: THREE.PerspectiveCamera): void {
-    const _camera = camera;
-    this.handleUserDirection(camera);
-
-    window.requestAnimationFrame(() => this.render(_camera));
   }
 }
