@@ -1,6 +1,19 @@
 import {Writable, writable} from 'svelte/store';
+import type {DeviceOrientationControls} from 'three/examples/jsm/controls/DeviceOrientationControls';
 import type {PointerLockControls} from 'three/examples/jsm/controls/PointerLockControls';
+import {mobileCheck} from '../utils/mobileCheck';
 
+// progress ratio of loading assets
 export const progressRatio: Writable<number> = writable(0);
+
+// Boolean that returns whether the player is in the game
 export const playerIsInScene: Writable<boolean> = writable(false);
+
+// Pointerlockercontrols
 export const pointerLockerControls: Writable<PointerLockControls> = writable();
+
+export const layoutContainer: Writable<HTMLElement> = writable();
+
+export const isMobileDevice: Writable<boolean> = writable(mobileCheck());
+
+export const deviceOrientation: Writable<DeviceOrientationControls> = writable();

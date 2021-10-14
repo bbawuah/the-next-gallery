@@ -5,17 +5,24 @@
   import {Scene} from './Scene';
   import {IconType} from '../../utils/icons/types/IconType';
   import NavigationContainer from '../Navigation/NavigationContainer.svelte';
-  import {mobileCheck} from '../../utils/mobileCheck';
   import Icon from '../Icon/Icon.svelte';
-  import {playerIsInScene, progressRatio} from '../../store/store';
+  import {
+    playerIsInScene,
+    progressRatio,
+    isMobileDevice as mobileDeviceSubscriber,
+    layoutContainer
+  } from '../../store/store';
+  import GSAP from 'gsap';
+  import {onExit} from '../../utils/onEnter';
 
-  const isMobileDevice = mobileCheck();
+  let isMobileDevice: boolean;
 
   let canvasElement: HTMLCanvasElement;
   let scene: Scene;
 
   let progress: number;
   let isPlaying: boolean;
+  let layoutElement: HTMLElement;
 
   playerIsInScene.subscribe(value => {
     isPlaying = value;
@@ -24,35 +31,41 @@
     progress = value;
   });
 
-  onMount(() => {
-    if (canvasElement) {
-      scene = new Scene(canvasElement, isMobileDevice);
-    }
+  mobileDeviceSubscriber.subscribe(value => {
+    isMobileDevice = value;
   });
 
-  const onTouchStart = (value: boolean) => {
-    console.log('clicked');
-    if (isMobileDevice) {
-      value = true;
-    }
-  };
+  layoutContainer.subscribe(value => {
+    layoutElement = value;
+  });
 
-  const onTouchEnd = (value: boolean) => {
-    if (isMobileDevice) {
-      value = false;
+  onMount(() => {
+    if (canvasElement) {
+      scene = new Scene(canvasElement);
     }
-  };
+  });
 </script>
 
-<div class="canvas-container">
+<div class="canvas-container" ontouchstart={() => console.log('clicked')}>
   <canvas class="webgl__canvas" bind:this={canvasElement} />
+
+  {#if isMobileDevice && isPlaying}
+    <div on:click={() => onExit(layoutElement)} class="exit-container">
+      <p class="exit-text">Leave gallery</p>
+    </div>
+  {/if}
+
   {#if progress === 100 && isPlaying}
     <NavigationContainer>
       <Keys>
         <div class="keys">
           <div
-            ontouchstart={() => onTouchStart(scene.events.forward)}
-            ontouchend={() => onTouchEnd(scene.events.forward)}
+            on:touchstart={() => {
+              scene.events.forward = true;
+            }}
+            on:touchend={() => {
+              scene.events.forward = false;
+            }}
             class="up"
           >
             <Icon icon={IconType.up} />
@@ -60,24 +73,36 @@
 
           <div
             class="bottom"
-            ontouchstart={() => onTouchStart(scene.events.backward)}
-            ontouchend={() => onTouchEnd(scene.events.backward)}
+            on:touchstart={() => {
+              scene.events.backward = true;
+            }}
+            on:touchend={() => {
+              scene.events.backward = false;
+            }}
           >
             <Icon icon={IconType.bottom} />
           </div>
 
           <div
             class="left"
-            ontouchstart={() => onTouchStart(scene.events.left)}
-            ontouchend={() => onTouchEnd(scene.events.left)}
+            on:touchstart={() => {
+              scene.events.left = true;
+            }}
+            on:touchend={() => {
+              scene.events.left = false;
+            }}
           >
             <Icon icon={IconType.left} />
           </div>
 
           <div
             class="right"
-            ontouchstart={() => onTouchStart(scene.events.right)}
-            ontouchend={() => onTouchEnd(scene.events.left)}
+            on:touchstart={() => {
+              scene.events.right = true;
+            }}
+            on:touchend={() => {
+              scene.events.right = false;
+            }}
           >
             <Icon icon={IconType.right} />
           </div>
@@ -102,8 +127,8 @@
   @import '../../styles/styles.scss';
   .canvas-container {
     position: relative;
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
     overflow: hidden;
     .webgl__canvas {
       position: fixed;
@@ -114,16 +139,45 @@
       z-index: 1;
     }
 
+    .exit-container {
+      position: absolute;
+      display: flex;
+      top: 55px;
+      border: 0.5px solid #363636;
+      align-items: center;
+      left: 0;
+      z-index: 1;
+      margin-left: 25px;
+      padding: 5px;
+      transition: 0.175s ease-in-out;
+
+      :global(svg) {
+        transform: rotate(90deg);
+      }
+
+      .exit-text {
+        width: 70px;
+        text-align: center;
+        width: max-content;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+    }
+
     .keys {
       position: relative;
-      width: 100px;
-      height: 100px;
-      margin-bottom: 8px;
+      width: 175px;
+      height: 172px;
 
       .up {
         position: absolute;
         top: 35%;
         left: 50%;
+        width: 50px;
         transform: translate(-50%, 0);
       }
 
@@ -131,6 +185,7 @@
         position: absolute;
         bottom: 0;
         left: 50%;
+        width: 50px;
         transform: translate(-50%, 0);
       }
 
@@ -138,12 +193,14 @@
         position: absolute;
         bottom: 0;
         left: 0;
+        width: 50px;
       }
 
       .right {
         position: absolute;
         bottom: 0;
         right: 0;
+        width: 50px;
       }
     }
 
@@ -153,6 +210,22 @@
       margin: 0;
       text-align: center;
       font-size: 12px;
+    }
+  }
+
+  @media screen and (min-width: 665px) {
+    .canvas-container {
+      .keys {
+        width: 100px;
+        height: 100px;
+
+        .up,
+        .left,
+        .right,
+        .bottom {
+          width: unset;
+        }
+      }
     }
   }
 </style>

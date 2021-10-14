@@ -44,6 +44,12 @@
       margin: 0;
       font-size: 11px;
       text-align: center;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      -khtml-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
     }
 
     @media screen and (min-width: 600px) {

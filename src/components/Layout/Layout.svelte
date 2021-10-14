@@ -3,34 +3,33 @@
   import Icon from '../Icon/Icon.svelte';
   import GSAP from 'gsap';
   import {onMount} from 'svelte';
-  import {playerIsInScene, pointerLockerControls, progressRatio} from '../../store/store';
-  import type {PointerLockControls} from 'three/examples/jsm/controls/PointerLockControls';
+  import {progressRatio, layoutContainer as layoutContainerSubscriber} from '../../store/store';
+  import {onEnter} from '../../utils/onEnter';
 
   let callToAction: HTMLParagraphElement;
   let layoutContainer: HTMLElement;
+  let scrollDownArrow: HTMLElement;
+  let columnLeft: HTMLElement;
 
   let onMouseOver: () => void;
   let onMouseLeave: () => void;
-  let onClick: () => void;
 
   let progress: number;
-  let pointerLockerctrls: PointerLockControls;
-  let isPlaying: boolean;
-
+  let test: boolean;
   progressRatio.subscribe(value => {
     progress = value;
   });
 
-  pointerLockerControls.subscribe(value => {
-    pointerLockerctrls = value;
-  });
-
-  playerIsInScene.subscribe(value => {
-    isPlaying = value;
-  });
+  const renderScrollIndicator = (el: HTMLElement) => {
+    setTimeout(() => {
+      GSAP.to(el, {duration: 0.5, opacity: 1});
+    }, 3000);
+  };
 
   onMount(() => {
-    if (callToAction && layoutContainer) {
+    if (callToAction && layoutContainer && scrollDownArrow && columnLeft) {
+      layoutContainerSubscriber.update(() => layoutContainer);
+
       onMouseOver = () => {
         if (progress === 100) {
           GSAP.to(callToAction, {duration: 0.5, opacity: 1});
@@ -41,38 +40,28 @@
         GSAP.to(callToAction, {duration: 0.5, opacity: 0});
       };
 
-      onClick = () => {
-        GSAP.to(layoutContainer, {duration: 0.5, opacity: 0});
+      renderScrollIndicator(scrollDownArrow);
 
-        // Add small delay before setting display to none
-        setTimeout(() => {
-          layoutContainer.style.display = 'none';
-        }, 500);
+      columnLeft.addEventListener('scroll', () => {
+        GSAP.to(scrollDownArrow, {duration: 0.5, opacity: 0});
 
-        pointerLockerctrls.lock();
-
-        pointerLockerctrls.addEventListener('unlock', () => {
-          GSAP.to(layoutContainer, {duration: 0.5, opacity: 1});
-          layoutContainer.style.display = 'grid';
-
-          playerIsInScene.update(() => false);
+        columnLeft.removeEventListener('scroll', () => {
+          GSAP.to(scrollDownArrow, {duration: 0.5, opacity: 0});
         });
-
-        playerIsInScene.update(() => true);
-      };
+      });
     }
   });
 </script>
 
 <section class="container" bind:this={layoutContainer}>
-  <section class="column-left">
+  <section class="column-left" bind:this={columnLeft}>
     <div class="logo-container">
       <Icon icon={IconType.logo} size={'small'} />
     </div>
 
     <slot name="content-left" />
 
-    <div class="arrow-container">
+    <div class="arrow-container" bind:this={scrollDownArrow}>
       <p class="scroll-text">scroll</p>
       <Icon size={'small'} icon={IconType.arrowDown} />
     </div>
@@ -83,7 +72,7 @@
     on:mouseover={onMouseOver}
     on:focus={onMouseOver}
     on:mouseleave={onMouseLeave}
-    on:click={onClick}
+    on:click={() => onEnter(layoutContainer)}
   >
     <slot name="content-right" />
 
@@ -122,6 +111,7 @@
       .arrow-container {
         position: absolute;
         bottom: 0;
+        opacity: 0;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -129,11 +119,32 @@
         left: 50%;
         transform: translate(-50%, 0);
 
+        :global(svg) {
+          position: relative;
+          transition: 0.175s ease-in-out;
+          position: 0.125px;
+          animation: lineairAnimation 0.95s infinite;
+        }
+
         .scroll-text {
           margin: 0;
           font-family: $font-text-light;
           font-size: 15px;
         }
+      }
+    }
+
+    @keyframes lineairAnimation {
+      0% {
+        top: 0.125px;
+      }
+
+      50% {
+        top: 4px;
+      }
+
+      100% {
+        top: 0.125px;
       }
     }
 

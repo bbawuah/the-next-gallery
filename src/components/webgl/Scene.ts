@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import GSAP from 'gsap';
 import Stats from 'stats-js';
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js';
 import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader';
@@ -9,9 +8,10 @@ import type {Sizes} from './types';
 import {Events} from './Events/Events';
 import {PhysicsWorld} from './Physics/Physics';
 import {RenderTarget} from './RenderTarget/RenderTarget';
-import {pointerLockerControls, progressRatio} from '../../store/store';
+import {deviceOrientation, isMobileDevice, pointerLockerControls} from '../../store/store';
 import {DeviceOrientationControls} from 'three/examples/jsm/controls/DeviceOrientationControls.js';
 import {PointerLockControls} from 'three/examples/jsm/controls/PointerLockControls';
+import {LoadingManager} from './LoadingManager/LoadingManager';
 
 const sizes: Sizes = {
   width: window.innerWidth,
@@ -74,27 +74,24 @@ export class Scene {
   // Physics
   private physics: PhysicsWorld;
 
-  // Movement
-  private frontVector: THREE.Vector3;
-  private sideVector: THREE.Vector3;
-  private userDirection: THREE.Vector3;
   private clock: THREE.Clock;
 
   // ShaderPainting
   private shaderPainting: THREE.Mesh;
   private bitmapText: RenderTarget;
 
-  // Overlay
-  private overlayGeometry: THREE.PlaneGeometry;
-  private overlayMaterial: THREE.RawShaderMaterial;
-  private overlayMesh: THREE.Mesh;
-  private loadingManager: THREE.LoadingManager;
+  // Loading manager
+  private loadingManager: LoadingManager;
+
+  // IsMobile device?
+  public isMobile: boolean;
+
   public deviceOrientationControls: DeviceOrientationControls;
 
   //Events
   public events: Events;
 
-  constructor(el: HTMLCanvasElement, isMobile: boolean) {
+  constructor(el: HTMLCanvasElement) {
     // Renderer
     this.renderer = new THREE.WebGLRenderer({
       canvas: el
@@ -111,44 +108,10 @@ export class Scene {
     this.camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100);
     this.camera.position.z = -1;
 
-    // Overlay
-    this.overlayGeometry = new THREE.PlaneGeometry(2, 2, 1, 1);
-    this.overlayMaterial = new THREE.RawShaderMaterial({
-      uniforms: {
-        u_alpha: {value: 1.0}
-      },
-      vertexShader: `
-          attribute vec3 position;
-          uniform mat4 projectionMatrix;
-          uniform mat4 modelViewMatrix;
-    
-    
-          void main() {
-            gl_Position = vec4(position, 1.0);
-          }
-          `,
-      fragmentShader: `
-          precision mediump float;
-    
-          uniform float u_alpha;
-    
-          void main() {
-            gl_FragColor = vec4(.6, 0.6, 0.6, u_alpha);
-          }
-          `,
-      transparent: true
-    });
-    this.overlayMesh = new THREE.Mesh(this.overlayGeometry, this.overlayMaterial);
-    this.scene.add(this.overlayMesh);
-
-    // Loading Manager
-    this.loadingManager = new THREE.LoadingManager(
-      () => this.onLoadedAssets(this.overlayMaterial),
-      this.onProgressLoadAssets
-    );
+    this.loadingManager = new LoadingManager(this.scene);
 
     // Textures
-    this.textureLoader = new THREE.TextureLoader(this.loadingManager);
+    this.textureLoader = new THREE.TextureLoader(this.loadingManager.loadingManager);
     this.bakedTexture = this.textureLoader.load('./static/map.jpg');
     this.bakedTexture.flipY = false;
     this.bakedTexture.encoding = THREE.sRGBEncoding;
@@ -157,10 +120,14 @@ export class Scene {
     this.material = new THREE.MeshBasicMaterial({map: this.bakedTexture});
 
     // Events
-    this.events = new Events();
+    this.events = new Events(this.camera);
 
+    // Clock
+    this.clock = new THREE.Clock();
     // Physics
-    this.physics = new PhysicsWorld(this.scene);
+    this.physics = new PhysicsWorld({
+      scene: this.scene
+    });
 
     if (this.mesh) {
       this.scene.add(this.mesh);
@@ -169,26 +136,28 @@ export class Scene {
     this.controls = new OrbitControls(this.camera, el); //Development
     this.deviceOrientationControls = new DeviceOrientationControls(this.camera);
 
+    // Svelte store
+    deviceOrientation.update(() => this.deviceOrientationControls);
+
     // DRACO Loader
-    this.dracoLoader = new DRACOLoader(this.loadingManager);
+    this.dracoLoader = new DRACOLoader(this.loadingManager.loadingManager);
     this.dracoLoader.setDecoderPath('draco/');
 
     // GLTF Loader
-    this.gltfLoader = new GLTFLoader(this.loadingManager);
+    this.gltfLoader = new GLTFLoader(this.loadingManager.loadingManager);
     this.gltfLoader.setDRACOLoader(this.dracoLoader);
     this.gltfLoader.load('./static/museum.glb', gltf => this.handleGltf(gltf));
 
-    // Clock
-    this.clock = new THREE.Clock();
+    isMobileDevice.subscribe(v => (this.isMobile = v));
 
-    if (!isMobile) {
+    if (!this.isMobile) {
       pointerLockerControls.update(() => new PointerLockControls(this.camera, el));
       this.events.handleKeyUpEvents();
       this.events.handleKeyDownEvents();
     }
 
     this.resize();
-    this.render(isMobile);
+    this.render(this.isMobile);
   }
 
   private resize(): void {
@@ -202,14 +171,6 @@ export class Scene {
       this.renderer.setSize(sizes.width, sizes.height);
       this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     });
-  }
-
-  private onLoadedAssets(material: THREE.RawShaderMaterial): void {
-    GSAP.to(material.uniforms.u_alpha, {duration: 3, value: 0.0});
-  }
-
-  private onProgressLoadAssets(url: string, loaded: number, total: number): void {
-    progressRatio.update(() => Math.floor((loaded / total) * 100));
   }
 
   private handleGltf(gltf: GLTF): void {
@@ -268,58 +229,23 @@ export class Scene {
     });
   }
 
-  private handleUserDirection(): void {
-    this.frontVector = new THREE.Vector3(0, 0, Number(this.events.backward) - Number(this.events.forward));
-    this.sideVector = new THREE.Vector3(Number(this.events.left) - Number(this.events.right), 0, 0);
-
-    this.userDirection = new THREE.Vector3();
-
-    this.userDirection
-      .subVectors(this.frontVector, this.sideVector)
-      .normalize()
-      .multiplyScalar(this.events.walkingSpeed)
-      .applyEuler(this.camera.rotation);
-  }
-
-  private handlePhysics(elapsedTime: number): void {
-    let oldElapsedTime = 0;
-    const deltaTime = elapsedTime - oldElapsedTime;
-    oldElapsedTime = elapsedTime;
-
-    // this.physics.cannonDebugRenderer.update();
-
-    this.camera.position.copy(
-      new THREE.Vector3(
-        this.physics.sphereBody.position.x,
-        this.physics.sphereBody.position.y + 0.5,
-        this.physics.sphereBody.position.z
-      )
-    );
-    this.physics.sphereBody.velocity.set(this.userDirection.x, -2.0, this.userDirection.z);
-
-    this.physics.physicsWorld.step(1 / 60, deltaTime, 2);
-  }
-
   private render(isMobileDevice: boolean): void {
     const isMobile = isMobileDevice;
     const elapsedTime = this.clock.getElapsedTime();
     stats.begin();
-    this.handleUserDirection();
 
     //Mobile orientation
-    if (isMobileDevice) {
+    if (isMobile) {
       this.deviceOrientationControls.update();
     }
 
     if (this.physics) {
-      this.handlePhysics(elapsedTime);
+      this.physics.handlePhysics({elapsedTime, camera: this.camera, userDirection: this.events.userDirection});
     }
 
-    if (this.bitmapText) {
-      if (this.bitmapText.renderTarget) {
-        if (this.bitmapText.renderTargetMaterial) {
-          (this.bitmapText.renderTargetMaterial as THREE.RawShaderMaterial).uniforms.u_time.value = elapsedTime;
-        }
+    if (this.bitmapText && this.bitmapText.renderTarget && this.bitmapText.renderTargetMaterial) {
+      if (!isMobile) {
+        (this.bitmapText.renderTargetMaterial as THREE.RawShaderMaterial).uniforms.u_time.value = elapsedTime;
       }
 
       this.renderer.setRenderTarget(this.bitmapText.renderTarget);

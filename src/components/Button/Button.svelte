@@ -24,6 +24,7 @@
 
   @media screen and (min-width: 870px) {
     .button {
+      font-size: 25px;
       max-width: 450px;
     }
   }
