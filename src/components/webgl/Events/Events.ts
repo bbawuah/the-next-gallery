@@ -11,6 +11,7 @@ export class Events {
   // Movement
   private frontVector: THREE.Vector3;
   private sideVector: THREE.Vector3;
+
   public userDirection: THREE.Vector3;
 
   public walkingSpeed: number;

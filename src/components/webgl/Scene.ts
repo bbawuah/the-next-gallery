@@ -135,7 +135,7 @@ export class Scene {
 
     this.controls = new OrbitControls(this.camera, el); //Development
     this.deviceOrientationControls = new DeviceOrientationControls(this.camera);
-
+    this.deviceOrientationControls.object.rotation.x = 60;
     // Svelte store
     deviceOrientation.update(() => this.deviceOrientationControls);
 

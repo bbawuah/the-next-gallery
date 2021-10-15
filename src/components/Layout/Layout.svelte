@@ -15,15 +15,14 @@
   let onMouseLeave: () => void;
 
   let progress: number;
-  let test: boolean;
   progressRatio.subscribe(value => {
     progress = value;
   });
 
-  const renderScrollIndicator = (el: HTMLElement) => {
+  const renderScrollIndicator = (el: HTMLElement): void => {
     setTimeout(() => {
       GSAP.to(el, {duration: 0.5, opacity: 1});
-    }, 3000);
+    }, 1000);
   };
 
   onMount(() => {

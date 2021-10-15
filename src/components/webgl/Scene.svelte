@@ -12,7 +12,6 @@
     isMobileDevice as mobileDeviceSubscriber,
     layoutContainer
   } from '../../store/store';
-  import GSAP from 'gsap';
   import {onExit} from '../../utils/onEnter';
 
   let isMobileDevice: boolean;
@@ -46,7 +45,7 @@
   });
 </script>
 
-<div class="canvas-container" ontouchstart={() => console.log('clicked')}>
+<div class="canvas-container">
   <canvas class="webgl__canvas" bind:this={canvasElement} />
 
   {#if isMobileDevice && isPlaying}

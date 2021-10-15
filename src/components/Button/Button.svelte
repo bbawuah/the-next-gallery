@@ -1,11 +1,11 @@
 <script lang="ts">
   export let onClick: () => void;
   export let text: string;
-
+  export let isDisabled: boolean;
   export let type: 'button' | 'menu' | 'reset' | 'submit';
 </script>
 
-<button {type} on:click={onClick} class="button">{text}</button>
+<button {type} disabled={isDisabled} on:click={onClick} class="button">{text}</button>
 
 <style type="text/scss">
   @import '../../styles/styles.scss';
@@ -20,6 +20,12 @@
     font-size: 20px;
     margin-top: 25px;
     cursor: pointer;
+
+    &:disabled {
+      cursor: not-allowed;
+      background-color: $color-white;
+      color: $color-dark-grey;
+    }
   }
 
   @media screen and (min-width: 870px) {

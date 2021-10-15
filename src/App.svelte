@@ -69,7 +69,12 @@
           <p class="text">Special thanks to all the creatives that participated in this gallery.</p>
           <p class="text">Enjoy the gallery ❤️</p>
         </div>
-        <Button onClick={() => onEnter(layoutElement)} text={'Enter gallery'} type={'button'} />
+        <Button
+          isDisabled={progress !== 100}
+          onClick={() => onEnter(layoutElement)}
+          text={'Enter gallery'}
+          type={'button'}
+        />
         <footer class="footer">
           <p class="copyright">Copyright &copy; {year} <Link href="https://github.com/bbawuah">Brian Bawuah</Link></p>
         </footer>
