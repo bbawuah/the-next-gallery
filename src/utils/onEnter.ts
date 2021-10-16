@@ -5,8 +5,19 @@ import {
   playerIsInScene,
   pointerLockerControls,
   isMobileDevice as mobileDeviceSubscriber,
-  deviceOrientation as deviceOrientationSubscriber
+  deviceOrientation as deviceOrientationSubscriber,
+  audioController,
+  hasMutedSound
 } from '../store/store';
+
+let audio: HTMLAudioElement;
+export const interval = 250;
+
+let soundIsMuted: boolean;
+
+hasMutedSound.subscribe(value => {
+  soundIsMuted = value;
+});
 
 export const onEnter = (el: HTMLElement): void => {
   let pointerLockerctrls: PointerLockControls;
@@ -14,6 +25,10 @@ export const onEnter = (el: HTMLElement): void => {
   let deviceOrientation: DeviceOrientationControls;
 
   GSAP.to(el, {duration: 0.5, opacity: 0});
+
+  audioController.subscribe(value => {
+    audio = value;
+  });
 
   pointerLockerControls.subscribe(value => {
     pointerLockerctrls = value;
@@ -29,7 +44,8 @@ export const onEnter = (el: HTMLElement): void => {
 
   playerIsInScene.update(() => true);
 
-  // Add small delay before setting display to none
+  playSound();
+
   setTimeout(() => {
     el.style.display = 'none';
   }, 500);
@@ -40,6 +56,8 @@ export const onEnter = (el: HTMLElement): void => {
     if (pointerLockerctrls) {
       pointerLockerctrls.lock();
       pointerLockerctrls.addEventListener('unlock', () => {
+        audio.pause();
+
         GSAP.to(el, {duration: 0.5, opacity: 1});
         el.style.display = 'grid';
         playerIsInScene.update(() => false);
@@ -51,6 +69,7 @@ export const onEnter = (el: HTMLElement): void => {
 };
 
 export const onExit = (el: HTMLElement): void => {
+  pauseSound();
   let deviceOrientation: DeviceOrientationControls;
 
   deviceOrientationSubscriber.subscribe(value => {
@@ -63,3 +82,24 @@ export const onExit = (el: HTMLElement): void => {
   el.style.display = 'grid';
   playerIsInScene.update(() => false);
 };
+
+export function playSound(): void {
+  if (!soundIsMuted) {
+    audio.volume = 0;
+    audio.play();
+
+    const fadeIn = setInterval(() => {
+      audio.volume += 0.05;
+
+      if (audio.volume === 0.2) {
+        clearInterval(fadeIn);
+      }
+    }, interval);
+  }
+}
+
+export function pauseSound(): void {
+  if (!soundIsMuted) {
+    audio.pause();
+  }
+}

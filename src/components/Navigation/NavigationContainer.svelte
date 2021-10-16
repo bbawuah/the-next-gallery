@@ -22,7 +22,7 @@
       display: grid;
       justify-content: initial;
       flex-direction: unset;
-      grid-template-columns: 130px 130px 130px;
+      grid-template-columns: 130px 130px 130px 130px;
       grid-gap: 10px;
       position: absolute;
       left: 25px;

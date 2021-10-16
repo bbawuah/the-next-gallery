@@ -12,6 +12,7 @@ import {deviceOrientation, isMobileDevice, pointerLockerControls} from '../../st
 import {DeviceOrientationControls} from 'three/examples/jsm/controls/DeviceOrientationControls.js';
 import {PointerLockControls} from 'three/examples/jsm/controls/PointerLockControls';
 import {LoadingManager} from './LoadingManager/LoadingManager';
+import {LightParticles} from './LightParticles/LightParticles';
 
 const sizes: Sizes = {
   width: window.innerWidth,
@@ -48,8 +49,8 @@ const portraitNames = [
 
 const stats = new Stats();
 
-// stats.showPanel(1);
-// document.body.appendChild(stats.dom);
+stats.showPanel(1);
+document.body.appendChild(stats.dom);
 
 export class Scene {
   // Scene
@@ -80,6 +81,8 @@ export class Scene {
   private shaderPainting: THREE.Mesh;
   private bitmapText: RenderTarget;
 
+  private particles: LightParticles;
+
   // Loading manager
   private loadingManager: LoadingManager;
 
@@ -103,6 +106,8 @@ export class Scene {
     // Scene
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(0xffffff);
+
+    this.particles = new LightParticles(this.scene);
 
     // Camera
     this.camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100);
@@ -135,7 +140,6 @@ export class Scene {
 
     this.controls = new OrbitControls(this.camera, el); //Development
     this.deviceOrientationControls = new DeviceOrientationControls(this.camera);
-    this.deviceOrientationControls.object.rotation.x = 60;
     // Svelte store
     deviceOrientation.update(() => this.deviceOrientationControls);
 

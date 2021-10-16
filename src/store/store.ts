@@ -17,3 +17,10 @@ export const layoutContainer: Writable<HTMLElement> = writable();
 export const isMobileDevice: Writable<boolean> = writable(mobileCheck());
 
 export const deviceOrientation: Writable<DeviceOrientationControls> = writable();
+
+const audio = new Audio('./static/sound/ambient-sound.mp3');
+audio.loop = true;
+
+export const audioController: Writable<HTMLAudioElement> = writable(audio);
+
+export const hasMutedSound: Writable<boolean> = writable(false);
