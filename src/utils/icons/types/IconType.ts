@@ -8,5 +8,8 @@ export enum IconType {
   phone = 'phone',
   instagram = 'instagram',
   logo = 'logo',
-  arrowDown = 'arrowDown'
+  arrowDown = 'arrowDown',
+  close = 'close',
+  headphone = 'headphone',
+  soundKey = 'soundKey'
 }

@@ -10,10 +10,12 @@
     playerIsInScene,
     progressRatio,
     isMobileDevice as mobileDeviceSubscriber,
-    layoutContainer
+    layoutContainer,
+    hasMutedSound,
+    audioController
   } from '../../store/store';
-  import GSAP from 'gsap';
   import {onExit} from '../../utils/onEnter';
+  import classNames from 'classnames';
 
   let isMobileDevice: boolean;
 
@@ -23,6 +25,28 @@
   let progress: number;
   let isPlaying: boolean;
   let layoutElement: HTMLElement;
+  let audio: HTMLAudioElement;
+  let soundIsMuted: boolean;
+
+  audioController.subscribe(value => {
+    audio = value;
+  });
+
+  hasMutedSound.subscribe(value => {
+    soundIsMuted = value;
+  });
+
+  window.addEventListener('keydown', e => {
+    if (e.key === 's') {
+      hasMutedSound.update(value => !value);
+
+      if (soundIsMuted) {
+        audio.pause();
+      } else {
+        audio.play();
+      }
+    }
+  });
 
   playerIsInScene.subscribe(value => {
     isPlaying = value;
@@ -46,14 +70,33 @@
   });
 </script>
 
-<div class="canvas-container" ontouchstart={() => console.log('clicked')}>
+<div class="canvas-container">
   <canvas class="webgl__canvas" bind:this={canvasElement} />
 
-  {#if isMobileDevice && isPlaying}
-    <div on:click={() => onExit(layoutElement)} class="exit-container">
-      <p class="exit-text">Leave gallery</p>
+  <div class="scene-header">
+    {#if isMobileDevice && isPlaying}
+      <div on:click={() => onExit(layoutElement)} class="exit-container">
+        <Icon icon={IconType.close} />
+      </div>
+    {/if}
+
+    <div
+      on:click={() => {
+        hasMutedSound.update(value => !value);
+
+        if (soundIsMuted) {
+          audio.pause();
+        } else {
+          audio.play();
+        }
+      }}
+      class={classNames('sound-icon', {
+        'sound-muted': soundIsMuted
+      })}
+    >
+      <Icon icon={IconType.headphone} />
     </div>
-  {/if}
+  </div>
 
   {#if progress === 100 && isPlaying}
     <NavigationContainer>
@@ -116,6 +159,7 @@
       {#if !isMobileDevice}
         <IconWithText icon={IconType.mouse} message={'Use your mouse to look around'} />
         <IconWithText icon={IconType.escape} message={'Press escape to leave the gallery'} />
+        <IconWithText icon={IconType.soundKey} message={'Press the S key to mute the sound'} />
       {:else}
         <IconWithText icon={IconType.phone} message={'Rotate your device to look around'} />
       {/if}
@@ -139,33 +183,33 @@
       z-index: 1;
     }
 
+    .scene-header {
+      position: relative;
+      display: flex;
+      width: 100%;
+      justify-content: space-between;
+      .sound-icon {
+        position: absolute;
+        right: 25px;
+        top: 55px;
+        z-index: 1;
+      }
+
+      .sound-muted {
+        :global(path) {
+          fill: #f5f1f1;
+        }
+      }
+    }
+
     .exit-container {
       position: absolute;
       display: flex;
       top: 55px;
-      border: 0.5px solid #363636;
       align-items: center;
-      left: 0;
+      left: 25px;
       z-index: 1;
-      margin-left: 25px;
-      padding: 5px;
       transition: 0.175s ease-in-out;
-
-      :global(svg) {
-        transform: rotate(90deg);
-      }
-
-      .exit-text {
-        width: 70px;
-        text-align: center;
-        width: max-content;
-        -webkit-touch-callout: none;
-        -webkit-user-select: none;
-        -khtml-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-      }
     }
 
     .keys {
@@ -224,6 +268,15 @@
         .right,
         .bottom {
           width: unset;
+        }
+      }
+
+      .scene-header {
+        .sound-icon {
+          position: absolute;
+          right: 50px;
+          top: 50px;
+          z-index: 1;
         }
       }
     }
