@@ -41,7 +41,7 @@
       <ParagraphContainer>
         <div>
           <p class="text">
-            Emerging technologies, from artificial intelligence and machine learning to virtual and augmented reality,
+            From artificial intelligence and machine learning to virtual and augmented reality, Emerging technologies
             are beginning to impact our societies and shape our public discourse.
           </p>
           <p class="text">
@@ -54,12 +54,11 @@
       <ParagraphContainer>
         <div>
           <p class="text">
-            The Next Gallery overwrites virtual information onto your real-world environment using Augmented and Virtual
-            Reality.
+            The Next Gallery overwrites virtual information onto your real-world environment using extended reality.
           </p>
           <p class="text">
             It opens a new virtual world as a source of inspiration for creatives who want to express their talent and
-            art in unique ways.
+            art and craft in unique ways.
           </p>
         </div>
       </ParagraphContainer>
