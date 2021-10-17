@@ -1,16 +1,15 @@
-import type {Navigator} from 'webxr';
 import GSAP from 'gsap';
 import {currentSession} from '../../../store/store';
 
 export class VRButton {
   private renderer: THREE.WebGLRenderer;
-  private navigator: Navigator;
+  private navigator: any;
   private button: HTMLButtonElement;
   private message: HTMLAnchorElement;
 
   constructor(renderer: THREE.WebGLRenderer) {
     this.renderer = renderer;
-    this.navigator = (navigator as any)?.xr as Navigator;
+    this.navigator = navigator as any;
     this.button = document.createElement('button');
     this.message = document.createElement('a');
 
@@ -29,6 +28,7 @@ export class VRButton {
         supported ? this.showEnterVR(this.button) : this.showWebXRNotFound(this.button);
       });
       document.body.appendChild(this.button);
+      this.button.textContent = 'ENTER VR';
     } else {
       if (window.isSecureContext === false) {
         this.message.href = document.location.href.replace(/^http:/, 'https:');
@@ -39,14 +39,9 @@ export class VRButton {
         this.message.innerHTML = 'WEBXR NOT AVAILABLE';
       }
 
-      this.message.style.left = '75%';
-      this.message.style.transform = 'translate(-50%, 0)';
       this.message.style.textDecoration = 'none';
-
-      this.stylizeElement(this.message);
-      this.message.style.top = '50px';
-      this.message.style.height = 'max-content';
       this.message.style.opacity = '1';
+      this.stylizeElement(this.message);
 
       document.body.appendChild(this.message);
     }
@@ -57,7 +52,7 @@ export class VRButton {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const self = this;
 
-    this.stylizeElement(button, 30);
+    this.stylizeElement(button);
 
     function onSessionStarted(session) {
       session.addEventListener('end', onSessionEnded);
@@ -73,7 +68,7 @@ export class VRButton {
     function onSessionEnded(): void {
       currentSession.removeEventListener('end', onSessionEnded);
 
-      self.stylizeElement(button, 12);
+      self.stylizeElement(button);
       button.textContent = 'ENTER VR';
 
       currentSession = null;
@@ -89,7 +84,6 @@ export class VRButton {
     };
 
     button.onmouseleave = function () {
-      button.style.fontSize = '30px';
       button.style.opacity = '0.5';
     };
 
@@ -127,12 +121,6 @@ export class VRButton {
 
     button.style.display = '';
     button.style.opacity = '1';
-    button.style.height = 'max-content';
-    button.style.top = '50px';
-    button.style.left = '75%';
-    button.style.transform = 'translate(-50%, 0)';
-    button.style.width = 'max-content';
-    button.style.background = 'transparent';
     button.textContent = 'VR NOT SUPPORTED';
   }
 
@@ -147,6 +135,11 @@ export class VRButton {
     element.style.textAlign = 'center';
     element.style.opacity = '0.5';
     element.style.outline = 'none';
+    element.style.height = 'max-content';
+    element.style.width = 'max-content';
     element.style.zIndex = '999';
+    element.style.left = '75%';
+    element.style.background = 'transparent';
+    element.style.transform = 'translate(-50%, 0)';
   }
 }
