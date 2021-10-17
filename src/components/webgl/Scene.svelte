@@ -7,12 +7,13 @@
   import NavigationContainer from '../Navigation/NavigationContainer.svelte';
   import Icon from '../Icon/Icon.svelte';
   import {
-    playerIsInScene,
+    currentSession,
     progressRatio,
     isMobileDevice as mobileDeviceSubscriber,
     layoutContainer,
     hasMutedSound,
-    audioController
+    audioController,
+    canvasContainer
   } from '../../store/store';
   import {onExit} from '../../utils/onEnter';
   import classNames from 'classnames';
@@ -27,6 +28,8 @@
   let layoutElement: HTMLElement;
   let audio: HTMLAudioElement;
   let soundIsMuted: boolean;
+
+  let canvasContainerRef: HTMLElement;
 
   audioController.subscribe(value => {
     audio = value;
@@ -48,7 +51,7 @@
     }
   });
 
-  playerIsInScene.subscribe(value => {
+  currentSession.subscribe(value => {
     isPlaying = value;
   });
   progressRatio.subscribe(value => {
@@ -64,13 +67,15 @@
   });
 
   onMount(() => {
-    if (canvasElement) {
+    if (canvasElement && canvasContainerRef) {
       scene = new Scene(canvasElement);
+
+      canvasContainer.update(() => canvasContainerRef);
     }
   });
 </script>
 
-<div class="canvas-container">
+<div class="canvas-container" bind:this={canvasContainerRef}>
   <canvas class="webgl__canvas" bind:this={canvasElement} />
 
   <div class="scene-header">

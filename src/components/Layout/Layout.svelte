@@ -66,16 +66,10 @@
     </div>
   </section>
 
-  <section
-    class="column-right"
-    on:mouseover={onMouseOver}
-    on:focus={onMouseOver}
-    on:mouseleave={onMouseLeave}
-    on:click={() => onEnter(layoutContainer)}
-  >
+  <section class="column-right" on:mouseover={onMouseOver} on:focus={onMouseOver} on:mouseleave={onMouseLeave}>
     <slot name="content-right" />
 
-    <p class="call-to-action" bind:this={callToAction}>Enter gallery</p>
+    <p class="call-to-action" bind:this={callToAction} on:click={() => onEnter(layoutContainer)}>Enter gallery</p>
   </section>
 </section>
 
@@ -150,10 +144,10 @@
     .column-right {
       position: relative;
       transition: 0.175s ease-in-out;
-      cursor: pointer;
 
       .call-to-action {
         position: absolute;
+        cursor: pointer;
         opacity: 0;
         left: 50%;
         top: 50%;
@@ -161,6 +155,12 @@
         font-size: 1.35rem;
         font-family: $font-text-bold;
         color: $color-white;
+        transition: 0.175s ease-in-out;
+
+        &:hover {
+          padding-bottom: 5px;
+          border-bottom: 0.5px solid #fff;
+        }
       }
     }
 

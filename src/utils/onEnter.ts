@@ -2,7 +2,7 @@ import GSAP from 'gsap';
 import type {DeviceOrientationControls} from 'three/examples/jsm/controls/DeviceOrientationControls';
 import type {PointerLockControls} from 'three/examples/jsm/controls/PointerLockControls';
 import {
-  playerIsInScene,
+  currentSession,
   pointerLockerControls,
   isMobileDevice as mobileDeviceSubscriber,
   deviceOrientation as deviceOrientationSubscriber,
@@ -42,7 +42,7 @@ export const onEnter = (el: HTMLElement): void => {
     deviceOrientation = value;
   });
 
-  playerIsInScene.update(() => true);
+  currentSession.update(() => true);
 
   playSound();
 
@@ -60,12 +60,12 @@ export const onEnter = (el: HTMLElement): void => {
 
         GSAP.to(el, {duration: 0.5, opacity: 1});
         el.style.display = 'grid';
-        playerIsInScene.update(() => false);
+        currentSession.update(() => false);
       });
     }
   }
 
-  playerIsInScene.update(() => true);
+  currentSession.update(() => true);
 };
 
 export const onExit = (el: HTMLElement): void => {
@@ -80,7 +80,7 @@ export const onExit = (el: HTMLElement): void => {
 
   GSAP.to(el, {duration: 0.5, opacity: 1});
   el.style.display = 'grid';
-  playerIsInScene.update(() => false);
+  currentSession.update(() => false);
 };
 
 export function playSound(): void {
