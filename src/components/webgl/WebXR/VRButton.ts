@@ -1,6 +1,7 @@
 import GSAP from 'gsap';
-import {currentSession} from '../../../store/store';
+import {audioController, currentSession} from '../../../store/store';
 import type {Navigator} from 'webxr';
+import {playSound} from '../../../utils/onEnter';
 
 export class VRButton {
   private renderer: THREE.WebGLRenderer;
@@ -26,7 +27,6 @@ export class VRButton {
 
     if ('xr' in this.navigator) {
       this.navigator.xr.isSessionSupported('immersive-vr').then(supported => {
-        console.log(supported);
         supported ? this.showEnterVR(this.button) : this.showWebXRNotFound(this.button);
       });
       document.body.appendChild(this.button);
@@ -51,6 +51,7 @@ export class VRButton {
 
   showEnterVR(button: HTMLButtonElement): void {
     let currentSession = null;
+    let audioElement: HTMLAudioElement;
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const self = this;
 
@@ -60,6 +61,12 @@ export class VRButton {
       session.addEventListener('end', onSessionEnded);
 
       self.renderer.xr.setSession(session);
+
+      audioController.subscribe(audio => {
+        playSound(audio);
+        audioElement = audio;
+      });
+
       self.stylizeElement(button, 12);
 
       button.textContent = 'EXIT VR';
@@ -70,6 +77,7 @@ export class VRButton {
     function onSessionEnded(): void {
       currentSession.removeEventListener('end', onSessionEnded);
 
+      audioElement.pause();
       self.stylizeElement(button);
       button.textContent = 'ENTER VR';
 

@@ -44,7 +44,7 @@ export const onEnter = (el: HTMLElement): void => {
 
   currentSession.update(() => true);
 
-  playSound();
+  playSound(audio);
 
   setTimeout(() => {
     el.style.display = 'none';
@@ -69,7 +69,7 @@ export const onEnter = (el: HTMLElement): void => {
 };
 
 export const onExit = (el: HTMLElement): void => {
-  pauseSound();
+  pauseSound(audio);
   let deviceOrientation: DeviceOrientationControls;
 
   deviceOrientationSubscriber.subscribe(value => {
@@ -83,23 +83,23 @@ export const onExit = (el: HTMLElement): void => {
   currentSession.update(() => false);
 };
 
-export function playSound(): void {
+export function playSound(sound: HTMLAudioElement): void {
   if (!soundIsMuted) {
-    audio.volume = 0;
-    audio.play();
+    sound.volume = 0;
+    sound.play();
 
     const fadeIn = setInterval(() => {
-      audio.volume += 0.05;
+      sound.volume += 0.05;
 
-      if (audio.volume === 0.2) {
+      if (sound.volume === 0.2) {
         clearInterval(fadeIn);
       }
     }, interval);
   }
 }
 
-export function pauseSound(): void {
+export function pauseSound(sound: HTMLAudioElement): void {
   if (!soundIsMuted) {
-    audio.pause();
+    sound.pause();
   }
 }
