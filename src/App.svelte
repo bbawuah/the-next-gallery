@@ -1,11 +1,10 @@
 <script lang="ts">
+  import type {Navigator} from 'webxr';
   import Button from './components/Button/Button.svelte';
-
   import Layout from './components/Layout/Layout.svelte';
   import Link from './components/Link/Link.svelte';
   import ParagraphContainer from './components/ParagraphContainer/ParagraphContainer.svelte';
   import ProgressMeter from './components/ProgressMeter/ProgressMeter.svelte';
-
   import Scene from './components/webgl/Scene.svelte';
   import {layoutContainer, progressRatio, xrIsSupported} from './store/store';
   import {onEnter} from './utils/onEnter';
@@ -13,8 +12,14 @@
   let progress: number;
   let layoutElement: HTMLElement;
   let webXRIsSupported: boolean;
+  let webXRNavigator: Navigator = navigator as any as Navigator;
 
   const year = new Date().getFullYear();
+
+  webXRNavigator.xr.isSessionSupported('immersive-vr').then(supported => {
+    webXRIsSupported = supported;
+    xrIsSupported.update(() => supported);
+  });
 
   layoutContainer.subscribe(value => {
     layoutElement = value;

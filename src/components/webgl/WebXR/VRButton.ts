@@ -1,5 +1,5 @@
 import GSAP from 'gsap';
-import {audioController, currentSession} from '../../../store/store';
+import {audioController, currentSession, xrIsSupported} from '../../../store/store';
 import type {Navigator} from 'webxr';
 import {playSound} from '../../../utils/onEnter';
 
@@ -26,11 +26,15 @@ export class VRButton {
     });
 
     if ('xr' in this.navigator) {
-      this.navigator.xr.isSessionSupported('immersive-vr').then(supported => {
-        supported ? this.showEnterVR(this.button) : this.showWebXRNotFound(this.button);
+      xrIsSupported.subscribe(value => {
+        if (value) {
+          this.showEnterVR(this.button);
+          this.button.textContent = 'ENTER VR';
+        } else {
+          this.showWebXRNotFound(this.button);
+        }
       });
       document.body.appendChild(this.button);
-      this.button.textContent = 'ENTER VR';
     } else {
       if (window.isSecureContext === false) {
         this.message.href = document.location.href.replace(/^http:/, 'https:');
