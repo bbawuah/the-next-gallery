@@ -214,7 +214,10 @@ export class Scene {
     this.shaderPainting = gltf.scene.children.find(child => child.name === 'shader-schilderij') as THREE.Mesh;
     this.shaderPainting.material = new THREE.MeshBasicMaterial({color: 0xff0000});
     this.bitmapText = new RenderTarget(this.shaderPainting);
-    this.webXR.bitmapText = this.bitmapText;
+
+    if (!this.isMobile) {
+      this.webXR.bitmapText = this.bitmapText;
+    }
 
     const looseWalls = gltf.scene.children.find(child => child.name === 'losse-muren') as THREE.Mesh;
     this.physics.createPhysics(looseWalls);
