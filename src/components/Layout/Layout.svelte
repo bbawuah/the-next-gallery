@@ -3,13 +3,14 @@
   import Icon from '../Icon/Icon.svelte';
   import GSAP from 'gsap';
   import {onMount} from 'svelte';
-  import {progressRatio, layoutContainer as layoutContainerSubscriber} from '../../store/store';
+  import {progressRatio, layoutContainer as layoutContainerSubscriber, xrIsSupported} from '../../store/store';
   import {onEnter} from '../../utils/onEnter';
 
   let callToAction: HTMLParagraphElement;
   let layoutContainer: HTMLElement;
   let scrollDownArrow: HTMLElement;
   let columnLeft: HTMLElement;
+  let webXRIsSupported: boolean;
 
   let onMouseOver: () => void;
   let onMouseLeave: () => void;
@@ -17,6 +18,10 @@
   let progress: number;
   progressRatio.subscribe(value => {
     progress = value;
+  });
+
+  xrIsSupported.subscribe(value => {
+    webXRIsSupported = value;
   });
 
   const renderScrollIndicator = (el: HTMLElement): void => {
@@ -69,7 +74,9 @@
   <section class="column-right" on:mouseover={onMouseOver} on:focus={onMouseOver} on:mouseleave={onMouseLeave}>
     <slot name="content-right" />
 
-    <p class="call-to-action" bind:this={callToAction} on:click={() => onEnter(layoutContainer)}>Enter gallery</p>
+    {#if !webXRIsSupported}
+      <p class="call-to-action" bind:this={callToAction} on:click={() => onEnter(layoutContainer)}>Enter gallery</p>
+    {/if}
   </section>
 </section>
 
@@ -80,7 +87,7 @@
     display: grid;
     position: absolute;
     grid-template-columns: 100%;
-    grid-template-rows: 60% 40%;
+    grid-template-rows: 100% 0%;
     width: 100%;
     height: 100%;
     z-index: 2;

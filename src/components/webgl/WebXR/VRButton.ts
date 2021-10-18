@@ -1,15 +1,16 @@
 import GSAP from 'gsap';
 import {currentSession} from '../../../store/store';
+import type {Navigator} from 'webxr';
 
 export class VRButton {
   private renderer: THREE.WebGLRenderer;
-  private navigator: any;
+  private navigator: Navigator;
   private button: HTMLButtonElement;
   private message: HTMLAnchorElement;
 
   constructor(renderer: THREE.WebGLRenderer) {
     this.renderer = renderer;
-    this.navigator = navigator as any;
+    this.navigator = navigator as any as Navigator;
     this.button = document.createElement('button');
     this.message = document.createElement('a');
 
@@ -25,6 +26,7 @@ export class VRButton {
 
     if ('xr' in this.navigator) {
       this.navigator.xr.isSessionSupported('immersive-vr').then(supported => {
+        console.log(supported);
         supported ? this.showEnterVR(this.button) : this.showWebXRNotFound(this.button);
       });
       document.body.appendChild(this.button);

@@ -16,7 +16,6 @@
     canvasContainer
   } from '../../store/store';
   import {onExit} from '../../utils/onEnter';
-  import classNames from 'classnames';
 
   let isMobileDevice: boolean;
 
@@ -95,12 +94,25 @@
           audio.play();
         }
       }}
-      class={classNames('sound-icon', {
-        'sound-muted': soundIsMuted
-      })}
+      class="sound-icon"
     >
-      <Icon icon={IconType.headphone} />
+      {#if soundIsMuted}
+        <Icon icon={IconType.headphoneMuted} />
+      {:else}
+        <Icon icon={IconType.headphone} />
+      {/if}
     </div>
+    <svg
+      class="pulse"
+      viewBox="0 0 1024 1024"
+      version="1.1"
+      xmlns="http://www.w3.org/2000/svg"
+      xmlns:xlink="http://www.w3.org/1999/xlink"
+    >
+      <circle id="Oval" cx="512" cy="512" r="512" />
+      <circle id="Oval" cx="512" cy="512" r="512" />
+      <circle id="Oval" cx="512" cy="512" r="512" />
+    </svg>
   </div>
 
   {#if progress === 100 && isPlaying}
@@ -198,12 +210,6 @@
         right: 25px;
         top: 55px;
         z-index: 1;
-      }
-
-      .sound-muted {
-        :global(path) {
-          fill: #f5f1f1;
-        }
       }
     }
 

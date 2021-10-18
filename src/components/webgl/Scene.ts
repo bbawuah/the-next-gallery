@@ -119,6 +119,10 @@ export class Scene {
 
     this.loadingManager = new LoadingManager(this.scene);
 
+    isMobileDevice.subscribe(value => {
+      this.isMobile = value;
+    });
+
     if (!this.isMobile) {
       this.webXR = new WebXR({
         renderer: this.renderer,
