@@ -13,6 +13,7 @@ import {DeviceOrientationControls} from 'three/examples/jsm/controls/DeviceOrien
 import {PointerLockControls} from 'three/examples/jsm/controls/PointerLockControls';
 import {LoadingManager} from './LoadingManager/LoadingManager';
 import {LightParticles} from './LightParticles/LightParticles';
+import {WebXR} from './WebXR/WebXR';
 
 const sizes: Sizes = {
   width: window.innerWidth,
@@ -86,6 +87,9 @@ export class Scene {
   // Loading manager
   private loadingManager: LoadingManager;
 
+  // WebXR
+  private webXR: WebXR;
+
   // IsMobile device?
   public isMobile: boolean;
 
@@ -115,6 +119,18 @@ export class Scene {
 
     this.loadingManager = new LoadingManager(this.scene);
 
+    isMobileDevice.subscribe(value => {
+      this.isMobile = value;
+    });
+
+    if (!this.isMobile) {
+      this.webXR = new WebXR({
+        renderer: this.renderer,
+        camera: this.camera,
+        scene: this.scene
+      });
+    }
+
     // Textures
     this.textureLoader = new THREE.TextureLoader(this.loadingManager.loadingManager);
     this.bakedTexture = this.textureLoader.load('./static/map.jpg');
@@ -129,6 +145,7 @@ export class Scene {
 
     // Clock
     this.clock = new THREE.Clock();
+
     // Physics
     this.physics = new PhysicsWorld({
       scene: this.scene
@@ -197,6 +214,7 @@ export class Scene {
     this.shaderPainting = gltf.scene.children.find(child => child.name === 'shader-schilderij') as THREE.Mesh;
     this.shaderPainting.material = new THREE.MeshBasicMaterial({color: 0xff0000});
     this.bitmapText = new RenderTarget(this.shaderPainting);
+    this.webXR.bitmapText = this.bitmapText;
 
     const looseWalls = gltf.scene.children.find(child => child.name === 'losse-muren') as THREE.Mesh;
     this.physics.createPhysics(looseWalls);

@@ -1,19 +1,25 @@
 <script lang="ts">
+  import type {Navigator} from 'webxr';
   import Button from './components/Button/Button.svelte';
-
   import Layout from './components/Layout/Layout.svelte';
   import Link from './components/Link/Link.svelte';
   import ParagraphContainer from './components/ParagraphContainer/ParagraphContainer.svelte';
   import ProgressMeter from './components/ProgressMeter/ProgressMeter.svelte';
-
   import Scene from './components/webgl/Scene.svelte';
-  import {layoutContainer, progressRatio} from './store/store';
+  import {layoutContainer, progressRatio, xrIsSupported} from './store/store';
   import {onEnter} from './utils/onEnter';
 
   let progress: number;
   let layoutElement: HTMLElement;
+  let webXRIsSupported: boolean;
+  let webXRNavigator: Navigator = navigator as any as Navigator;
 
   const year = new Date().getFullYear();
+
+  webXRNavigator.xr.isSessionSupported('immersive-vr').then(supported => {
+    webXRIsSupported = supported;
+    xrIsSupported.update(() => supported);
+  });
 
   layoutContainer.subscribe(value => {
     layoutElement = value;
@@ -21,6 +27,10 @@
 
   progressRatio.subscribe(value => {
     progress = value;
+  });
+
+  xrIsSupported.subscribe(value => {
+    webXRIsSupported = value;
   });
 </script>
 
@@ -68,12 +78,15 @@
           <p class="text">Special thanks to all the creatives that participated in this gallery.</p>
           <p class="text">Enjoy the gallery ❤️</p>
         </div>
-        <Button
-          isDisabled={progress !== 100}
-          onClick={() => onEnter(layoutElement)}
-          text={'Enter gallery'}
-          type={'button'}
-        />
+
+        {#if !webXRIsSupported}
+          <Button
+            isDisabled={progress !== 100}
+            onClick={() => onEnter(layoutElement)}
+            text={'Enter gallery'}
+            type={'button'}
+          />
+        {/if}
         <footer class="footer">
           <p class="copyright">Copyright &copy; {year} <Link href="https://github.com/bbawuah">Brian Bawuah</Link></p>
         </footer>

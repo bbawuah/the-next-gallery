@@ -3,13 +3,14 @@
   import Icon from '../Icon/Icon.svelte';
   import GSAP from 'gsap';
   import {onMount} from 'svelte';
-  import {progressRatio, layoutContainer as layoutContainerSubscriber} from '../../store/store';
+  import {progressRatio, layoutContainer as layoutContainerSubscriber, xrIsSupported} from '../../store/store';
   import {onEnter} from '../../utils/onEnter';
 
   let callToAction: HTMLParagraphElement;
   let layoutContainer: HTMLElement;
   let scrollDownArrow: HTMLElement;
   let columnLeft: HTMLElement;
+  let webXRIsSupported: boolean;
 
   let onMouseOver: () => void;
   let onMouseLeave: () => void;
@@ -17,6 +18,10 @@
   let progress: number;
   progressRatio.subscribe(value => {
     progress = value;
+  });
+
+  xrIsSupported.subscribe(value => {
+    webXRIsSupported = value;
   });
 
   const renderScrollIndicator = (el: HTMLElement): void => {
@@ -66,16 +71,12 @@
     </div>
   </section>
 
-  <section
-    class="column-right"
-    on:mouseover={onMouseOver}
-    on:focus={onMouseOver}
-    on:mouseleave={onMouseLeave}
-    on:click={() => onEnter(layoutContainer)}
-  >
+  <section class="column-right" on:mouseover={onMouseOver} on:focus={onMouseOver} on:mouseleave={onMouseLeave}>
     <slot name="content-right" />
 
-    <p class="call-to-action" bind:this={callToAction}>Enter gallery</p>
+    {#if !webXRIsSupported}
+      <p class="call-to-action" bind:this={callToAction} on:click={() => onEnter(layoutContainer)}>Enter gallery</p>
+    {/if}
   </section>
 </section>
 
@@ -86,7 +87,7 @@
     display: grid;
     position: absolute;
     grid-template-columns: 100%;
-    grid-template-rows: 60% 40%;
+    grid-template-rows: 100% 0%;
     width: 100%;
     height: 100%;
     z-index: 2;
@@ -150,10 +151,10 @@
     .column-right {
       position: relative;
       transition: 0.175s ease-in-out;
-      cursor: pointer;
 
       .call-to-action {
         position: absolute;
+        cursor: pointer;
         opacity: 0;
         left: 50%;
         top: 50%;
@@ -161,6 +162,12 @@
         font-size: 1.35rem;
         font-family: $font-text-bold;
         color: $color-white;
+        transition: 0.175s ease-in-out;
+
+        &:hover {
+          padding-bottom: 5px;
+          border-bottom: 0.5px solid #fff;
+        }
       }
     }
 
