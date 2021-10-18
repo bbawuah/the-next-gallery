@@ -16,10 +16,12 @@
 
   const year = new Date().getFullYear();
 
-  webXRNavigator.xr.isSessionSupported('immersive-vr').then(supported => {
-    webXRIsSupported = supported;
-    xrIsSupported.update(() => supported);
-  });
+  if ('xr' in webXRNavigator) {
+    webXRNavigator.xr.isSessionSupported('immersive-vr').then(supported => {
+      webXRIsSupported = supported;
+      xrIsSupported.update(() => supported);
+    });
+  }
 
   layoutContainer.subscribe(value => {
     layoutElement = value;
