@@ -16,7 +16,7 @@
 
   const year = new Date().getFullYear();
 
-  if ('vr' in webXRNavigator) {
+  if ('xr' in webXRNavigator) {
     webXRNavigator.xr.isSessionSupported('immersive-vr').then(supported => {
       webXRIsSupported = supported;
       xrIsSupported.update(() => supported);
