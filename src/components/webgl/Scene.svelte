@@ -160,10 +160,12 @@
 
           <div
             class="right"
-            on:touchstart={() => {
+            on:touchstart={e => {
+              e.preventDefault();
               scene.events.right = true;
             }}
-            on:touchend={() => {
+            on:touchend={e => {
+              e.preventDefault();
               scene.events.right = false;
             }}
           >
