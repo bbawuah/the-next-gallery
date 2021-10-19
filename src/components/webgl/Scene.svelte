@@ -109,10 +109,12 @@
       <Keys>
         <div class="keys">
           <div
-            on:touchstart={() => {
+            on:touchstart={e => {
+              e.preventDefault();
               scene.events.forward = true;
             }}
-            on:touchend={() => {
+            on:touchend={e => {
+              e.preventDefault();
               scene.events.forward = false;
             }}
             class="up"
@@ -122,10 +124,13 @@
 
           <div
             class="bottom"
-            on:touchstart={() => {
+            on:touchstart={e => {
+              e.preventDefault();
+
               scene.events.backward = true;
             }}
-            on:touchend={() => {
+            on:touchend={e => {
+              e.preventDefault();
               scene.events.backward = false;
             }}
           >
@@ -134,10 +139,12 @@
 
           <div
             class="left"
-            on:touchstart={() => {
+            on:touchstart={e => {
+              e.preventDefault();
               scene.events.left = true;
             }}
-            on:touchend={() => {
+            on:touchend={e => {
+              e.preventDefault();
               scene.events.left = false;
             }}
           >
