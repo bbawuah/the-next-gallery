@@ -79,13 +79,20 @@
 
   <div class="scene-header">
     {#if isMobileDevice && isPlaying}
-      <div on:click={() => onExit(layoutElement)} class="exit-container">
+      <div
+        on:click={e => {
+          e.preventDefault();
+          onExit(layoutElement);
+        }}
+        class="exit-container"
+      >
         <Icon icon={IconType.close} />
       </div>
     {/if}
 
     <div
-      on:click={() => {
+      on:click={e => {
+        e.preventDefault();
         hasMutedSound.update(value => !value);
 
         if (soundIsMuted) {
@@ -207,7 +214,7 @@
         right: 25px;
         top: 55px;
         z-index: 1;
-        touch-action: manipulation;
+        touch-action: none;
       }
     }
 
@@ -216,7 +223,7 @@
       display: flex;
       top: 55px;
       align-items: center;
-      touch-action: manipulation;
+      touch-action: none;
       left: 25px;
       z-index: 1;
       transition: 0.175s ease-in-out;
