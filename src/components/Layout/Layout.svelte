@@ -86,7 +86,7 @@
   <section class="column-right" on:mouseover={onMouseOver} on:focus={onMouseOver} on:mouseleave={onMouseLeave}>
     <slot name="content-right" />
 
-    {#if isMobile === false}
+    {#if !isMobile}
       <p class="call-to-action" bind:this={callToAction} on:click={() => onEnter(layoutContainer)}>Enter gallery</p>
     {/if}
   </section>
