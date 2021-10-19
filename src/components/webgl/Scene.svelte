@@ -200,6 +200,7 @@
         right: 25px;
         top: 55px;
         z-index: 1;
+        touch-action: manipulation;
       }
     }
 
@@ -208,6 +209,7 @@
       display: flex;
       top: 55px;
       align-items: center;
+      touch-action: manipulation;
       left: 25px;
       z-index: 1;
       transition: 0.175s ease-in-out;

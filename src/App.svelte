@@ -83,7 +83,10 @@
 
         <Button
           isDisabled={progress !== 100}
-          onClick={() => onEnter(layoutElement)}
+          onClick={e => {
+            e.preventDefault();
+            onEnter(layoutElement);
+          }}
           text={'Enter gallery'}
           type={'button'}
         />

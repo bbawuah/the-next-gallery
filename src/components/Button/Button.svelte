@@ -1,5 +1,5 @@
 <script lang="ts">
-  export let onClick: () => void;
+  export let onClick: (e: Event) => void;
   export let text: string;
   export let isDisabled: boolean;
   export let type: 'button' | 'menu' | 'reset' | 'submit';

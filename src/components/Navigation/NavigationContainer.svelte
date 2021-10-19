@@ -9,10 +9,10 @@
     justify-content: space-around;
     flex-direction: row-reverse;
     bottom: 15vh;
+    touch-action: manipulation;
     left: 0;
     width: 100%;
     z-index: 1;
-    pointer-events: none;
   }
 
   @media screen and (min-width: 600px) {

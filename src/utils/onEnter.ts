@@ -24,7 +24,6 @@ export const onEnter = (el: HTMLElement): void => {
   let isMobileDevice: boolean;
   let deviceOrientation: DeviceOrientationControls;
 
-  console.log(el);
   GSAP.to(el, {duration: 0.5, opacity: 0});
 
   audioController.subscribe(value => {
