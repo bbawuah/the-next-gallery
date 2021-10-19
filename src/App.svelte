@@ -107,6 +107,10 @@
 <style type="text/scss">
   @import './styles/styles.scss';
 
+  :global(*) {
+    touch-action: manipulation;
+  }
+
   :global(body) {
     padding: 0;
     width: 100%;
