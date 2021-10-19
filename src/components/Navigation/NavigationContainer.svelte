@@ -11,7 +11,7 @@
     display: flex;
     justify-content: space-around;
     flex-direction: row-reverse;
-    bottom: 60px;
+    bottom: 85px;
     left: 0;
     width: 100%;
     z-index: 1;
