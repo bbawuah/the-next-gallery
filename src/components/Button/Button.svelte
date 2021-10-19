@@ -20,6 +20,8 @@
     font-size: 20px;
     margin-top: 25px;
     cursor: pointer;
+    border: none;
+    outline: none;
 
     &:disabled {
       cursor: not-allowed;
