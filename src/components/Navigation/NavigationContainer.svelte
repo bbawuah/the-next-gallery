@@ -1,6 +1,3 @@
-<script lang="ts">
-</script>
-
 <div class="navigation-container">
   <slot />
 </div>
@@ -11,7 +8,7 @@
     display: flex;
     justify-content: space-around;
     flex-direction: row-reverse;
-    bottom: 85px;
+    bottom: 15vh;
     left: 0;
     width: 100%;
     z-index: 1;
