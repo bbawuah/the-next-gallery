@@ -220,8 +220,14 @@
       width: 175px;
       height: 172px;
 
-      .up {
+      .up,
+      .left,
+      .bottom,
+      .right {
         position: absolute;
+        touch-action: manipulation;
+      }
+      .up {
         top: 35%;
         left: 50%;
         width: 50px;
@@ -229,7 +235,6 @@
       }
 
       .bottom {
-        position: absolute;
         bottom: 0;
         left: 50%;
         width: 50px;
@@ -237,14 +242,12 @@
       }
 
       .left {
-        position: absolute;
         bottom: 0;
         left: 0;
         width: 50px;
       }
 
       .right {
-        position: absolute;
         bottom: 0;
         right: 0;
         width: 50px;
