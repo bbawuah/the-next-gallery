@@ -83,7 +83,10 @@
 
         <Button
           isDisabled={progress !== 100}
-          onClick={() => onEnter(layoutElement)}
+          onClick={e => {
+            e.preventDefault();
+            onEnter(layoutElement);
+          }}
           text={'Enter gallery'}
           type={'button'}
         />
@@ -107,10 +110,21 @@
 <style type="text/scss">
   @import './styles/styles.scss';
 
+  :global(*) {
+    touch-action: manipulation;
+    box-sizing: border-box;
+  }
+
   :global(body) {
     padding: 0;
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
+    user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
   }
 
   main {

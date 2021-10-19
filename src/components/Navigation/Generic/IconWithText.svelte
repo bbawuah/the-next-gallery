@@ -24,6 +24,7 @@
     flex-direction: column;
     align-items: center;
     max-width: 140px;
+    pointer-events: none;
     .wrapper {
       width: 50%;
       height: 100px;

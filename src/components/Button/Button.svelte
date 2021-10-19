@@ -1,5 +1,9 @@
 <script lang="ts">
-  export let onClick: () => void;
+  export let onClick: (
+    e: MouseEvent & {
+      currentTarget: EventTarget & HTMLButtonElement;
+    }
+  ) => void;
   export let text: string;
   export let isDisabled: boolean;
   export let type: 'button' | 'menu' | 'reset' | 'submit';
@@ -20,6 +24,8 @@
     font-size: 20px;
     margin-top: 25px;
     cursor: pointer;
+    border: none;
+    outline: none;
 
     &:disabled {
       cursor: not-allowed;

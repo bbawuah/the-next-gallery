@@ -79,13 +79,20 @@
 
   <div class="scene-header">
     {#if isMobileDevice && isPlaying}
-      <div on:click={() => onExit(layoutElement)} class="exit-container">
+      <div
+        on:click={e => {
+          e.preventDefault();
+          onExit(layoutElement);
+        }}
+        class="exit-container"
+      >
         <Icon icon={IconType.close} />
       </div>
     {/if}
 
     <div
-      on:click={() => {
+      on:click={e => {
+        e.preventDefault();
         hasMutedSound.update(value => !value);
 
         if (soundIsMuted) {
@@ -109,10 +116,12 @@
       <Keys>
         <div class="keys">
           <div
-            on:touchstart={() => {
+            on:touchstart={e => {
+              e.preventDefault();
               scene.events.forward = true;
             }}
-            on:touchend={() => {
+            on:touchend={e => {
+              e.preventDefault();
               scene.events.forward = false;
             }}
             class="up"
@@ -122,10 +131,13 @@
 
           <div
             class="bottom"
-            on:touchstart={() => {
+            on:touchstart={e => {
+              e.preventDefault();
+
               scene.events.backward = true;
             }}
-            on:touchend={() => {
+            on:touchend={e => {
+              e.preventDefault();
               scene.events.backward = false;
             }}
           >
@@ -134,10 +146,12 @@
 
           <div
             class="left"
-            on:touchstart={() => {
+            on:touchstart={e => {
+              e.preventDefault();
               scene.events.left = true;
             }}
-            on:touchend={() => {
+            on:touchend={e => {
+              e.preventDefault();
               scene.events.left = false;
             }}
           >
@@ -146,10 +160,12 @@
 
           <div
             class="right"
-            on:touchstart={() => {
+            on:touchstart={e => {
+              e.preventDefault();
               scene.events.right = true;
             }}
-            on:touchend={() => {
+            on:touchend={e => {
+              e.preventDefault();
               scene.events.right = false;
             }}
           >
@@ -200,6 +216,7 @@
         right: 25px;
         top: 55px;
         z-index: 1;
+        touch-action: none;
       }
     }
 
@@ -208,6 +225,7 @@
       display: flex;
       top: 55px;
       align-items: center;
+      touch-action: none;
       left: 25px;
       z-index: 1;
       transition: 0.175s ease-in-out;
@@ -217,9 +235,16 @@
       position: relative;
       width: 175px;
       height: 172px;
+      touch-action: none;
 
-      .up {
+      .up,
+      .left,
+      .bottom,
+      .right {
         position: absolute;
+        touch-action: manipulation;
+      }
+      .up {
         top: 35%;
         left: 50%;
         width: 50px;
@@ -227,7 +252,6 @@
       }
 
       .bottom {
-        position: absolute;
         bottom: 0;
         left: 50%;
         width: 50px;
@@ -235,14 +259,12 @@
       }
 
       .left {
-        position: absolute;
         bottom: 0;
         left: 0;
         width: 50px;
       }
 
       .right {
-        position: absolute;
         bottom: 0;
         right: 0;
         width: 50px;
