@@ -3,7 +3,12 @@
   import Icon from '../Icon/Icon.svelte';
   import GSAP from 'gsap';
   import {onMount} from 'svelte';
-  import {progressRatio, layoutContainer as layoutContainerSubscriber, xrIsSupported} from '../../store/store';
+  import {
+    progressRatio,
+    layoutContainer as layoutContainerSubscriber,
+    xrIsSupported,
+    isMobileDevice
+  } from '../../store/store';
   import {onEnter} from '../../utils/onEnter';
 
   let callToAction: HTMLParagraphElement;
@@ -11,6 +16,7 @@
   let scrollDownArrow: HTMLElement;
   let columnLeft: HTMLElement;
   let webXRIsSupported: boolean;
+  let isMobile: boolean;
 
   let onMouseOver: () => void;
   let onMouseLeave: () => void;
@@ -24,6 +30,10 @@
     webXRIsSupported = value;
   });
 
+  isMobileDevice.subscribe(value => {
+    isMobile = value;
+  });
+
   const renderScrollIndicator = (el: HTMLElement): void => {
     setTimeout(() => {
       GSAP.to(el, {duration: 0.5, opacity: 1});
@@ -31,18 +41,20 @@
   };
 
   onMount(() => {
-    if (callToAction && layoutContainer && scrollDownArrow && columnLeft) {
+    if (layoutContainer && scrollDownArrow && columnLeft) {
       layoutContainerSubscriber.update(() => layoutContainer);
 
-      onMouseOver = () => {
-        if (progress === 100) {
-          GSAP.to(callToAction, {duration: 0.5, opacity: 1});
-        }
-      };
+      if (callToAction) {
+        onMouseOver = () => {
+          if (progress === 100) {
+            GSAP.to(callToAction, {duration: 0.5, opacity: 1});
+          }
+        };
 
-      onMouseLeave = () => {
-        GSAP.to(callToAction, {duration: 0.5, opacity: 0});
-      };
+        onMouseLeave = () => {
+          GSAP.to(callToAction, {duration: 0.5, opacity: 0});
+        };
+      }
 
       renderScrollIndicator(scrollDownArrow);
 
@@ -74,7 +86,7 @@
   <section class="column-right" on:mouseover={onMouseOver} on:focus={onMouseOver} on:mouseleave={onMouseLeave}>
     <slot name="content-right" />
 
-    {#if !webXRIsSupported}
+    {#if !isMobile}
       <p class="call-to-action" bind:this={callToAction} on:click={() => onEnter(layoutContainer)}>Enter gallery</p>
     {/if}
   </section>
@@ -93,15 +105,11 @@
     z-index: 2;
     opacity: 1;
 
-    .column-right {
-      padding: 50px;
-    }
-
     .column-left {
       background-color: $color-white;
       overflow-y: scroll;
       position: relative;
-      padding: 0 25px;
+      padding: 25px;
 
       .logo-container {
         position: fixed;
@@ -180,6 +188,9 @@
       grid-template-columns: 50% 50%;
       grid-template-rows: unset;
 
+      .column-right {
+        padding: 50px;
+      }
       .column-left {
         padding: 50px;
         .logo-container {

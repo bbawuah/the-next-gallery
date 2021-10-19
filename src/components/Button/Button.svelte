@@ -12,7 +12,7 @@
 
   .button {
     padding: 20px;
-    font-family: $color-dark-grey;
+    font-family: $font-text-regular;
     background-color: $color-dark-grey;
     color: $color-white;
     align-self: start;
