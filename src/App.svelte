@@ -109,6 +109,7 @@
 
   :global(*) {
     touch-action: manipulation;
+    box-sizing: border-box;
   }
 
   :global(body) {

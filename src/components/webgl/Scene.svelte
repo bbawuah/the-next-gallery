@@ -198,6 +198,7 @@
       .sound-icon {
         position: absolute;
         right: 25px;
+        pointer-events: none;
         top: 55px;
         z-index: 1;
       }
@@ -208,6 +209,7 @@
       display: flex;
       top: 55px;
       align-items: center;
+      pointer-events: none;
       left: 25px;
       z-index: 1;
       transition: 0.175s ease-in-out;
@@ -217,8 +219,10 @@
       position: relative;
       width: 175px;
       height: 172px;
+      pointer-events: none;
 
       .up {
+        pointer-events: none;
         position: absolute;
         top: 35%;
         left: 50%;
@@ -227,6 +231,7 @@
       }
 
       .bottom {
+        pointer-events: none;
         position: absolute;
         bottom: 0;
         left: 50%;
@@ -235,6 +240,7 @@
       }
 
       .left {
+        pointer-events: none;
         position: absolute;
         bottom: 0;
         left: 0;
@@ -242,6 +248,7 @@
       }
 
       .right {
+        pointer-events: none;
         position: absolute;
         bottom: 0;
         right: 0;

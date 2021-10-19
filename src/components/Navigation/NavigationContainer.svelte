@@ -15,6 +15,7 @@
     left: 0;
     width: 100%;
     z-index: 1;
+    pointer-events: none;
   }
 
   @media screen and (min-width: 600px) {
