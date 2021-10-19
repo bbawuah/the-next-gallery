@@ -226,7 +226,7 @@
       position: relative;
       width: 175px;
       height: 172px;
-      touch-action: manipulation;
+      touch-action: none;
 
       .up,
       .left,

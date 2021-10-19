@@ -9,7 +9,7 @@
     justify-content: space-around;
     flex-direction: row-reverse;
     bottom: 15vh;
-    touch-action: manipulation;
+    touch-action: none;
     left: 0;
     width: 100%;
     z-index: 1;
