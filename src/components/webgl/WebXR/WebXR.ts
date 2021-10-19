@@ -1,12 +1,25 @@
 import * as THREE from 'three';
-import type {RenderTarget} from '../RenderTarget/RenderTarget';
 import {VRButton} from './VRButton';
-import {XRControllerModelFactory} from 'three/examples/jsm/webxr/XRControllerModelFactory';
+import type {XRProfile} from './types';
+import {XRControllerModelFactory} from 'three/examples/jsm/webxr/XRControllerModelFactory.js';
+import {
+  Constants as MotionControllerConstants,
+  fetchProfile,
+  MotionController
+} from 'three/examples/jsm/libs/motion-controllers.module.js';
 
+const DEFAULT_PROFILES_PATH = 'https://cdn.jsdelivr.net/npm/@webxr-input-profiles/assets@1.0/dist/profiles';
+const DEFAULT_PROFILE = 'generic-trigger';
 interface Props {
   renderer: THREE.WebGLRenderer;
   scene: THREE.Scene;
   camera: THREE.PerspectiveCamera;
+}
+
+interface Profile {
+  name?: string;
+  targetRayMode?: string;
+  layouts?: string;
 }
 
 export class WebXR {
@@ -18,8 +31,6 @@ export class WebXR {
   private scene: THREE.Scene;
   private camera: THREE.PerspectiveCamera;
   private controllers: THREE.Group[];
-
-  public bitmapText: RenderTarget;
 
   constructor(props: Props) {
     this.renderer = props.renderer;
@@ -54,6 +65,7 @@ export class WebXR {
       const controller = this.renderer.xr.getController(i);
       controller.add(line.clone());
       controller.userData.selectPressed = false;
+      controller.addEventListener('connected', event => this.onConnected(event));
       this.scene.add(controller);
 
       controllers.push(controller);
@@ -62,19 +74,70 @@ export class WebXR {
       grip.add(controllerModelFactory.createControllerModel(grip));
       this.scene.add(grip);
     }
+    controllers.forEach(controller => {
+      controller.addEventListener('selectstart', event => this.onSelectStart(event.target));
+      controller.addEventListener('selectend', event => this.onSelectEnd(event.target));
+    });
 
     return controllers;
   }
 
-  // private handleController(controller: THREE.Group) {}
+  private onConnected(event: THREE.Event): void {
+    const info: Profile = {};
+
+    fetchProfile(event.data, DEFAULT_PROFILES_PATH, DEFAULT_PROFILE).then(({profile, assethPath}) => {
+      const typedProfile = profile as XRProfile;
+      info.name = typedProfile.profileId as string;
+      info.targetRayMode = event.data.targetRayMode as string;
+
+      Object.entries(typedProfile.layouts).forEach(([key, layout]) => {
+        const components = {};
+
+        Object.values(layout.components as any[]).forEach(component => {
+          components[component.rootNodeName] = component.gamepadIndices;
+        });
+
+        info[key] = components;
+      });
+    });
+  }
+
+  private createButtonStates(components) {
+    const buttonStates = {};
+
+    Object.keys(components).forEach(key => {
+      if (key.indexOf('touchpad') != -1 || key.indexOf('thumbstick') != -1) {
+        buttonStates[key] = {button: 0, xAxis: 0, yAxis: 0};
+      } else {
+        buttonStates[key] = 0;
+      }
+    });
+  }
+
+  private onSelectStart(controller: THREE.Group) {
+    controller.userData.selectPressed = true;
+  }
+
+  private onSelectEnd(controller: THREE.Group) {
+    controller.userData.selectPressed = false;
+  }
+
+  private handleController(controller: THREE.Group) {
+    if (controller.userData.selectPressed) {
+      controller.children[0].scale.z = 10;
+
+      this.workingMatrix.identity().extractRotation(controller.matrixWorld);
+
+      this.raycaster.ray.origin.setFromMatrixPosition(controller.matrixWorld);
+
+      this.raycaster.ray.direction.set(0, 0, -1).applyMatrix4(controller.matrixWorld);
+
+      // const intersects = this.raycaster.intersectObjects(this.r)
+    }
+  }
 
   private render(): void {
     this.renderer.setAnimationLoop(() => {
-      const elapsedTime = this.clock.getElapsedTime();
-
-      if (this.bitmapText && this.bitmapText.renderTarget && this.bitmapText.renderTargetMaterial) {
-        (this.bitmapText.renderTargetMaterial as THREE.RawShaderMaterial).uniforms.u_time.value = elapsedTime;
-      }
       this.renderer.render(this.scene, this.camera);
     });
   }

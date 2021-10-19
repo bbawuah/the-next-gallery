@@ -102,17 +102,6 @@
         <Icon icon={IconType.headphone} />
       {/if}
     </div>
-    <svg
-      class="pulse"
-      viewBox="0 0 1024 1024"
-      version="1.1"
-      xmlns="http://www.w3.org/2000/svg"
-      xmlns:xlink="http://www.w3.org/1999/xlink"
-    >
-      <circle id="Oval" cx="512" cy="512" r="512" />
-      <circle id="Oval" cx="512" cy="512" r="512" />
-      <circle id="Oval" cx="512" cy="512" r="512" />
-    </svg>
   </div>
 
   {#if progress === 100 && isPlaying}
@@ -190,6 +179,7 @@
     position: relative;
     width: 100%;
     height: 100%;
+    min-height: 100vh;
     overflow: hidden;
     .webgl__canvas {
       position: fixed;

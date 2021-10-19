@@ -133,7 +133,7 @@ export class PhysicsWorld {
     // this.physics.cannonDebugRenderer.update();
 
     camera.position.copy(
-      new THREE.Vector3(this.sphereBody.position.x, this.sphereBody.position.y + 0.5, this.sphereBody.position.z)
+      new THREE.Vector3(this.sphereBody.position.x, this.sphereBody.position.y + 0.75, this.sphereBody.position.z)
     );
 
     this.sphereBody.velocity.set(userDirection.x, this.sphereBody.velocity.y, userDirection.z);

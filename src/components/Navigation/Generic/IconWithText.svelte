@@ -25,7 +25,7 @@
     align-items: center;
     max-width: 140px;
     .wrapper {
-      width: 100%;
+      width: 50%;
       height: 100px;
       position: relative;
       margin-bottom: 8px;
@@ -42,7 +42,7 @@
       font-family: $font-text-light;
       color: $color-dark-grey;
       margin: 0;
-      font-size: 11px;
+      font-size: 10px;
       text-align: center;
       -webkit-touch-callout: none;
       -webkit-user-select: none;
@@ -53,8 +53,14 @@
     }
 
     @media screen and (min-width: 600px) {
-      p {
-        font-size: 12px;
+      .container {
+        .wrapper {
+          width: 50%;
+        }
+
+        p {
+          font-size: 12px;
+        }
       }
     }
   }

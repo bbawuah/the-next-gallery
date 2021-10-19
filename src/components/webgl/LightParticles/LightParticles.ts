@@ -27,6 +27,7 @@ export class LightParticles {
     this.lightParticlesMaterial = new THREE.RawShaderMaterial({
       uniforms: {
         u_size: {value: 200.0},
+        u_time: {value: 0.0},
         u_PixelRatio: {value: Math.min(window.devicePixelRatio, 2)}
       },
       vertexShader: `
@@ -37,12 +38,13 @@ export class LightParticles {
 
                    uniform float u_PixelRatio;
                    uniform float u_size;
+                   uniform float u_time;
              
              
                    void main() {
                     vec4 modelPosition = modelViewMatrix * vec4(position, 1.0);
-                    
                     vec4 projectionPosition = projectionMatrix * modelPosition;
+                    projectionPosition.y += sin(u_time + position.x * 100.0) * aScale * 0.2;;
 
                      gl_Position = projectionPosition;
                      gl_PointSize = u_size * aScale * u_PixelRatio;
@@ -74,5 +76,17 @@ export class LightParticles {
     window.addEventListener('resize', () => {
       this.lightParticlesMaterial.uniforms.u_PixelRatio.value = Math.min(window.devicePixelRatio, 2);
     });
+
+    this.render();
+  }
+
+  private render(): void {
+    const elapsedTime = this.clock.getElapsedTime();
+
+    if (this.lightParticles) {
+      this.lightParticlesMaterial.uniforms.u_time.value = elapsedTime;
+    }
+
+    window.requestAnimationFrame(() => this.render());
   }
 }

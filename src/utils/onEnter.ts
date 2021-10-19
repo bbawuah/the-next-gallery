@@ -24,6 +24,7 @@ export const onEnter = (el: HTMLElement): void => {
   let isMobileDevice: boolean;
   let deviceOrientation: DeviceOrientationControls;
 
+  console.log(el);
   GSAP.to(el, {duration: 0.5, opacity: 0});
 
   audioController.subscribe(value => {
@@ -45,6 +46,8 @@ export const onEnter = (el: HTMLElement): void => {
   currentSession.update(() => true);
 
   playSound(audio);
+
+  handleSoundOnPageVisibility();
 
   setTimeout(() => {
     el.style.display = 'none';
@@ -82,6 +85,24 @@ export const onExit = (el: HTMLElement): void => {
   el.style.display = 'grid';
   currentSession.update(() => false);
 };
+
+function handleSoundOnPageVisibility() {
+  const hidden = 'hidden';
+  const visibilityChange = 'visibilitychange';
+
+  document.addEventListener(visibilityChange, () => {
+    console.log('running');
+    if (document[hidden]) {
+      audio.pause();
+    } else {
+      currentSession.subscribe(value => {
+        if (value) {
+          playSound(audio);
+        }
+      });
+    }
+  });
+}
 
 export function playSound(sound: HTMLAudioElement): void {
   if (!soundIsMuted) {
