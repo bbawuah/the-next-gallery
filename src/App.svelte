@@ -119,7 +119,7 @@
     width: 100vw;
     height: 100vh;
     user-select: none;
-    touch-action: none;
+    touch-action: pan-y;
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     -khtml-user-select: none;
@@ -130,12 +130,6 @@
   main {
     height: 100%;
     width: 100%;
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
   }
 
   .content-left-wrapper {
