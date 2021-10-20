@@ -161,6 +161,7 @@
   }
 
   .outro {
+    z-index: 1;
     align-self: flex-end;
   }
 
