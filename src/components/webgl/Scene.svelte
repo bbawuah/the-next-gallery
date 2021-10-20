@@ -277,9 +277,26 @@
         .bottom {
           width: unset;
         }
-      }
 
-      .scene-header {
+        .up {
+          top: 35%;
+          left: 50%;
+
+          transform: translate(-50%, 0);
+        }
+        .bottom {
+          bottom: 0;
+          left: 50%;
+          transform: translate(-50%, 0);
+        }
+        .left {
+          bottom: 0;
+          left: 0;
+        }
+        .right {
+          bottom: 0;
+          right: 0;
+        }
       }
     }
   }
