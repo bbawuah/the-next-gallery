@@ -219,13 +219,26 @@
       width: 175px;
       height: 172px;
       touch-action: none;
+      user-select: none;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      -khtml-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
 
       .up,
       .left,
       .bottom,
       .right {
         position: absolute;
+        user-select: initial;
         touch-action: none;
+        user-select: text;
+        -webkit-touch-callout: text;
+        -webkit-user-select: text;
+        -khtml-user-select: text;
+        -moz-user-select: text;
+        -ms-user-select: text;
       }
       .up {
         top: 13%;

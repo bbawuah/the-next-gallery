@@ -8,5 +8,11 @@
     flex-direction: column;
     align-items: center;
     touch-action: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
   }
 </style>
