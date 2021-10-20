@@ -1,12 +1,14 @@
 <script lang="ts">
   import type {Navigator} from 'webxr';
   import Button from './components/Button/Button.svelte';
+  import Icon from './components/Icon/Icon.svelte';
   import Layout from './components/Layout/Layout.svelte';
   import Link from './components/Link/Link.svelte';
   import ParagraphContainer from './components/ParagraphContainer/ParagraphContainer.svelte';
   import ProgressMeter from './components/ProgressMeter/ProgressMeter.svelte';
   import Scene from './components/webgl/Scene.svelte';
   import {layoutContainer, progressRatio, xrIsSupported} from './store/store';
+  import {IconType} from './utils/icons/types/IconType';
   import {onEnter} from './utils/onEnter';
 
   let progress: number;
@@ -40,7 +42,10 @@
   <Layout>
     <section class="content-left-wrapper" slot="content-left">
       <ParagraphContainer>
-        <p class="text">A digital showcase of creatives and talents in a way you’ve never seen before.</p>
+        <h1 class="text">A digital showcase of creatives and talents in a way you’ve never seen before.</h1>
+        <div class="logo-top">
+          <Icon icon={IconType.close} />
+        </div>
       </ParagraphContainer>
 
       <ParagraphContainer>
@@ -87,13 +92,16 @@
             e.preventDefault();
             onEnter(layoutElement);
           }}
-          text={'Enter gallery'}
+          text={progress !== 100 ? 'Loading the gallery..' : 'Enter gallery'}
           type={'button'}
         />
 
         <footer class="footer">
           <p class="copyright">Copyright &copy; {year} <Link href="https://github.com/bbawuah">Brian Bawuah</Link></p>
         </footer>
+        <div class="logo-bottom">
+          <Icon icon={IconType.close} />
+        </div>
       </ParagraphContainer>
     </section>
 
@@ -130,6 +138,12 @@
   main {
     height: 100%;
     width: 100%;
+    user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
   }
 
   .content-left-wrapper {
@@ -139,7 +153,7 @@
   .text {
     width: 100%;
     max-width: 650px;
-    font-size: 20px;
+    font-size: 22.125px;
     line-height: 129.49%;
     font-family: $font-text-light;
     letter-spacing: -0.025em;
@@ -161,7 +175,23 @@
     }
   }
 
-  @media screen and (min-width: 870px) {
+  .logo-top {
+    position: absolute;
+    left: -39%;
+    width: 65%;
+    bottom: -5px;
+    opacity: 0.25;
+  }
+
+  .logo-bottom {
+    position: absolute;
+    opacity: 0.25;
+    right: -33%;
+    width: 65%;
+    bottom: -5px;
+  }
+
+  @media screen and (min-width: 1028px) {
     .text {
       font-size: 25px;
     }
