@@ -225,7 +225,7 @@
       .bottom,
       .right {
         position: absolute;
-        touch-action: manipulation;
+        touch-action: none;
       }
       .up {
         top: 13%;
