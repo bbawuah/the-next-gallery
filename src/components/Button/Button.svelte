@@ -26,6 +26,7 @@
     cursor: pointer;
     border: none;
     outline: none;
+    z-index: 1;
 
     &:disabled {
       cursor: not-allowed;
