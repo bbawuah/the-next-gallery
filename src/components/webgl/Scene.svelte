@@ -226,7 +226,6 @@
       position: relative;
       width: 175px;
       height: 172px;
-      touch-action: none;
       user-select: none;
       -webkit-touch-callout: none;
       -webkit-user-select: none;
