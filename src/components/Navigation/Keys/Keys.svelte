@@ -8,6 +8,5 @@
     flex-direction: column;
     align-items: center;
     touch-action: manipulation;
-    pointer-events: none;
   }
 </style>
