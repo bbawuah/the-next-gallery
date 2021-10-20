@@ -1,4 +1,34 @@
-<div class="keys-container">
+<script lang="ts">
+  import {onMount} from 'svelte';
+
+  let container: HTMLDivElement;
+
+  onMount(() => {
+    if (container) {
+      container.addEventListener('touchstart', e => {
+        e.preventDefault();
+      });
+
+      container.addEventListener('touchmove', e => {
+        e.preventDefault();
+      });
+
+      container.addEventListener('touchend', e => {
+        e.preventDefault();
+      });
+
+      container.addEventListener('dblclick', e => {
+        e.preventDefault();
+      });
+
+      container.addEventListener('click', e => {
+        e.preventDefault();
+      });
+    }
+  });
+</script>
+
+<div class="keys-container" bind:this={container}>
   <slot />
 </div>
 
