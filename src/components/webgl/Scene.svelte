@@ -81,7 +81,6 @@
     {#if isMobileDevice && isPlaying}
       <div
         on:click={e => {
-          e.preventDefault();
           onExit(layoutElement);
         }}
         class="exit-container"
@@ -92,7 +91,6 @@
 
     <div
       on:click={e => {
-        e.preventDefault();
         hasMutedSound.update(value => !value);
 
         if (soundIsMuted) {
@@ -117,11 +115,9 @@
         <div class="keys">
           <div
             on:touchstart={e => {
-              e.preventDefault();
               scene.events.forward = true;
             }}
             on:touchend={e => {
-              e.preventDefault();
               scene.events.forward = false;
             }}
             class="up"
@@ -132,12 +128,9 @@
           <div
             class="bottom"
             on:touchstart={e => {
-              e.preventDefault();
-
               scene.events.backward = true;
             }}
             on:touchend={e => {
-              e.preventDefault();
               scene.events.backward = false;
             }}
           >
@@ -147,11 +140,9 @@
           <div
             class="left"
             on:touchstart={e => {
-              e.preventDefault();
               scene.events.left = true;
             }}
             on:touchend={e => {
-              e.preventDefault();
               scene.events.left = false;
             }}
           >
@@ -161,11 +152,9 @@
           <div
             class="right"
             on:touchstart={e => {
-              e.preventDefault();
               scene.events.right = true;
             }}
             on:touchend={e => {
-              e.preventDefault();
               scene.events.right = false;
             }}
           >
@@ -195,7 +184,6 @@
     position: relative;
     width: 100%;
     height: 100%;
-    min-height: 100vh;
     overflow: hidden;
     .webgl__canvas {
       position: fixed;

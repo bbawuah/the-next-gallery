@@ -104,10 +104,12 @@
     height: 100%;
     z-index: 2;
     opacity: 1;
+    touch-action: pan-y;
 
     .column-left {
       background-color: $color-white;
-      overflow-y: scroll;
+      overflow-y: auto;
+      overflow-x: hidden;
       position: relative;
       padding: 25px;
 
@@ -164,6 +166,7 @@
         position: absolute;
         cursor: pointer;
         opacity: 0;
+        display: none;
         left: 50%;
         top: 50%;
         transform: translate(-50%, -50%);
@@ -200,6 +203,7 @@
 
       .column-right {
         .call-to-action {
+          display: block;
           font-size: 2rem;
         }
       }
