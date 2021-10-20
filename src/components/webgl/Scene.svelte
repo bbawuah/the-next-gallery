@@ -118,7 +118,6 @@
               scene.events.forward = true;
             }}
             on:touchend={e => {
-              e.preventDefault();
               scene.events.forward = false;
             }}
             class="up"
@@ -132,7 +131,6 @@
               scene.events.backward = true;
             }}
             on:touchend={e => {
-              e.preventDefault();
               scene.events.backward = false;
             }}
           >
@@ -145,7 +143,6 @@
               scene.events.left = true;
             }}
             on:touchend={e => {
-              e.preventDefault();
               scene.events.left = false;
             }}
           >
@@ -158,7 +155,6 @@
               scene.events.right = true;
             }}
             on:touchend={e => {
-              e.preventDefault();
               scene.events.right = false;
             }}
           >
