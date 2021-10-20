@@ -186,7 +186,7 @@
       background-color: rgba(143, 143, 143, 0.623);
     }
   }
-  @media screen and (min-width: 870px) {
+  @media screen and (min-width: 1028px) {
     .container {
       grid-template-columns: 50% 50%;
       grid-template-rows: unset;

@@ -87,7 +87,7 @@
             e.preventDefault();
             onEnter(layoutElement);
           }}
-          text={'Enter gallery'}
+          text={progress !== 100 ? 'Loading the gallery..' : 'Enter gallery'}
           type={'button'}
         />
 
@@ -139,7 +139,7 @@
   .text {
     width: 100%;
     max-width: 650px;
-    font-size: 20px;
+    font-size: 22.125px;
     line-height: 129.49%;
     font-family: $font-text-light;
     letter-spacing: -0.025em;
@@ -161,7 +161,7 @@
     }
   }
 
-  @media screen and (min-width: 870px) {
+  @media screen and (min-width: 1028px) {
     .text {
       font-size: 25px;
     }
