@@ -119,7 +119,7 @@
     width: 100vw;
     height: 100vh;
     user-select: none;
-    touch-action: manipulation;
+    touch-action: none;
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     -khtml-user-select: none;
