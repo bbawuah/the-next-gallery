@@ -115,9 +115,11 @@
         <div class="keys">
           <div
             on:touchstart={e => {
+              e.preventDefault();
               scene.events.forward = true;
             }}
             on:touchend={e => {
+              e.preventDefault();
               scene.events.forward = false;
             }}
             class="up"
@@ -128,9 +130,11 @@
           <div
             class="bottom"
             on:touchstart={e => {
+              e.preventDefault();
               scene.events.backward = true;
             }}
             on:touchend={e => {
+              e.preventDefault();
               scene.events.backward = false;
             }}
           >
@@ -140,9 +144,11 @@
           <div
             class="left"
             on:touchstart={e => {
+              e.preventDefault();
               scene.events.left = true;
             }}
             on:touchend={e => {
+              e.preventDefault();
               scene.events.left = false;
             }}
           >
@@ -152,9 +158,11 @@
           <div
             class="right"
             on:touchstart={e => {
+              e.preventDefault();
               scene.events.right = true;
             }}
             on:touchend={e => {
+              e.preventDefault();
               scene.events.right = false;
             }}
           >
@@ -233,12 +241,6 @@
         position: absolute;
         user-select: initial;
         touch-action: none;
-        user-select: text;
-        -webkit-touch-callout: text;
-        -webkit-user-select: text;
-        -khtml-user-select: text;
-        -moz-user-select: text;
-        -ms-user-select: text;
       }
       .up {
         top: 13%;
