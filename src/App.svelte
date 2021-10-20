@@ -49,13 +49,15 @@
       </ParagraphContainer>
 
       <ParagraphContainer>
-        <p class="text">
-          The Next Gallery is an immersive digital experience that showcases a selection of creatives and talents.
-        </p>
-        <p class="text">
-          Each individual, specialized in his/her craft. Successful in his/her way, proofs that listening to your heart
-          is the beginning of impactful art.
-        </p>
+        <div>
+          <p class="text">
+            The Next Gallery is an immersive digital experience that showcases a selection of creatives and talents.
+          </p>
+          <p class="text">
+            Each individual, specialized in his/her craft. Successful in his/her way, proofs that listening to your
+            heart is the beginning of impactful art.
+          </p>
+        </div>
       </ParagraphContainer>
 
       <ParagraphContainer>
