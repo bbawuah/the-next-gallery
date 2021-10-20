@@ -105,7 +105,12 @@
     z-index: 2;
     opacity: 1;
     touch-action: pan-y;
-
+    user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
     .column-left {
       background-color: $color-white;
       overflow-y: auto;
