@@ -45,20 +45,23 @@
 
       <ParagraphContainer>
         <p class="text">
-          The Next Gallery is an immersive digital experience that showcases a selection of creatives and talents based
-          in the Netherlands in a unique way using emerging technologies.
+          The Next Gallery is an immersive digital experience that showcases a selection of creatives and talents.
+        </p>
+        <p class="text">
+          Each individual, specialized in his/her craft. Successful in his/her way, proofs that listening to your heart
+          is the beginning of impactful art.
         </p>
       </ParagraphContainer>
 
       <ParagraphContainer>
         <div>
           <p class="text">
-            From artificial intelligence and machine learning to virtual and augmented reality, Emerging technologies
+            Emerging technologies, from artificial intelligence and machine learning to virtual and augmented reality,
             are beginning to impact our societies and shape our public discourse.
           </p>
           <p class="text">
             But the conversations in our community around how these tools are influencing, and will continue to mould,
-            the creative fields of art and design are still really in their infancy.
+            the creative fields are still really in their infancy.
           </p>
         </div>
       </ParagraphContainer>
@@ -66,15 +69,11 @@
       <ParagraphContainer>
         <div>
           <p class="text">
-            The Next Gallery overwrites virtual information onto your real-world environment using extended reality.
-          </p>
-          <p class="text">
-            It opens a new virtual world as a source of inspiration for creatives who want to express their talent and
-            art and craft in unique ways.
+            The Next Gallery opens a new virtual world as a source of inspiration for creatives who want to express
+            their talent and art and craft in unique ways.
           </p>
         </div>
       </ParagraphContainer>
-
       <ParagraphContainer>
         <div class="outro">
           <p class="text">Special thanks to all the creatives that participated in this gallery.</p>
