@@ -104,6 +104,12 @@
     height: 100%;
     z-index: 2;
     opacity: 1;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 
     .column-left {
       background-color: $color-white;
