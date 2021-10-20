@@ -90,7 +90,6 @@ function handleSoundOnPageVisibility() {
   const visibilityChange = 'visibilitychange';
 
   document.addEventListener(visibilityChange, () => {
-    console.log('running');
     if (document[hidden]) {
       audio.pause();
     } else {
