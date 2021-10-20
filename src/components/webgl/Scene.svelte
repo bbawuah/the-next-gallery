@@ -198,23 +198,18 @@
       position: relative;
       display: flex;
       width: 100%;
+      padding: 25px;
       justify-content: space-between;
       .sound-icon {
-        position: absolute;
-        right: 25px;
-        top: 55px;
         z-index: 1;
         touch-action: none;
       }
     }
 
     .exit-container {
-      position: absolute;
       display: flex;
-      top: 55px;
       align-items: center;
       touch-action: none;
-      left: 25px;
       z-index: 1;
       transition: 0.175s ease-in-out;
     }
@@ -223,39 +218,47 @@
       position: relative;
       width: 175px;
       height: 172px;
-      touch-action: none;
+      user-select: none;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      -khtml-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
 
       .up,
       .left,
       .bottom,
       .right {
         position: absolute;
-        touch-action: manipulation;
+        user-select: initial;
+        touch-action: none;
       }
       .up {
-        top: 35%;
+        top: 13%;
         left: 50%;
         width: 50px;
         transform: translate(-50%, 0);
       }
 
       .bottom {
-        bottom: 0;
+        bottom: 15%;
         left: 50%;
         width: 50px;
-        transform: translate(-50%, 0);
+        transform: translate(-50%, -15%);
       }
 
       .left {
-        bottom: 0;
+        bottom: 15%;
         left: 0;
         width: 50px;
+        transform: translate(0, -15%);
       }
 
       .right {
-        bottom: 0;
+        bottom: 15%;
         right: 0;
         width: 50px;
+        transform: translate(0, -15%);
       }
     }
 
@@ -268,7 +271,7 @@
     }
   }
 
-  @media screen and (min-width: 665px) {
+  @media screen and (min-width: 1028px) {
     .canvas-container {
       .keys {
         width: 100px;
@@ -280,14 +283,25 @@
         .bottom {
           width: unset;
         }
-      }
 
-      .scene-header {
-        .sound-icon {
-          position: absolute;
-          right: 50px;
-          top: 50px;
-          z-index: 1;
+        .up {
+          top: 35%;
+          left: 50%;
+
+          transform: translate(-50%, 0);
+        }
+        .bottom {
+          bottom: 0;
+          left: 50%;
+          transform: translate(-50%, 0);
+        }
+        .left {
+          bottom: 0;
+          left: 0;
+        }
+        .right {
+          bottom: 0;
+          right: 0;
         }
       }
     }

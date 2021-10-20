@@ -33,7 +33,7 @@
     }
   }
 
-  @media screen and (min-width: 870px) {
+  @media screen and (min-width: 1024px) {
     .container {
       .progress-meter {
         font-size: 3.5rem;

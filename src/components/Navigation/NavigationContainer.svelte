@@ -6,16 +6,17 @@
   .navigation-container {
     position: absolute;
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     flex-direction: row-reverse;
     bottom: 15vh;
     touch-action: none;
     left: 0;
     width: 100%;
     z-index: 1;
+    padding: 0 25px;
   }
 
-  @media screen and (min-width: 600px) {
+  @media screen and (min-width: 1028px) {
     .navigation-container {
       display: grid;
       justify-content: initial;
@@ -23,8 +24,8 @@
       grid-template-columns: 130px 130px 130px 130px;
       grid-gap: 10px;
       position: absolute;
-      left: 25px;
-      bottom: 20px;
+      bottom: 0;
+      padding: 25px;
     }
   }
 </style>

@@ -21,7 +21,7 @@
     color: $color-white;
     align-self: start;
     width: 100%;
-    font-size: 20px;
+    font-size: 22.125px;
     margin-top: 25px;
     cursor: pointer;
     border: none;
@@ -34,7 +34,7 @@
     }
   }
 
-  @media screen and (min-width: 870px) {
+  @media screen and (min-width: 1028px) {
     .button {
       font-size: 25px;
       max-width: 450px;

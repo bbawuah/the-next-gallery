@@ -105,7 +105,12 @@
     z-index: 2;
     opacity: 1;
     touch-action: pan-y;
-
+    user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
     .column-left {
       background-color: $color-white;
       overflow-y: auto;
@@ -186,7 +191,7 @@
       background-color: rgba(143, 143, 143, 0.623);
     }
   }
-  @media screen and (min-width: 870px) {
+  @media screen and (min-width: 1028px) {
     .container {
       grid-template-columns: 50% 50%;
       grid-template-rows: unset;
