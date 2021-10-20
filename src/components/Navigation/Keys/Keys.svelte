@@ -7,7 +7,6 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    touch-action: none;
     user-select: none;
     -webkit-touch-callout: none;
     -webkit-user-select: none;

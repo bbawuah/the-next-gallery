@@ -36,10 +36,6 @@
   xrIsSupported.subscribe(value => {
     webXRIsSupported = value;
   });
-
-  document.ontouchmove = function (event) {
-    event.preventDefault();
-  };
 </script>
 
 <main>
