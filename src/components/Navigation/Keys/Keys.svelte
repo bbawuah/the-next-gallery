@@ -5,15 +5,7 @@
 
   onMount(() => {
     if (container) {
-      container.addEventListener('touchstart', e => {
-        e.preventDefault();
-      });
-
       container.addEventListener('touchmove', e => {
-        e.preventDefault();
-      });
-
-      container.addEventListener('touchend', e => {
         e.preventDefault();
       });
 
