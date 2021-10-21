@@ -182,12 +182,12 @@
     left: -39%;
     width: 65%;
     bottom: -5px;
-    opacity: 0.25;
+    opacity: 0.075;
   }
 
   .logo-bottom {
     position: absolute;
-    opacity: 0.25;
+    opacity: 0.075;
     right: -33%;
     width: 65%;
     bottom: -5px;
