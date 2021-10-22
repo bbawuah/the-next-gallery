@@ -118,7 +118,6 @@ export class WebXR {
       const controller = this.renderer.xr.getController(i);
       controller.add(line.clone());
       controller.userData.selectPressed = false;
-      controller.addEventListener('connected', event => this.onConnected(event));
       controller.userData.marker = this.createMarker(geometry2, material);
       this.scene.add(controller);
       controllers.push(controller);
@@ -127,6 +126,7 @@ export class WebXR {
       const grip = this.renderer.xr.getControllerGrip(i);
       grip.add(controllerModelFactory.createControllerModel(grip));
       this.scene.add(grip);
+      this.dolly.add(grip);
     }
     controllers.forEach(controller => {
       controller.addEventListener('selectstart', event => this.onSelectStart(event.target));
@@ -136,43 +136,6 @@ export class WebXR {
     });
 
     return controllers;
-  }
-
-  private onConnected(event: THREE.Event): void {
-    const info: Profile = {};
-
-    fetchProfile(event.data, DEFAULT_PROFILES_PATH, DEFAULT_PROFILE).then(({profile, assethPath}) => {
-      const typedProfile = profile as XRProfile;
-      info.name = typedProfile.profileId as string;
-      info.targetRayMode = event.data.targetRayMode as string;
-
-      Object.entries(typedProfile.layouts).forEach(([key, layout]) => {
-        const components = {};
-
-        Object.values(layout.components as any[]).forEach(component => {
-          components[component.rootNodeName] = component.gamepadIndices;
-        });
-
-        info[key] = components;
-      });
-
-      this.createButtonStates(info.right);
-    });
-  }
-
-  private createButtonStates(components: LeftController | RightController) {
-    const buttonStates: ButtonStates = {};
-    this.gamepadIndices = components;
-
-    Object.keys(components).forEach(key => {
-      if (key.indexOf('touchpad') != -1 || key.indexOf('thumbstick') != -1) {
-        buttonStates[key] = {button: 0, xAxis: 0, yAxis: 0};
-      } else {
-        buttonStates[key] = 0;
-      }
-    });
-
-    this.buttonStates = buttonStates;
   }
 
   private onSelectStart(controller: THREE.Group) {
