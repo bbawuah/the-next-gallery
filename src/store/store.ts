@@ -28,5 +28,3 @@ export const audioController: Writable<HTMLAudioElement> = writable(audio);
 export const hasMutedSound: Writable<boolean> = writable(false);
 
 export const xrIsSupported: Writable<boolean> = writable();
-
-export const xrColliders: Writable<THREE.Mesh[]> = writable();

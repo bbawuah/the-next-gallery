@@ -2,11 +2,8 @@ import * as THREE from 'three';
 import {VRButton} from './VRButton';
 import type {ButtonStates, LeftController, RightController, XRProfile, Profile} from './types';
 import {XRControllerModelFactory} from 'three/examples/jsm/webxr/XRControllerModelFactory.js';
-import {
-  Constants as MotionControllerConstants,
-  fetchProfile
-} from 'three/examples/jsm/libs/motion-controllers.module.js';
-import {xrColliders} from '../../../store/store';
+import {fetchProfile} from 'three/examples/jsm/libs/motion-controllers.module.js';
+import {TeleportMesh} from './TeleportMesh';
 
 const DEFAULT_PROFILES_PATH = 'https://cdn.jsdelivr.net/npm/@webxr-input-profiles/assets@1.0/dist/profiles';
 const DEFAULT_PROFILE = 'generic-trigger';
@@ -31,7 +28,8 @@ export class WebXR {
   private lightParticles: THREE.Points;
   private dolly: THREE.Object3D;
   private dummyCam: THREE.Object3D;
-  private origin: THREE.Vector3;
+  private teleports: TeleportMesh[];
+  private collisionObjects: THREE.Object3D[];
 
   constructor(props: Props) {
     this.renderer = props.renderer;
@@ -42,7 +40,6 @@ export class WebXR {
 
     this.clock = new THREE.Clock();
     this.raycaster = new THREE.Raycaster();
-    this.workingMatrix = new THREE.Matrix4();
     this.controllers = this.buildControllers();
 
     this.renderer.xr.enabled = true;
@@ -50,12 +47,51 @@ export class WebXR {
     this.dolly = new THREE.Object3D();
     this.dolly.add(this.camera);
     this.scene.add(this.dolly);
-    this.origin = new THREE.Vector3();
 
     this.dummyCam = new THREE.Object3D();
     this.camera.add(this.dummyCam);
 
+    const locations: THREE.Vector3[] = [
+      new THREE.Vector3(-1.4411578358044423, 0, -12.7902673661434),
+      new THREE.Vector3(1.408202185061461, 0, -14.59596980904186),
+      new THREE.Vector3(2.2322463246114808, 0, -20.022498424597057),
+      new THREE.Vector3(-0.7143463136406428, 0, -20.884178077483437),
+      new THREE.Vector3(3.8957668683477857, 0, -22.997137183792685),
+      new THREE.Vector3(-2.7715808064437817, 0, -24.06950431854075),
+      new THREE.Vector3(-14.184811972111136, 0, -25.192878140758882),
+      new THREE.Vector3(-13.645796824317507, 0, -16.84230505197753),
+      new THREE.Vector3(-13.65444636702242, 0, -8.824376425299347),
+      new THREE.Vector3(-13.365366711325443, 0, 0.06779025505478342),
+      new THREE.Vector3(-13.472713912090512, 0, 14.16126213479785),
+      new THREE.Vector3(-13.223165346946413, 0, 23.094053460188935),
+      new THREE.Vector3(13.848622389704037, 0, 25.487481232138368),
+      new THREE.Vector3(13.330024885178467, 0, 14.921956753477273),
+      new THREE.Vector3(13.709804551512184, 0, 7.6775593300571865),
+      new THREE.Vector3(13.451456302717393, 0, -0.8678559898471846),
+      new THREE.Vector3(13.740666875752018, 0, -8.848286348883995),
+      new THREE.Vector3(13.767639616866397, -17.14089751761281)
+    ];
+
+    this.teleports = [];
+
+    locations.forEach(location => {
+      const teleport = new TeleportMesh();
+      teleport.position.copy(location);
+      this.scene.add(teleport);
+      this.teleports.push(teleport);
+    });
+
+    this.collisionObjects = [];
+    this.teleports.forEach(teleport => this.collisionObjects.push(teleport.children[0]));
+
     this.render();
+  }
+
+  private createMarker(geometry: THREE.BufferGeometry, material: THREE.Material): THREE.Mesh {
+    const mesh = new THREE.Mesh(geometry, material);
+    mesh.visible = false;
+    this.scene.add(mesh);
+    return mesh;
   }
 
   private buildControllers(): THREE.Group[] {
@@ -70,6 +106,9 @@ export class WebXR {
     line.name = 'line';
     line.scale.z = 10;
 
+    const geometry2 = new THREE.SphereGeometry(0.5, 8, 6);
+    const material = new THREE.MeshBasicMaterial({color: 0xff0000});
+
     const controllers: THREE.Group[] = [];
 
     for (let i = 0; i <= 1; i++) {
@@ -77,6 +116,7 @@ export class WebXR {
       controller.add(line.clone());
       controller.userData.selectPressed = false;
       controller.addEventListener('connected', event => this.onConnected(event));
+      controller.userData.marker = this.createMarker(geometry2, material);
       this.scene.add(controller);
       controllers.push(controller);
 
@@ -87,6 +127,8 @@ export class WebXR {
     controllers.forEach(controller => {
       controller.addEventListener('selectstart', event => this.onSelectStart(event.target));
       controller.addEventListener('selectend', event => this.onSelectEnd(event.target));
+      controller.addEventListener('squeezestart', event => this.onSqueezeStart(event.target));
+      controller.addEventListener('squeezeend', event => this.onSqueezeEnd(event.target));
     });
 
     return controllers;
@@ -131,125 +173,66 @@ export class WebXR {
 
   private onSelectStart(controller: THREE.Group) {
     controller.userData.selectPressed = true;
+    if (controller.userData.teleport) {
+      this.dolly.position.copy(controller.userData.teleport.position);
+      this.teleports.forEach(teleport => teleport.fadeOut(0.5));
+    } else if (controller.userData.marker.visible) {
+      const pos = controller.userData.marker.position;
+      console.log(`${pos.x.toFixed(3)}, ${pos.y.toFixed(3)}, ${pos.z.toFixed(3)}`);
+    }
   }
 
   private onSelectEnd(controller: THREE.Group) {
     controller.userData.selectPressed = false;
   }
 
-  // private updateGamepadState(): void {
-  //   const session = this.renderer.xr.getSession();
-  //   const inputSource = session.inputSources[0];
+  private onSqueezeStart(controller: THREE.Group) {
+    controller.userData.squeezePressed = false;
+    this.teleports.forEach(teleport => teleport.fadeIn(1));
+  }
 
-  //   if (inputSource && inputSource.gamepad && this.gamepadIndices && this.buttonStates) {
-  //     const gamepad = inputSource.gamepad;
+  private onSqueezeEnd(controller: THREE.Group) {
+    controller.userData.squeezePressed = true;
+    this.teleports.forEach(teleport => teleport.fadeOut(1));
+  }
 
-  //     try {
-  //       Object.entries(this.buttonStates).forEach(([key, value]) => {
-  //         const buttonIndex = this.gamepadIndices[key].button;
+  private intersectObjects(controller: THREE.Group): void {
+    const line = controller.getObjectByName('ray');
+    this.workingMatrix.identity().extractRotation(controller.matrixWorld);
 
-  //         if (key.indexOf('touchpad') != -1 || key.indexOf('thumbstick') != -1) {
-  //           const xAxisIndex = this.gamepadIndices[key].xAxis;
-  //           const yAxisIndex = this.gamepadIndices[key].yAxis;
-  //           this.buttonStates[key].button = gamepad.buttons[buttonIndex].value;
-  //           this.buttonStates[key].xAxis = gamepad.axes[xAxisIndex].toFixed(2);
-  //           this.buttonStates[key].yAxis = gamepad.axes[yAxisIndex].toFixed(2);
-  //         } else {
-  //           this.buttonStates[key].button = gamepad.buttons[buttonIndex].value;
-  //         }
-  //       });
-  //     } catch (e) {
-  //       console.warn('An error occured setting up the UI');
-  //     }
-  //   }
-  // }
+    this.raycaster.ray.origin.setFromMatrixPosition(controller.matrixWorld);
+    this.raycaster.ray.direction.set(0, 0, -1).applyMatrix4(this.workingMatrix);
 
-  private handleController(controller: THREE.Group, dt: number) {
-    let colliders: THREE.Mesh[];
+    const intersects = this.raycaster.intersectObjects(this.collisionObjects);
+    const marker = controller.userData.marker;
+    marker.visible = false;
 
-    xrColliders.subscribe(value => {
-      colliders = value;
-    });
+    controller.userData.teleport = undefined;
 
-    if (controller.userData.selectPressed) {
-      const wallLimit = 1.3;
-      const speed = 2;
-      let pos = this.dolly.position.clone();
-      pos.y += 1;
+    if (intersects.length > 0) {
+      const intersect = intersects[0];
+      line.scale.z = intersect.distance;
 
-      const dir = new THREE.Vector3();
-
-      // console.log(colliders);
-
-      const quaternion = this.dolly.quaternion.clone();
-      this.dolly.quaternion.copy(this.dummyCam.getWorldQuaternion(new THREE.Quaternion()));
-
-      this.dolly.getWorldDirection(dir);
-      dir.negate();
-      this.raycaster.set(pos, dir);
-
-      let blocked = false;
-
-      let intersect = this.raycaster.intersectObjects(colliders);
-
-      if (intersect.length > 0) {
-        if (intersect[0].distance < wallLimit) {
-          blocked = true;
-        }
+      if (intersect.object.parent && intersect.object.parent instanceof TeleportMesh) {
+        intersect.object.parent.selected = true;
+        controller.userData.teleport = intersect.object.parent;
       }
-
-      if (!blocked) {
-        this.dolly.translateZ(-dt * speed);
-        pos = this.dolly.getWorldPosition(this.origin);
-      }
-
-      dir.set(-1, 0, 0);
-      dir.applyMatrix4(this.dolly.matrix);
-      dir.normalize();
-      this.raycaster.set(pos, dir);
-
-      intersect = this.raycaster.intersectObjects(colliders);
-
-      if (intersect.length > 0) {
-        if (intersect[0].distance < wallLimit) this.dolly.translateX(wallLimit - intersect[0].distance);
-      }
-
-      dir.set(1, 0, 0);
-      dir.applyMatrix4(this.dolly.matrix);
-      dir.normalize();
-      this.raycaster.set(pos, dir);
-
-      const stairs = colliders.filter(mesh => mesh.name === 'treden');
-
-      intersect = this.raycaster.intersectObjects(stairs);
-      if (intersect.length > 0) {
-        if (intersect[0].distance < wallLimit) this.dolly.translateX(intersect[0].distance - wallLimit);
-      }
-
-      dir.set(0, -1, 0);
-      pos.y += 1.5;
-      this.raycaster.set(pos, dir);
-
-      intersect = this.raycaster.intersectObjects(stairs);
-      if (intersect.length > 0) {
-        this.dolly.position.copy(intersect[0].point);
-      }
-
-      this.dolly.position.y = 0;
-
-      //Restore the original rotation
-      this.dolly.quaternion.copy(quaternion);
     }
   }
 
   private render(): void {
     this.renderer.setAnimationLoop(() => {
-      const deltaTime = this.clock.getDelta();
+      // const deltaTime = this.clock.getDelta();
       const elapsedTime = this.clock.getElapsedTime();
 
-      if (this.controllers) {
-        this.handleController(this.controllers[0], deltaTime);
-      }
+      this.teleports.forEach(teleport => {
+        teleport.selected = false;
+        teleport.update();
+      });
+
+      this.controllers.forEach(controller => {
+        this.intersectObjects(controller);
+      });
 
       if (this.lightParticles) {
         (this.lightParticles.material as THREE.RawShaderMaterial).uniforms.u_time.value = elapsedTime;

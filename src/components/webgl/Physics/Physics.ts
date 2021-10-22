@@ -130,7 +130,7 @@ export class PhysicsWorld {
     const deltaTime = elapsedTime - oldElapsedTime;
     oldElapsedTime = elapsedTime;
 
-    this.cannonDebugRenderer.update();
+    // this.cannonDebugRenderer.update();
 
     camera.position.copy(
       new THREE.Vector3(this.sphereBody.position.x, this.sphereBody.position.y + 0.75, this.sphereBody.position.z)

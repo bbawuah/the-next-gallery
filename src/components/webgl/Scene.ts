@@ -8,7 +8,7 @@ import type {Sizes} from './types';
 import {Events} from './Events/Events';
 import {PhysicsWorld} from './Physics/Physics';
 import {RenderTarget} from './RenderTarget/RenderTarget';
-import {deviceOrientation, isMobileDevice, pointerLockerControls, xrColliders} from '../../store/store';
+import {deviceOrientation, isMobileDevice, pointerLockerControls} from '../../store/store';
 import {DeviceOrientationControls} from 'three/examples/jsm/controls/DeviceOrientationControls.js';
 import {PointerLockControls} from 'three/examples/jsm/controls/PointerLockControls';
 import {LoadingManager} from './LoadingManager/LoadingManager';
@@ -198,14 +198,6 @@ export class Scene {
 
     const handrail = gltf.scene.children.find(child => child.name === 'trapLeuning') as THREE.Mesh;
     handrail.material = darkGrey;
-
-    const gebouw = gltf.scene.children.find(child => child.name === 'Gebouw') as THREE.Mesh;
-
-    const hekken = gltf.scene.children.find(child => child.name === 'hekken') as THREE.Mesh;
-
-    const verdieping = gltf.scene.children.find(child => child.name === 'verdieping') as THREE.Mesh;
-
-    xrColliders.update(() => [gebouw, handrail, looseWalls, stairs, hekken, verdieping]);
 
     this.addPortraits(gltf);
     this.addMeta(gltf);
