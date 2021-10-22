@@ -7,13 +7,10 @@ export class Events {
   private _left: boolean;
   private _right: boolean;
   private playerIsInScene: boolean;
-
-  // Movement
   private frontVector: THREE.Vector3;
   private sideVector: THREE.Vector3;
 
   public userDirection: THREE.Vector3;
-
   public walkingSpeed: number;
 
   constructor(camera: THREE.PerspectiveCamera) {

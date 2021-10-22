@@ -54,52 +54,41 @@ const stats = new Stats();
 // document.body.appendChild(stats.dom);
 
 export class Scene {
-  // Scene
   private renderer: THREE.WebGLRenderer;
   private camera: THREE.PerspectiveCamera;
   private scene: THREE.Scene;
 
-  // Development
   private controls: OrbitControls;
 
   private material: THREE.MeshBasicMaterial;
   private mesh: THREE.Mesh;
 
-  // Loader
   private gltfLoader: GLTFLoader;
   private dracoLoader: DRACOLoader;
   private textureLoader: THREE.TextureLoader;
 
-  // Textures
   private bakedTexture: THREE.Texture;
 
-  // Physics
   private physics: PhysicsWorld;
 
   private clock: THREE.Clock;
 
-  // ShaderPainting
   private shaderPainting: THREE.Mesh;
-  private bitmapText: RenderTarget;
+  private renderTarget: RenderTarget;
 
   private particles: LightParticles;
 
-  // Loading manager
   private loadingManager: LoadingManager;
 
-  // WebXR
   private webXR: WebXR;
 
-  // IsMobile device?
   public isMobile: boolean;
 
   public deviceOrientationControls: DeviceOrientationControls;
 
-  //Events
   public events: Events;
 
   constructor(el: HTMLCanvasElement) {
-    // Renderer
     this.renderer = new THREE.WebGLRenderer({
       canvas: el
     });
@@ -107,13 +96,11 @@ export class Scene {
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.renderer.outputEncoding = THREE.sRGBEncoding;
 
-    // Scene
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(0xffffff);
 
     this.particles = new LightParticles(this.scene);
 
-    // Camera
     this.camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100);
     this.camera.position.z = -1;
 
@@ -123,30 +110,17 @@ export class Scene {
       this.isMobile = value;
     });
 
-    if (!this.isMobile) {
-      this.webXR = new WebXR({
-        renderer: this.renderer,
-        camera: this.camera,
-        scene: this.scene
-      });
-    }
-
-    // Textures
     this.textureLoader = new THREE.TextureLoader(this.loadingManager.loadingManager);
     this.bakedTexture = this.textureLoader.load('./static/map.jpg');
     this.bakedTexture.flipY = false;
     this.bakedTexture.encoding = THREE.sRGBEncoding;
 
-    // Texture material
     this.material = new THREE.MeshBasicMaterial({map: this.bakedTexture});
 
-    // Events
     this.events = new Events(this.camera);
 
-    // Clock
     this.clock = new THREE.Clock();
 
-    // Physics
     this.physics = new PhysicsWorld({
       scene: this.scene
     });
@@ -156,15 +130,13 @@ export class Scene {
     }
 
     this.controls = new OrbitControls(this.camera, el); //Development
+
     this.deviceOrientationControls = new DeviceOrientationControls(this.camera);
-    // Svelte store
     deviceOrientation.update(() => this.deviceOrientationControls);
 
-    // DRACO Loader
     this.dracoLoader = new DRACOLoader(this.loadingManager.loadingManager);
     this.dracoLoader.setDecoderPath('draco/');
 
-    // GLTF Loader
     this.gltfLoader = new GLTFLoader(this.loadingManager.loadingManager);
     this.gltfLoader.setDRACOLoader(this.dracoLoader);
     this.gltfLoader.load('./static/museum.glb', gltf => this.handleGltf(gltf));
@@ -172,6 +144,12 @@ export class Scene {
     isMobileDevice.subscribe(v => (this.isMobile = v));
 
     if (!this.isMobile) {
+      this.webXR = new WebXR({
+        renderer: this.renderer,
+        camera: this.camera,
+        scene: this.scene,
+        particles: this.particles.lightParticles
+      });
       pointerLockerControls.update(() => new PointerLockControls(this.camera, el));
       this.events.handleKeyUpEvents();
       this.events.handleKeyDownEvents();
@@ -213,7 +191,7 @@ export class Scene {
 
     this.shaderPainting = gltf.scene.children.find(child => child.name === 'shader-schilderij') as THREE.Mesh;
     this.shaderPainting.material = new THREE.MeshBasicMaterial({color: 0xff0000});
-    this.bitmapText = new RenderTarget(this.shaderPainting);
+    this.renderTarget = new RenderTarget(this.shaderPainting);
 
     const looseWalls = gltf.scene.children.find(child => child.name === 'losse-muren') as THREE.Mesh;
     this.physics.createPhysics(looseWalls);
@@ -255,7 +233,6 @@ export class Scene {
     const elapsedTime = this.clock.getElapsedTime();
     stats.begin();
 
-    //Mobile orientation
     if (isMobile) {
       this.deviceOrientationControls.update();
     }
@@ -264,14 +241,14 @@ export class Scene {
       this.physics.handlePhysics({elapsedTime, camera: this.camera, userDirection: this.events.userDirection});
     }
 
-    if (this.bitmapText && this.bitmapText.renderTarget && this.bitmapText.renderTargetMaterial) {
+    if (this.renderTarget && this.renderTarget.renderTarget && this.renderTarget.renderTargetMaterial) {
       if (!isMobile) {
-        (this.bitmapText.renderTargetMaterial as THREE.RawShaderMaterial).uniforms.u_time.value = elapsedTime;
+        (this.renderTarget.renderTargetMaterial as THREE.RawShaderMaterial).uniforms.u_time.value = elapsedTime;
       }
 
-      this.renderer.setRenderTarget(this.bitmapText.renderTarget);
+      this.renderer.setRenderTarget(this.renderTarget.renderTarget);
 
-      this.renderer.render(this.bitmapText.renderTargetScene, this.bitmapText.renderTargetCamera);
+      this.renderer.render(this.renderTarget.renderTargetScene, this.renderTarget.renderTargetCamera);
       this.renderer.setRenderTarget(null);
     }
 
