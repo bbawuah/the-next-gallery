@@ -28,6 +28,7 @@ export class WebXR {
   private lightParticles: THREE.Points;
   private dolly: THREE.Object3D;
   private dummyCam: THREE.Object3D;
+  private origin: THREE.Vector3;
   private teleports: TeleportMesh[];
   private collisionObjects: THREE.Object3D[];
 
@@ -40,6 +41,7 @@ export class WebXR {
 
     this.clock = new THREE.Clock();
     this.raycaster = new THREE.Raycaster();
+    this.workingMatrix = new THREE.Matrix4();
     this.controllers = this.buildControllers();
 
     this.renderer.xr.enabled = true;
@@ -47,6 +49,7 @@ export class WebXR {
     this.dolly = new THREE.Object3D();
     this.dolly.add(this.camera);
     this.scene.add(this.dolly);
+    this.origin = new THREE.Vector3();
 
     this.dummyCam = new THREE.Object3D();
     this.camera.add(this.dummyCam);
@@ -103,7 +106,7 @@ export class WebXR {
     ]);
 
     const line = new THREE.Line(geometry);
-    line.name = 'line';
+    line.name = 'ray';
     line.scale.z = 10;
 
     const geometry2 = new THREE.SphereGeometry(0.5, 8, 6);
@@ -222,7 +225,7 @@ export class WebXR {
 
   private render(): void {
     this.renderer.setAnimationLoop(() => {
-      // const deltaTime = this.clock.getDelta();
+      const deltaTime = this.clock.getDelta();
       const elapsedTime = this.clock.getElapsedTime();
 
       this.teleports.forEach(teleport => {
@@ -233,7 +236,6 @@ export class WebXR {
       this.controllers.forEach(controller => {
         this.intersectObjects(controller);
       });
-
       if (this.lightParticles) {
         (this.lightParticles.material as THREE.RawShaderMaterial).uniforms.u_time.value = elapsedTime;
       }
