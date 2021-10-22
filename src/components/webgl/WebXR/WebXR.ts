@@ -1,11 +1,10 @@
 import * as THREE from 'three';
 import {VRButton} from './VRButton';
-import type {XRProfile} from './types';
+import type {ButtonStates, LeftController, RightController, XRProfile, Profile} from './types';
 import {XRControllerModelFactory} from 'three/examples/jsm/webxr/XRControllerModelFactory.js';
 import {
   Constants as MotionControllerConstants,
-  fetchProfile,
-  MotionController
+  fetchProfile
 } from 'three/examples/jsm/libs/motion-controllers.module.js';
 
 const DEFAULT_PROFILES_PATH = 'https://cdn.jsdelivr.net/npm/@webxr-input-profiles/assets@1.0/dist/profiles';
@@ -14,12 +13,7 @@ interface Props {
   renderer: THREE.WebGLRenderer;
   scene: THREE.Scene;
   camera: THREE.PerspectiveCamera;
-}
-
-interface Profile {
-  name?: string;
-  targetRayMode?: string;
-  layouts?: string;
+  particles: THREE.Points;
 }
 
 export class WebXR {
@@ -31,11 +25,17 @@ export class WebXR {
   private scene: THREE.Scene;
   private camera: THREE.PerspectiveCamera;
   private controllers: THREE.Group[];
+  private gamepadIndices: LeftController | RightController;
+  private buttonStates: ButtonStates;
+  private lightParticles: THREE.Points;
+  private dolly: THREE.Object3D;
+  private dummyCam: THREE.Object3D;
 
   constructor(props: Props) {
     this.renderer = props.renderer;
     this.camera = props.camera;
     this.scene = props.scene;
+    this.lightParticles = props.particles;
     this.vrButton = new VRButton(this.renderer);
     this.clock = new THREE.Clock();
     this.raycaster = new THREE.Raycaster();
@@ -43,6 +43,14 @@ export class WebXR {
     this.controllers = this.buildControllers();
 
     this.renderer.xr.enabled = true;
+
+    this.dolly = new THREE.Object3D();
+    this.dolly.position.z = 5;
+    this.dolly.add(this.camera);
+    this.scene.add(this.dolly);
+
+    this.dummyCam = new THREE.Object3D();
+    this.camera.add(this.dummyCam);
 
     this.render();
   }
@@ -67,7 +75,6 @@ export class WebXR {
       controller.userData.selectPressed = false;
       controller.addEventListener('connected', event => this.onConnected(event));
       this.scene.add(controller);
-
       controllers.push(controller);
 
       const grip = this.renderer.xr.getControllerGrip(i);
@@ -99,11 +106,14 @@ export class WebXR {
 
         info[key] = components;
       });
+
+      this.createButtonStates(info.right);
     });
   }
 
-  private createButtonStates(components) {
-    const buttonStates = {};
+  private createButtonStates(components: LeftController | RightController) {
+    const buttonStates: ButtonStates = {};
+    this.gamepadIndices = components;
 
     Object.keys(components).forEach(key => {
       if (key.indexOf('touchpad') != -1 || key.indexOf('thumbstick') != -1) {
@@ -112,6 +122,8 @@ export class WebXR {
         buttonStates[key] = 0;
       }
     });
+
+    this.buttonStates = buttonStates;
   }
 
   private onSelectStart(controller: THREE.Group) {
@@ -122,22 +134,56 @@ export class WebXR {
     controller.userData.selectPressed = false;
   }
 
-  private handleController(controller: THREE.Group) {
+  // private updateGamepadState(): void {
+  //   const session = this.renderer.xr.getSession();
+  //   const inputSource = session.inputSources[0];
+
+  //   if (inputSource && inputSource.gamepad && this.gamepadIndices && this.buttonStates) {
+  //     const gamepad = inputSource.gamepad;
+
+  //     try {
+  //       Object.entries(this.buttonStates).forEach(([key, value]) => {
+  //         const buttonIndex = this.gamepadIndices[key].button;
+
+  //         if (key.indexOf('touchpad') != -1 || key.indexOf('thumbstick') != -1) {
+  //           const xAxisIndex = this.gamepadIndices[key].xAxis;
+  //           const yAxisIndex = this.gamepadIndices[key].yAxis;
+  //           this.buttonStates[key].button = gamepad.buttons[buttonIndex].value;
+  //           this.buttonStates[key].xAxis = gamepad.axes[xAxisIndex].toFixed(2);
+  //           this.buttonStates[key].yAxis = gamepad.axes[yAxisIndex].toFixed(2);
+  //         } else {
+  //           this.buttonStates[key].button = gamepad.buttons[buttonIndex].value;
+  //         }
+  //       });
+  //     } catch (e) {
+  //       console.warn('An error occured setting up the UI');
+  //     }
+  //   }
+  // }
+
+  private handleController(controller: THREE.Group, dt: number) {
     if (controller.userData.selectPressed) {
-      controller.children[0].scale.z = 10;
-
-      this.workingMatrix.identity().extractRotation(controller.matrixWorld);
-
-      this.raycaster.ray.origin.setFromMatrixPosition(controller.matrixWorld);
-
-      this.raycaster.ray.direction.set(0, 0, -1).applyMatrix4(controller.matrixWorld);
-
-      // const intersects = this.raycaster.intersectObjects(this.r)
+      const speed = 2;
+      console.log(-dt * speed);
+      const quaternion = this.dolly.quaternion.clone();
+      this.dolly.quaternion.copy(this.dummyCam.getWorldQuaternion(new THREE.Quaternion()));
+      this.dolly.translateZ(-dt * speed);
+      this.dolly.position.y = 0;
+      this.dolly.quaternion.copy(quaternion);
     }
   }
 
   private render(): void {
     this.renderer.setAnimationLoop(() => {
+      const deltaTime = this.clock.getDelta();
+      const elapsedTime = this.clock.getElapsedTime();
+      if (this.controllers) {
+        this.handleController(this.controllers[0], deltaTime);
+      }
+
+      if (this.lightParticles) {
+        (this.lightParticles.material as THREE.RawShaderMaterial).uniforms.u_time.value = elapsedTime;
+      }
       this.renderer.render(this.scene, this.camera);
     });
   }
