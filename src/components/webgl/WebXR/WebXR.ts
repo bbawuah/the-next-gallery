@@ -122,6 +122,7 @@ export class WebXR {
       controller.userData.marker = this.createMarker(geometry2, material);
       this.scene.add(controller);
       controllers.push(controller);
+      this.dolly.add(controller);
 
       const grip = this.renderer.xr.getControllerGrip(i);
       grip.add(controllerModelFactory.createControllerModel(grip));
