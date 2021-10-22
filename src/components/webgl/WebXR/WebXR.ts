@@ -6,6 +6,7 @@ import {
   Constants as MotionControllerConstants,
   fetchProfile
 } from 'three/examples/jsm/libs/motion-controllers.module.js';
+import {xrColliders} from '../../../store/store';
 
 const DEFAULT_PROFILES_PATH = 'https://cdn.jsdelivr.net/npm/@webxr-input-profiles/assets@1.0/dist/profiles';
 const DEFAULT_PROFILE = 'generic-trigger';
@@ -30,6 +31,7 @@ export class WebXR {
   private lightParticles: THREE.Points;
   private dolly: THREE.Object3D;
   private dummyCam: THREE.Object3D;
+  private origin: THREE.Vector3;
 
   constructor(props: Props) {
     this.renderer = props.renderer;
@@ -37,6 +39,7 @@ export class WebXR {
     this.scene = props.scene;
     this.lightParticles = props.particles;
     this.vrButton = new VRButton(this.renderer);
+
     this.clock = new THREE.Clock();
     this.raycaster = new THREE.Raycaster();
     this.workingMatrix = new THREE.Matrix4();
@@ -45,9 +48,9 @@ export class WebXR {
     this.renderer.xr.enabled = true;
 
     this.dolly = new THREE.Object3D();
-    this.dolly.position.z = 5;
     this.dolly.add(this.camera);
     this.scene.add(this.dolly);
+    this.origin = new THREE.Vector3();
 
     this.dummyCam = new THREE.Object3D();
     this.camera.add(this.dummyCam);
@@ -162,13 +165,79 @@ export class WebXR {
   // }
 
   private handleController(controller: THREE.Group, dt: number) {
+    let colliders: THREE.Mesh[];
+
+    xrColliders.subscribe(value => {
+      colliders = value;
+    });
+
     if (controller.userData.selectPressed) {
+      const wallLimit = 1.3;
       const speed = 2;
-      console.log(-dt * speed);
+      let pos = this.dolly.position.clone();
+      pos.y += 1;
+
+      const dir = new THREE.Vector3();
+
+      // console.log(colliders);
+
       const quaternion = this.dolly.quaternion.clone();
       this.dolly.quaternion.copy(this.dummyCam.getWorldQuaternion(new THREE.Quaternion()));
-      this.dolly.translateZ(-dt * speed);
+
+      this.dolly.getWorldDirection(dir);
+      dir.negate();
+      this.raycaster.set(pos, dir);
+
+      let blocked = false;
+
+      let intersect = this.raycaster.intersectObjects(colliders);
+
+      if (intersect.length > 0) {
+        if (intersect[0].distance < wallLimit) {
+          blocked = true;
+        }
+      }
+
+      if (!blocked) {
+        this.dolly.translateZ(-dt * speed);
+        pos = this.dolly.getWorldPosition(this.origin);
+      }
+
+      dir.set(-1, 0, 0);
+      dir.applyMatrix4(this.dolly.matrix);
+      dir.normalize();
+      this.raycaster.set(pos, dir);
+
+      intersect = this.raycaster.intersectObjects(colliders);
+
+      if (intersect.length > 0) {
+        if (intersect[0].distance < wallLimit) this.dolly.translateX(wallLimit - intersect[0].distance);
+      }
+
+      dir.set(1, 0, 0);
+      dir.applyMatrix4(this.dolly.matrix);
+      dir.normalize();
+      this.raycaster.set(pos, dir);
+
+      const stairs = colliders.filter(mesh => mesh.name === 'treden');
+
+      intersect = this.raycaster.intersectObjects(stairs);
+      if (intersect.length > 0) {
+        if (intersect[0].distance < wallLimit) this.dolly.translateX(intersect[0].distance - wallLimit);
+      }
+
+      dir.set(0, -1, 0);
+      pos.y += 1.5;
+      this.raycaster.set(pos, dir);
+
+      intersect = this.raycaster.intersectObjects(stairs);
+      if (intersect.length > 0) {
+        this.dolly.position.copy(intersect[0].point);
+      }
+
       this.dolly.position.y = 0;
+
+      //Restore the original rotation
       this.dolly.quaternion.copy(quaternion);
     }
   }
@@ -177,6 +246,7 @@ export class WebXR {
     this.renderer.setAnimationLoop(() => {
       const deltaTime = this.clock.getDelta();
       const elapsedTime = this.clock.getElapsedTime();
+
       if (this.controllers) {
         this.handleController(this.controllers[0], deltaTime);
       }
@@ -184,6 +254,7 @@ export class WebXR {
       if (this.lightParticles) {
         (this.lightParticles.material as THREE.RawShaderMaterial).uniforms.u_time.value = elapsedTime;
       }
+
       this.renderer.render(this.scene, this.camera);
     });
   }
