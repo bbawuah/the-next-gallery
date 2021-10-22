@@ -42,7 +42,6 @@ export class WebXR {
     this.clock = new THREE.Clock();
     this.raycaster = new THREE.Raycaster();
     this.workingMatrix = new THREE.Matrix4();
-    this.controllers = this.buildControllers();
 
     this.renderer.xr.enabled = true;
 
@@ -53,6 +52,7 @@ export class WebXR {
 
     this.dummyCam = new THREE.Object3D();
     this.camera.add(this.dummyCam);
+    this.controllers = this.buildControllers();
 
     const locations: THREE.Vector3[] = [
       new THREE.Vector3(-1.4411578358044423, 0, -12.7902673661434),
