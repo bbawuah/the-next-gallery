@@ -77,8 +77,14 @@ export class Scene {
 
   private clock: THREE.Clock;
 
-  private shaderPainting: THREE.Mesh;
-  private renderTarget: RenderTarget;
+  private shaderPaintingOne: THREE.Mesh;
+  private renderTargetOne: RenderTarget;
+
+  private shaderPaintingTwo: THREE.Mesh;
+  private renderTargetTwo: RenderTarget;
+
+  private shaderPaintingThree: THREE.Mesh;
+  private renderTargetThree: RenderTarget;
 
   private particles: LightParticles;
 
@@ -193,10 +199,9 @@ export class Scene {
     const metaSides = gltf.scene.children.find(child => child.name === 'namenbordjes-randen') as THREE.Mesh;
     metaSides.material = darkGrey;
 
-    this.shaderPainting = gltf.scene.children.find(child => child.name === 'shader-schilderij') as THREE.Mesh;
-    this.shaderPainting.material = new THREE.MeshBasicMaterial({color: 0xff0000});
-    this.renderTarget = new RenderTarget({
-      el: this.shaderPainting,
+    this.shaderPaintingOne = gltf.scene.children.find(child => child.name === 'shader-schilderij') as THREE.Mesh;
+    this.renderTargetOne = new RenderTarget({
+      el: this.shaderPaintingOne,
       shader: {
         vertexShader,
         fragmentShader,
@@ -255,14 +260,14 @@ export class Scene {
       this.physics.handlePhysics({elapsedTime, camera: this.camera, userDirection: this.events.userDirection});
     }
 
-    if (this.renderTarget && this.renderTarget.renderTarget && this.renderTarget.renderTargetMaterial) {
+    if (this.renderTargetOne && this.renderTargetOne.renderTarget && this.renderTargetOne.renderTargetMaterial) {
       if (!isMobile) {
-        (this.renderTarget.renderTargetMaterial as THREE.RawShaderMaterial).uniforms.u_time.value = elapsedTime;
+        (this.renderTargetOne.renderTargetMaterial as THREE.RawShaderMaterial).uniforms.u_time.value = elapsedTime;
       }
 
-      this.renderer.setRenderTarget(this.renderTarget.renderTarget);
+      this.renderer.setRenderTarget(this.renderTargetOne.renderTarget);
 
-      this.renderer.render(this.renderTarget.renderTargetScene, this.renderTarget.renderTargetCamera);
+      this.renderer.render(this.renderTargetOne.renderTargetScene, this.renderTargetOne.renderTargetCamera);
       this.renderer.setRenderTarget(null);
     }
 

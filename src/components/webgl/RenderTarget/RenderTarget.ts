@@ -80,8 +80,8 @@ export class RenderTarget {
 
         const text = new THREE.Mesh(this.geometry, this.material);
 
-        text.position.set(-0.9, -0.8, 0);
-        text.rotation.set(Math.PI, 0, 0);
+        text.position.set(-0.1, -0.95, 0);
+        text.rotation.set(Math.PI, 0, Math.PI * 1.5);
         text.scale.set(0.0075, 0.01, 1);
 
         this.renderTargetScene.add(text);
