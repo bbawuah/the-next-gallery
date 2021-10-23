@@ -63,8 +63,7 @@
       <ParagraphContainer>
         <div>
           <p class="text">
-            Emerging technologies, from artificial intelligence and machine learning to virtual and augmented reality,
-            are beginning to impact our societies and shape our public discourse.
+            Virtual and augmented reality are beginning to impact our societies and shape our public discourse.
           </p>
           <p class="text">
             But the conversations in our community around how these tools are influencing, and will continue to mould,
