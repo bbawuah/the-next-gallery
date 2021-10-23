@@ -14,6 +14,8 @@ import {PointerLockControls} from 'three/examples/jsm/controls/PointerLockContro
 import {LoadingManager} from './LoadingManager/LoadingManager';
 import {LightParticles} from './LightParticles/LightParticles';
 import {WebXR} from './WebXR/WebXR';
+import {vertexShader} from './Shaders/paintingOne/vertex';
+import {fragmentShader} from './Shaders/paintingOne/fragment';
 
 const sizes: Sizes = {
   width: window.innerWidth,
@@ -45,13 +47,15 @@ const portraitNames = [
   'shaneequa',
   'churchbwoygram',
   'othnell',
-  'branco'
+  'branco',
+  'emmanuel',
+  'denitio'
 ];
 
 const stats = new Stats();
 
-// stats.showPanel(1);
-// document.body.appendChild(stats.dom);
+stats.showPanel(1);
+document.body.appendChild(stats.dom);
 
 export class Scene {
   private renderer: THREE.WebGLRenderer;
@@ -139,7 +143,7 @@ export class Scene {
 
     this.gltfLoader = new GLTFLoader(this.loadingManager.loadingManager);
     this.gltfLoader.setDRACOLoader(this.dracoLoader);
-    this.gltfLoader.load('./static/museum.glb', gltf => this.handleGltf(gltf));
+    this.gltfLoader.load('./static/gallery.glb', gltf => this.handleGltf(gltf));
 
     isMobileDevice.subscribe(v => (this.isMobile = v));
 
@@ -191,7 +195,17 @@ export class Scene {
 
     this.shaderPainting = gltf.scene.children.find(child => child.name === 'shader-schilderij') as THREE.Mesh;
     this.shaderPainting.material = new THREE.MeshBasicMaterial({color: 0xff0000});
-    this.renderTarget = new RenderTarget(this.shaderPainting);
+    this.renderTarget = new RenderTarget({
+      el: this.shaderPainting,
+      shader: {
+        vertexShader,
+        fragmentShader,
+        uniforms: {
+          u_time: {value: 0.0}
+        }
+      },
+      text: 'NEXT'
+    });
 
     const looseWalls = gltf.scene.children.find(child => child.name === 'losse-muren') as THREE.Mesh;
     this.physics.createPhysics(looseWalls);
