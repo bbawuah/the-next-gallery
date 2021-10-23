@@ -3,7 +3,6 @@ import GSAP from 'gsap';
 import {progressRatio} from '../../../store/store';
 
 export class LoadingManager {
-  // Overlay
   private overlayGeometry: THREE.PlaneGeometry;
   private overlayMaterial: THREE.RawShaderMaterial;
   private overlayMesh: THREE.Mesh;
@@ -11,7 +10,6 @@ export class LoadingManager {
   public loadingManager: THREE.LoadingManager;
 
   constructor(scene: THREE.Scene) {
-    // Overlay
     this.overlayGeometry = new THREE.PlaneGeometry(2, 2, 1, 1);
     this.overlayMaterial = new THREE.RawShaderMaterial({
       uniforms: {

@@ -3,31 +3,20 @@
   import Icon from '../Icon/Icon.svelte';
   import GSAP from 'gsap';
   import {onMount} from 'svelte';
-  import {
-    progressRatio,
-    layoutContainer as layoutContainerSubscriber,
-    xrIsSupported,
-    isMobileDevice
-  } from '../../store/store';
+  import {progressRatio, layoutContainer as layoutContainerSubscriber, isMobileDevice} from '../../store/store';
   import {onEnter} from '../../utils/onEnter';
 
   let callToAction: HTMLParagraphElement;
   let layoutContainer: HTMLElement;
   let scrollDownArrow: HTMLElement;
   let columnLeft: HTMLElement;
-  let webXRIsSupported: boolean;
   let isMobile: boolean;
-
   let onMouseOver: () => void;
   let onMouseLeave: () => void;
-
   let progress: number;
+
   progressRatio.subscribe(value => {
     progress = value;
-  });
-
-  xrIsSupported.subscribe(value => {
-    webXRIsSupported = value;
   });
 
   isMobileDevice.subscribe(value => {

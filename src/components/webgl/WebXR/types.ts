@@ -9,12 +9,12 @@ export interface Layouts {
 }
 export interface Left {
   selectComponentId: string;
-  components: Components;
+  components: LeftController;
   gamepadMapping: string;
   rootNodeName: string;
   assetPath: string;
 }
-export interface Components {
+export interface LeftController {
   'xr-standard-trigger': XRStandardTrigger;
   'xr-standard-squeeze': XRStandardSqueeze;
   'xr-standard-thumbstick': XRStandardThumbstick;
@@ -96,12 +96,12 @@ export interface VisualResponses5 {
 }
 export interface Right {
   selectComponentId: string;
-  components: Components1;
+  components: RightController;
   gamepadMapping: string;
   rootNodeName: string;
   assetPath: string;
 }
-export interface Components1 {
+export interface RightController {
   'xr-standard-trigger': XRStandardTrigger;
   'xr-standard-squeeze': XRStandardSqueeze;
   'xr-standard-thumbstick': XRStandardThumbstick;
@@ -126,4 +126,26 @@ export interface BButton {
 }
 export interface VisualResponses7 {
   b_button_pressed: XRStandard;
+}
+
+export type ButtonStateProps = keyof LeftController | RightController;
+
+type ButtonStateValues =
+  | {
+      button: 0;
+      xAxis: 0;
+      yAxis: 0;
+    }
+  | 0;
+
+export type ButtonStates = {
+  [K in keyof ButtonStateProps]: ButtonStateValues;
+};
+
+export interface Profile {
+  name?: string;
+  targetRayMode?: string;
+  layouts?: string;
+  left?: LeftController;
+  right?: RightController;
 }

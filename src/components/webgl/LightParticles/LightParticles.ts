@@ -5,15 +5,15 @@ export class LightParticles {
   private lightParticlesMaterial: THREE.RawShaderMaterial;
   private count: number;
   private positionArray: Float32Array;
-  private lightParticles: THREE.Points;
   private scaleArray: Float32Array;
   private clock: THREE.Clock;
+
+  public lightParticles: THREE.Points;
 
   constructor(scene: THREE.Scene) {
     this.lightParticlesGeometry = new THREE.BufferGeometry();
     this.count = 200;
     this.positionArray = new Float32Array(this.count * 3);
-
     this.scaleArray = new Float32Array(this.count);
 
     for (let i = 0; i < this.count; i++) {
