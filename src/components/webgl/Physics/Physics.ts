@@ -131,7 +131,7 @@ export class PhysicsWorld {
     oldElapsedTime = elapsedTime;
     const position = new THREE.Vector3(
       this.sphereBody.position.x,
-      this.sphereBody.position.y + 0.75,
+      this.sphereBody.position.y,
       this.sphereBody.position.z
     );
 

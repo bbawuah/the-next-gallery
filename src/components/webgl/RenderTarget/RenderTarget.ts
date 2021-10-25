@@ -3,7 +3,6 @@ import createGeometry from 'three-bmfont-text';
 import loadFont from 'load-bmfont';
 import type {BufferGeometry} from 'three';
 import {createMSDFShader} from '../Shaders/msdf';
-
 interface ShaderProps {
   vertexShader: string;
   fragmentShader: string;
@@ -81,6 +80,7 @@ export class RenderTarget {
         const text = new THREE.Mesh(this.geometry, this.material);
 
         text.position.set(-0.1, -0.95, 0);
+
         text.rotation.set(Math.PI, 0, Math.PI * 1.5);
         text.scale.set(0.0075, 0.01, 1);
 

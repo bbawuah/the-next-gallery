@@ -149,7 +149,7 @@ export class VRButton {
     element.style.textAlign = 'center';
     element.style.opacity = '0.5';
     element.style.outline = 'none';
-    element.style.height = 'max-content';
+    element.style.height = '50px';
     element.style.width = 'max-content';
     element.style.zIndex = '999';
     element.style.left = '75%';

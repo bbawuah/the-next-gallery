@@ -54,8 +54,8 @@ const portraitNames = [
 
 const stats = new Stats();
 
-stats.showPanel(1);
-document.body.appendChild(stats.dom);
+// stats.showPanel(1);
+// document.body.appendChild(stats.dom);
 
 export class Scene {
   private renderer: THREE.WebGLRenderer;
@@ -212,6 +212,12 @@ export class Scene {
       text: 'NEXT'
     });
 
+    this.shaderPaintingTwo = gltf.scene.children.find(child => child.name === 'shader-schilderij-2') as THREE.Mesh;
+    this.shaderPaintingTwo.material = new THREE.MeshBasicMaterial({color: 0xff0000});
+
+    this.shaderPaintingThree = gltf.scene.children.find(child => child.name === 'shader-schilderij-3') as THREE.Mesh;
+    this.shaderPaintingThree.material = new THREE.MeshBasicMaterial({color: 0xff0000});
+
     const looseWalls = gltf.scene.children.find(child => child.name === 'losse-muren') as THREE.Mesh;
     this.physics.createPhysics(looseWalls);
 
@@ -247,6 +253,19 @@ export class Scene {
     });
   }
 
+  private handleRenderTarget(renderTarget: RenderTarget, elapsedTime: number, isMobile: boolean): void {
+    if (renderTarget && renderTarget.renderTarget && renderTarget.renderTargetMaterial) {
+      if (!isMobile) {
+        (renderTarget.renderTargetMaterial as THREE.RawShaderMaterial).uniforms.u_time.value = elapsedTime;
+      }
+
+      this.renderer.setRenderTarget(renderTarget.renderTarget);
+
+      this.renderer.render(renderTarget.renderTargetScene, renderTarget.renderTargetCamera);
+      this.renderer.setRenderTarget(null);
+    }
+  }
+
   private render(isMobileDevice: boolean): void {
     const isMobile = isMobileDevice;
     const elapsedTime = this.clock.getElapsedTime();
@@ -260,16 +279,7 @@ export class Scene {
       this.physics.handlePhysics({elapsedTime, camera: this.camera, userDirection: this.events.userDirection});
     }
 
-    if (this.renderTargetOne && this.renderTargetOne.renderTarget && this.renderTargetOne.renderTargetMaterial) {
-      if (!isMobile) {
-        (this.renderTargetOne.renderTargetMaterial as THREE.RawShaderMaterial).uniforms.u_time.value = elapsedTime;
-      }
-
-      this.renderer.setRenderTarget(this.renderTargetOne.renderTarget);
-
-      this.renderer.render(this.renderTargetOne.renderTargetScene, this.renderTargetOne.renderTargetCamera);
-      this.renderer.setRenderTarget(null);
-    }
+    this.handleRenderTarget(this.renderTargetOne, elapsedTime, isMobile);
 
     this.renderer.render(this.scene, this.camera);
     stats.end();

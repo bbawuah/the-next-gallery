@@ -19,7 +19,7 @@ export class Events {
     this._left = false;
     this._right = false;
 
-    this.walkingSpeed = 3.3;
+    this.walkingSpeed = 1.85;
 
     currentSession.subscribe(value => {
       this.playerIsInScene = value;
