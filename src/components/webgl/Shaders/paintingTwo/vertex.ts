@@ -9,14 +9,14 @@ uniform float u_time;
 
 varying vec2 vUv;
 varying float vTime;
-varying vec3 vPosition;
 
 void main() {
   float time = u_time * 0.125;
   
+  vec3 customPosition = vec3(position);
+  
   gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.);
   vUv = uv;
   vTime = time; 
-  vPosition = position;
 }
 `;
