@@ -8,12 +8,13 @@ varying float vTime;
 void main() {
   vec2 repeat = vec2(5., 5.);
 
-  float eye = 2.25;
+  float eye = 2.35;
 
   vec2 strengthCenterOne = vec2(0.5, 0.9);
   vec2 strengthCenterTwo = vec2(0.1, 0.125);
   vec2 strengthCenterThree = vec2(0.5, 0.125);
   vec2 strengthCenterFour = vec2(0.1, .9);
+  
 
   float strength = distance(vUv, strengthCenterOne) * eye;
   strength *= distance(vUv, strengthCenterTwo) * eye;

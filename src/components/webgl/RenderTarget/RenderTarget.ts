@@ -2,14 +2,24 @@ import * as THREE from 'three';
 import createGeometry from 'three-bmfont-text';
 import loadFont from 'load-bmfont';
 import type {BufferGeometry} from 'three';
-import {vertexShader} from '../Shaders/KinecticText/vertex';
-import {fragmentShader} from '../Shaders/KinecticText/fragment';
 import {createMSDFShader} from '../Shaders/msdf';
+interface ShaderProps {
+  vertexShader: string;
+  fragmentShader: string;
+  uniforms: {[uniform: string]: THREE.IUniform};
+}
+
+interface Props {
+  el: THREE.Mesh;
+  shader: ShaderProps;
+  text: string;
+}
 
 export class RenderTarget {
   private text: string;
   private geometry: BufferGeometry;
   private material: THREE.RawShaderMaterial;
+  private shader: ShaderProps;
 
   public renderTarget: THREE.WebGLRenderTarget;
   public renderTargetCamera: THREE.PerspectiveCamera;
@@ -17,11 +27,12 @@ export class RenderTarget {
   public renderTargetMesh: THREE.Mesh;
   public renderTargetMaterial: THREE.RawShaderMaterial;
 
-  constructor(el: THREE.Mesh) {
-    this.text = 'NEXT';
+  constructor(props: Props) {
+    this.text = props.text;
+    this.shader = props.shader;
 
     this.createRenderTarget();
-    this.initializeShader(el);
+    this.initializeShader(props.el);
   }
 
   private createRenderTarget(): void {
@@ -35,13 +46,10 @@ export class RenderTarget {
   }
 
   private addShader(mesh: THREE.Mesh | undefined): void {
+    this.shader.uniforms.u_texture = {value: this.renderTarget.texture};
+
     this.renderTargetMaterial = new THREE.RawShaderMaterial({
-      vertexShader,
-      fragmentShader,
-      uniforms: {
-        u_time: {value: 0.0},
-        u_texture: {value: this.renderTarget.texture}
-      },
+      ...this.shader,
       side: THREE.FrontSide
     });
 
@@ -71,8 +79,9 @@ export class RenderTarget {
 
         const text = new THREE.Mesh(this.geometry, this.material);
 
-        text.position.set(-0.9, -0.8, 0);
-        text.rotation.set(Math.PI, 0, 0);
+        text.position.set(-0.1, -0.95, 0);
+
+        text.rotation.set(Math.PI, 0, Math.PI * 1.5);
         text.scale.set(0.0075, 0.01, 1);
 
         this.renderTargetScene.add(text);

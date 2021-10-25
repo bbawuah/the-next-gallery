@@ -203,6 +203,7 @@
       .sound-icon {
         z-index: 1;
         touch-action: none;
+        width: 25px;
       }
     }
 
@@ -211,6 +212,7 @@
       align-items: center;
       touch-action: none;
       z-index: 1;
+      width: 25px;
       transition: 0.175s ease-in-out;
     }
 
@@ -281,7 +283,7 @@
         .left,
         .right,
         .bottom {
-          width: unset;
+          width: 25px;
         }
 
         .up {

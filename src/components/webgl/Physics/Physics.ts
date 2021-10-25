@@ -129,12 +129,15 @@ export class PhysicsWorld {
     let oldElapsedTime = 0;
     const deltaTime = elapsedTime - oldElapsedTime;
     oldElapsedTime = elapsedTime;
+    const position = new THREE.Vector3(
+      this.sphereBody.position.x,
+      this.sphereBody.position.y,
+      this.sphereBody.position.z
+    );
 
     // this.cannonDebugRenderer.update();
 
-    camera.position.copy(
-      new THREE.Vector3(this.sphereBody.position.x, this.sphereBody.position.y + 0.75, this.sphereBody.position.z)
-    );
+    camera.position.copy(position);
 
     this.sphereBody.velocity.set(userDirection.x, this.sphereBody.velocity.y, userDirection.z);
 

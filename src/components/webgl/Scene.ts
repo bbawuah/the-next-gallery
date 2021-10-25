@@ -14,6 +14,8 @@ import {PointerLockControls} from 'three/examples/jsm/controls/PointerLockContro
 import {LoadingManager} from './LoadingManager/LoadingManager';
 import {LightParticles} from './LightParticles/LightParticles';
 import {WebXR} from './WebXR/WebXR';
+import {vertexShader} from './Shaders/paintingOne/vertex';
+import {fragmentShader} from './Shaders/paintingOne/fragment';
 
 const sizes: Sizes = {
   width: window.innerWidth,
@@ -45,7 +47,9 @@ const portraitNames = [
   'shaneequa',
   'churchbwoygram',
   'othnell',
-  'branco'
+  'branco',
+  'emmanuel',
+  'denitio'
 ];
 
 const stats = new Stats();
@@ -73,8 +77,14 @@ export class Scene {
 
   private clock: THREE.Clock;
 
-  private shaderPainting: THREE.Mesh;
-  private renderTarget: RenderTarget;
+  private shaderPaintingOne: THREE.Mesh;
+  private renderTargetOne: RenderTarget;
+
+  private shaderPaintingTwo: THREE.Mesh;
+  private renderTargetTwo: RenderTarget;
+
+  private shaderPaintingThree: THREE.Mesh;
+  private renderTargetThree: RenderTarget;
 
   private particles: LightParticles;
 
@@ -139,7 +149,7 @@ export class Scene {
 
     this.gltfLoader = new GLTFLoader(this.loadingManager.loadingManager);
     this.gltfLoader.setDRACOLoader(this.dracoLoader);
-    this.gltfLoader.load('./static/museum.glb', gltf => this.handleGltf(gltf));
+    this.gltfLoader.load('./static/gallery.glb', gltf => this.handleGltf(gltf));
 
     isMobileDevice.subscribe(v => (this.isMobile = v));
 
@@ -189,9 +199,24 @@ export class Scene {
     const metaSides = gltf.scene.children.find(child => child.name === 'namenbordjes-randen') as THREE.Mesh;
     metaSides.material = darkGrey;
 
-    this.shaderPainting = gltf.scene.children.find(child => child.name === 'shader-schilderij') as THREE.Mesh;
-    this.shaderPainting.material = new THREE.MeshBasicMaterial({color: 0xff0000});
-    this.renderTarget = new RenderTarget(this.shaderPainting);
+    this.shaderPaintingOne = gltf.scene.children.find(child => child.name === 'shader-schilderij') as THREE.Mesh;
+    this.renderTargetOne = new RenderTarget({
+      el: this.shaderPaintingOne,
+      shader: {
+        vertexShader,
+        fragmentShader,
+        uniforms: {
+          u_time: {value: 0.0}
+        }
+      },
+      text: 'NEXT'
+    });
+
+    this.shaderPaintingTwo = gltf.scene.children.find(child => child.name === 'shader-schilderij-2') as THREE.Mesh;
+    this.shaderPaintingTwo.material = new THREE.MeshBasicMaterial({color: 0xff0000});
+
+    this.shaderPaintingThree = gltf.scene.children.find(child => child.name === 'shader-schilderij-3') as THREE.Mesh;
+    this.shaderPaintingThree.material = new THREE.MeshBasicMaterial({color: 0xff0000});
 
     const looseWalls = gltf.scene.children.find(child => child.name === 'losse-muren') as THREE.Mesh;
     this.physics.createPhysics(looseWalls);
@@ -228,6 +253,19 @@ export class Scene {
     });
   }
 
+  private handleRenderTarget(renderTarget: RenderTarget, elapsedTime: number, isMobile: boolean): void {
+    if (renderTarget && renderTarget.renderTarget && renderTarget.renderTargetMaterial) {
+      if (!isMobile) {
+        (renderTarget.renderTargetMaterial as THREE.RawShaderMaterial).uniforms.u_time.value = elapsedTime;
+      }
+
+      this.renderer.setRenderTarget(renderTarget.renderTarget);
+
+      this.renderer.render(renderTarget.renderTargetScene, renderTarget.renderTargetCamera);
+      this.renderer.setRenderTarget(null);
+    }
+  }
+
   private render(isMobileDevice: boolean): void {
     const isMobile = isMobileDevice;
     const elapsedTime = this.clock.getElapsedTime();
@@ -241,16 +279,7 @@ export class Scene {
       this.physics.handlePhysics({elapsedTime, camera: this.camera, userDirection: this.events.userDirection});
     }
 
-    if (this.renderTarget && this.renderTarget.renderTarget && this.renderTarget.renderTargetMaterial) {
-      if (!isMobile) {
-        (this.renderTarget.renderTargetMaterial as THREE.RawShaderMaterial).uniforms.u_time.value = elapsedTime;
-      }
-
-      this.renderer.setRenderTarget(this.renderTarget.renderTarget);
-
-      this.renderer.render(this.renderTarget.renderTargetScene, this.renderTarget.renderTargetCamera);
-      this.renderer.setRenderTarget(null);
-    }
+    this.handleRenderTarget(this.renderTargetOne, elapsedTime, isMobile);
 
     this.renderer.render(this.scene, this.camera);
     stats.end();

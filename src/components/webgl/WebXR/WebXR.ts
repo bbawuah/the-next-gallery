@@ -33,16 +33,25 @@ export class WebXR {
     this.camera = props.camera;
     this.scene = props.scene;
     this.lightParticles = props.particles;
-    this.vrButton = new VRButton(this.renderer);
 
     this.clock = new THREE.Clock();
     this.raycaster = new THREE.Raycaster();
     this.workingMatrix = new THREE.Matrix4();
 
+    this.teleports = [];
+    this.collisionObjects = [];
+
+    this.vrButton = new VRButton(this.renderer);
+
+    this.initializeWebXR();
+  }
+
+  private initializeWebXR(): void {
     this.renderer.xr.enabled = true;
 
     this.dolly = new THREE.Object3D();
     this.dolly.add(this.camera);
+    this.dolly.position.y = 0.8;
     this.scene.add(this.dolly);
 
     this.dummyCam = new THREE.Object3D();
@@ -51,8 +60,6 @@ export class WebXR {
 
     const locations: THREE.Vector3[] = teleportLocations;
 
-    this.teleports = [];
-
     locations.forEach(location => {
       const teleport = new TeleportMesh();
       teleport.position.copy(location);
@@ -60,7 +67,6 @@ export class WebXR {
       this.teleports.push(teleport);
     });
 
-    this.collisionObjects = [];
     this.teleports.forEach(teleport => this.collisionObjects.push(teleport.children[0]));
 
     this.render();

@@ -191,7 +191,7 @@
       .column-left {
         padding: 50px;
         .logo-container {
-          width: unset;
+          width: 150px;
         }
       }
 
