@@ -153,13 +153,14 @@ export class Scene {
 
     isMobileDevice.subscribe(v => (this.isMobile = v));
 
+    this.webXR = new WebXR({
+      renderer: this.renderer,
+      camera: this.camera,
+      scene: this.scene,
+      particles: this.particles.lightParticles
+    });
+
     if (!this.isMobile) {
-      this.webXR = new WebXR({
-        renderer: this.renderer,
-        camera: this.camera,
-        scene: this.scene,
-        particles: this.particles.lightParticles
-      });
       pointerLockerControls.update(() => new PointerLockControls(this.camera, el));
       this.events.handleKeyUpEvents();
       this.events.handleKeyDownEvents();

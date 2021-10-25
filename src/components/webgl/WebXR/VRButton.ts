@@ -1,5 +1,5 @@
 import GSAP from 'gsap';
-import {audioController, currentSession, xrIsSupported} from '../../../store/store';
+import {audioController, currentSession, isMobileDevice, xrIsSupported} from '../../../store/store';
 import type {Navigator} from 'webxr';
 import {playSound} from '../../../utils/onEnter';
 
@@ -139,8 +139,14 @@ export class VRButton {
   }
 
   stylizeElement(element: HTMLElement, fontSize = 13, ignorePadding = false): void {
+    let isMobile: boolean;
+
+    isMobileDevice.subscribe(value => {
+      isMobile = value;
+    });
+
     element.style.position = 'absolute';
-    element.style.top = '50px';
+    element.style.top = isMobile ? '25px' : '50px';
     if (!ignorePadding) element.style.padding = '12px 6px';
     element.style.border = '1px solid #fff';
     element.style.borderRadius = '4px';
@@ -149,7 +155,7 @@ export class VRButton {
     element.style.textAlign = 'center';
     element.style.opacity = '0.5';
     element.style.outline = 'none';
-    element.style.height = '50px';
+    element.style.height = isMobile ? '40px' : '50px';
     element.style.width = 'max-content';
     element.style.zIndex = '999';
     element.style.left = '75%';
