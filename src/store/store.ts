@@ -22,6 +22,7 @@ export const canvasContainer: Writable<HTMLElement> = writable();
 
 const audio = new Audio('./static/sound/ambient-sound.mp3');
 audio.loop = true;
+audio.volume = 0.125;
 
 export const audioController: Writable<HTMLAudioElement> = writable(audio);
 
