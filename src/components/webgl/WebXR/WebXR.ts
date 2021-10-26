@@ -109,7 +109,7 @@ export class WebXR {
     return controllers;
   }
 
-  private onSelectStart(controller: THREE.Group) {
+  private onSelectStart(controller: THREE.Group): void {
     controller.userData.selectPressed = true;
     if (controller.userData.teleport) {
       this.dolly.position.copy(controller.userData.teleport.position);
@@ -117,16 +117,16 @@ export class WebXR {
     }
   }
 
-  private onSelectEnd(controller: THREE.Group) {
+  private onSelectEnd(controller: THREE.Group): void {
     controller.userData.selectPressed = false;
   }
 
-  private onSqueezeStart(controller: THREE.Group) {
+  private onSqueezeStart(controller: THREE.Group): void {
     controller.userData.squeezePressed = false;
     this.teleports.forEach(teleport => teleport.fadeIn(1));
   }
 
-  private onSqueezeEnd(controller: THREE.Group) {
+  private onSqueezeEnd(controller: THREE.Group): void {
     controller.userData.squeezePressed = true;
     this.teleports.forEach(teleport => teleport.fadeOut(1));
   }
