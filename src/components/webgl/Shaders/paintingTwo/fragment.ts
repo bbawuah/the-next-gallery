@@ -6,7 +6,7 @@ varying vec2 vUv;
 varying float vTime;
 
 void main() {
-  vec2 uv = vUv;
+  vec2 uv = vUv * vec2(1.0, -1.0);
   
   vec2 repeat = vec2(3.,3.);
 

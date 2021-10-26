@@ -229,7 +229,7 @@ export class Scene {
           u_time: {value: 0.0}
         }
       },
-      text: 'WAKOMA',
+      text: "'WAKOMA'",
       backgroundColor: 0x383838,
       textColor: 0xe8e8e8
     });
