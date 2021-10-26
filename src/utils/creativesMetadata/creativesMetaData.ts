@@ -39,11 +39,11 @@ export const metadata = [
     instagram: 'https://www.instagram.com/terryquasi/?hl=nl'
   },
   {
-    name: 'Crystalina Agyemang',
+    name: 'Crystalina Agyeman',
     instagram: 'https://www.instagram.com/icrystalina/?hl=nl'
   },
   {
-    name: 'Mirella Agyemann',
+    name: 'Mirella Agyeman',
     instagram: 'https://www.instagram.com/mirellaabn/?hl=nl'
   },
   {
@@ -51,7 +51,7 @@ export const metadata = [
     instagram: 'https://www.instagram.com/les_adu/?hl=nl'
   },
   {
-    name: 'Junnior Appiah',
+    name: 'Junior Appiah',
     instagram: 'https://www.instagram.com/juniorappiah/?hl=nl'
   },
   {
@@ -67,7 +67,7 @@ export const metadata = [
     instagram: 'https://www.instagram.com/eoboafo/?hl=nl'
   },
   {
-    name: 'Shaqueena Vrede',
+    name: 'Shanueeqa Vrede',
     instagram: 'https://www.instagram.com/shaneequa.vrede/?hl=nl'
   },
   {
@@ -95,7 +95,7 @@ export const metadata = [
     instagram: 'https://www.instagram.com/tonny.gha/?hl=nl'
   },
   {
-    name: 'BRANKO MC',
+    name: 'Branko MC',
     instagram: 'https://www.instagram.com/brankomc/?hl=nl'
   },
   {
