@@ -16,6 +16,10 @@ import {LightParticles} from './LightParticles/LightParticles';
 import {WebXR} from './WebXR/WebXR';
 import {vertexShader} from './Shaders/paintingOne/vertex';
 import {fragmentShader} from './Shaders/paintingOne/fragment';
+import {vertexShaderTwo} from './Shaders/paintingTwo/vertex';
+import {fragmentShaderTwo} from './Shaders/paintingTwo/fragment';
+import {fragmentShaderThree} from './Shaders/paintingThree/fragment';
+import {vertexShaderThree} from './Shaders/paintingThree/vertex';
 
 const sizes: Sizes = {
   width: window.innerWidth,
@@ -81,7 +85,6 @@ export class Scene {
   private renderTargetOne: RenderTarget;
 
   private shaderPaintingTwo: THREE.Mesh;
-  private renderTargetTwo: RenderTarget;
 
   private shaderPaintingThree: THREE.Mesh;
   private renderTargetThree: RenderTarget;
@@ -210,14 +213,34 @@ export class Scene {
           u_time: {value: 0.0}
         }
       },
-      text: 'NEXT'
+      text: 'NEXT',
+      backgroundColor: 0xe8e8e8,
+      textColor: 0x383838
     });
 
     this.shaderPaintingTwo = gltf.scene.children.find(child => child.name === 'shader-schilderij-2') as THREE.Mesh;
-    this.shaderPaintingTwo.material = new THREE.MeshBasicMaterial({color: 0xff0000});
+    this.shaderPaintingTwo.material = new THREE.RawShaderMaterial({
+      vertexShader: vertexShaderTwo,
+      fragmentShader: fragmentShaderTwo,
+      uniforms: {
+        u_time: {value: 0.0}
+      }
+    });
 
     this.shaderPaintingThree = gltf.scene.children.find(child => child.name === 'shader-schilderij-3') as THREE.Mesh;
-    this.shaderPaintingThree.material = new THREE.MeshBasicMaterial({color: 0xff0000});
+    this.renderTargetThree = new RenderTarget({
+      el: this.shaderPaintingThree,
+      shader: {
+        vertexShader: vertexShaderThree,
+        fragmentShader: fragmentShaderThree,
+        uniforms: {
+          u_time: {value: 0.0}
+        }
+      },
+      text: "'INSPIRE'",
+      backgroundColor: 0x383838,
+      textColor: 0xe8e8e8
+    });
 
     const looseWalls = gltf.scene.children.find(child => child.name === 'losse-muren') as THREE.Mesh;
     this.physics.createPhysics(looseWalls);
@@ -255,16 +278,14 @@ export class Scene {
   }
 
   private handleRenderTarget(renderTarget: RenderTarget, elapsedTime: number, isMobile: boolean): void {
-    if (renderTarget && renderTarget.renderTarget && renderTarget.renderTargetMaterial) {
-      if (!isMobile) {
-        (renderTarget.renderTargetMaterial as THREE.RawShaderMaterial).uniforms.u_time.value = elapsedTime;
-      }
-
-      this.renderer.setRenderTarget(renderTarget.renderTarget);
-
-      this.renderer.render(renderTarget.renderTargetScene, renderTarget.renderTargetCamera);
-      this.renderer.setRenderTarget(null);
+    if (!isMobile) {
+      (renderTarget.renderTargetMaterial as THREE.RawShaderMaterial).uniforms.u_time.value = elapsedTime;
     }
+
+    this.renderer.setRenderTarget(renderTarget.renderTarget);
+
+    this.renderer.render(renderTarget.renderTargetScene, renderTarget.renderTargetCamera);
+    this.renderer.setRenderTarget(null);
   }
 
   private render(isMobileDevice: boolean): void {
@@ -280,7 +301,17 @@ export class Scene {
       this.physics.handlePhysics({elapsedTime, camera: this.camera, userDirection: this.events.userDirection});
     }
 
-    this.handleRenderTarget(this.renderTargetOne, elapsedTime, isMobile);
+    if (this.shaderPaintingTwo && this.shaderPaintingTwo.material) {
+      (this.shaderPaintingTwo.material as THREE.RawShaderMaterial).uniforms.u_time.value = elapsedTime;
+    }
+
+    if (this.renderTargetOne && this.renderTargetOne.renderTargetMaterial && this.renderTargetOne.renderTarget) {
+      this.handleRenderTarget(this.renderTargetOne, elapsedTime, isMobile);
+    }
+
+    if (this.renderTargetThree && this.renderTargetThree.renderTargetMaterial && this.renderTargetThree.renderTarget) {
+      this.handleRenderTarget(this.renderTargetThree, elapsedTime, isMobile);
+    }
 
     this.renderer.render(this.scene, this.camera);
     stats.end();

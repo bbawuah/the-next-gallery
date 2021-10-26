@@ -13,6 +13,8 @@ interface Props {
   el: THREE.Mesh;
   shader: ShaderProps;
   text: string;
+  backgroundColor: string | number;
+  textColor: string | number;
 }
 
 export class RenderTarget {
@@ -20,6 +22,8 @@ export class RenderTarget {
   private geometry: BufferGeometry;
   private material: THREE.RawShaderMaterial;
   private shader: ShaderProps;
+  private backgroundColor: string | number;
+  private textColor: string | number;
 
   public renderTarget: THREE.WebGLRenderTarget;
   public renderTargetCamera: THREE.PerspectiveCamera;
@@ -30,6 +34,8 @@ export class RenderTarget {
   constructor(props: Props) {
     this.text = props.text;
     this.shader = props.shader;
+    this.backgroundColor = props.backgroundColor;
+    this.textColor = props.textColor;
 
     this.createRenderTarget();
     this.initializeShader(props.el);
@@ -42,7 +48,7 @@ export class RenderTarget {
     this.renderTargetCamera.position.z = 2.5;
 
     this.renderTargetScene = new THREE.Scene();
-    this.renderTargetScene.background = new THREE.Color(0xe8e8e8);
+    this.renderTargetScene.background = new THREE.Color(this.backgroundColor);
   }
 
   private addShader(mesh: THREE.Mesh | undefined): void {
@@ -73,7 +79,7 @@ export class RenderTarget {
           createMSDFShader({
             map: texture,
             negate: false,
-            color: 0x383838
+            color: this.textColor
           })
         );
 

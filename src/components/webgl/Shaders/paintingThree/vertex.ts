@@ -1,4 +1,4 @@
-export const vertexShaderTwo = `
+export const vertexShaderThree = `
 attribute vec2 uv;
 attribute vec3 position;
 attribute vec3 normal;

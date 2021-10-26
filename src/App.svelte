@@ -8,6 +8,7 @@
   import ProgressMeter from './components/ProgressMeter/ProgressMeter.svelte';
   import Scene from './components/webgl/Scene.svelte';
   import {layoutContainer, progressRatio, xrIsSupported} from './store/store';
+  import {metadata} from './utils/creativesMetadata/creativesMetaData';
   import {IconType} from './utils/icons/types/IconType';
   import {onEnter} from './utils/onEnter';
 
@@ -54,8 +55,9 @@
             The Next Gallery is an immersive digital experience that showcases a selection of creatives and talents.
           </p>
           <p class="text">
-            Each individual, specialized in his/her craft. Successful in his/her way, proofs that listening to your
-            heart is the beginning of impactful art.
+            Virtual and augmented reality is rapidly becoming a part of our daily lives. It is incorporated in public
+            discourse and impacting our societies in multiple ways. The creative fields must not be left behind in these
+            advancements.
           </p>
         </div>
       </ParagraphContainer>
@@ -63,11 +65,8 @@
       <ParagraphContainer>
         <div>
           <p class="text">
-            Virtual and augmented reality are beginning to impact our societies and shape our public discourse.
-          </p>
-          <p class="text">
-            But the conversations in our community around how these tools are influencing, and will continue to mould,
-            the creative fields are still really in their infancy.
+            The Next Gallery introduces you to a virtual world full of inspirational creatives who are expressing their
+            talents, arts and crafts in unique ways.
           </p>
         </div>
       </ParagraphContainer>
@@ -75,14 +74,15 @@
       <ParagraphContainer>
         <div>
           <p class="text">
-            The Next Gallery opens a new virtual world as a source of inspiration for creatives who want to express
-            their talent and art and craft in unique ways.
+            Each individual is successful in their own way and on their own terms. The creation of their impactful art
+            began the moment they started listening and following the directions of their heart.
           </p>
         </div>
       </ParagraphContainer>
       <ParagraphContainer>
         <div class="outro">
           <p class="text">Special thanks to all the creatives that participated in this gallery.</p>
+
           <p class="text">Enjoy the gallery ❤️</p>
         </div>
 
@@ -95,6 +95,25 @@
           text={progress !== 100 ? 'Loading the gallery..' : 'Enter gallery'}
           type={'button'}
         />
+      </ParagraphContainer>
+
+      <ParagraphContainer>
+        <div class="metadata-grid-container">
+          <p class="metadata-title">Creatives</p>
+          <div class="metadata-grid">
+            {#each metadata as creative}
+              <div class="metadata-container">
+                <p>{creative.name}</p>
+
+                {#if creative.instagram}
+                  <a href={creative.instagram} target="__blank" class="instagram-icon">
+                    <Icon icon={IconType.instagram} />
+                  </a>
+                {/if}
+              </div>
+            {/each}
+          </div>
+        </div>
 
         <footer class="footer">
           <p class="copyright">Copyright &copy; {year} <Link href="https://github.com/bbawuah">Brian Bawuah</Link></p>
@@ -166,6 +185,36 @@
     align-self: flex-end;
   }
 
+  .metadata-grid-container {
+    margin: 30px 0;
+    width: 100%;
+
+    .metadata-title {
+      font-family: $font-text-light;
+      font-size: 20px;
+      font-weight: 400;
+      text-align: center;
+    }
+
+    .metadata-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      width: 100%;
+      justify-items: center;
+
+      .metadata-container {
+        font-family: $font-text-light;
+        display: flex;
+        align-items: center;
+        width: max-content;
+        font-size: 13px;
+        .instagram-icon {
+          margin-left: 10px;
+        }
+      }
+    }
+  }
+
   .footer {
     align-self: flex-end;
     margin-bottom: 20px;
@@ -195,6 +244,10 @@
   @media screen and (min-width: 1028px) {
     .text {
       font-size: 25px;
+    }
+
+    .metadata-grid-container {
+      margin: 65 0;
     }
   }
 

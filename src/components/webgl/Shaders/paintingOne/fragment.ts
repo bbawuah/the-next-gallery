@@ -6,28 +6,19 @@ varying vec2 vUv;
 varying float vTime;
 
 void main() {
-  vec2 repeat = vec2(5., 5.);
+  vec2 repeat = vec2(10.,5.);
 
-  float eye = 2.35;
+  float eye = 0.95;
 
-  vec2 strengthCenterOne = vec2(0.5, 0.9);
-  vec2 strengthCenterTwo = vec2(0.1, 0.125);
-  vec2 strengthCenterThree = vec2(0.5, 0.125);
-  vec2 strengthCenterFour = vec2(0.1, .9);
+  vec2 strengthCenterOne = vec2(0.3, 0.5);
   
-
   float strength = distance(vUv, strengthCenterOne) * eye;
-  strength *= distance(vUv, strengthCenterTwo) * eye;
-  strength *= distance(vUv, strengthCenterThree) * eye;
-  strength *= distance(vUv, strengthCenterFour) * eye;
 
-  vec2 uv = fract(vUv * vec2(strength) * repeat + vec2(-vTime * 1.25, 0.0));
+  vec2 uv = fract(vec2(vUv.x, vUv.y + 1.75) * vec2(strength) * repeat + vec2(-vTime * 1.35, 0.0));
 
-
-  uv *= strength;
+  uv -= strength;
   
   vec3 texture = texture2D(u_texture, uv).rgb;
-
 
   gl_FragColor = vec4(texture, 1.);
 }
