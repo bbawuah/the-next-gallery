@@ -85,6 +85,7 @@ export class Scene {
   private renderTargetOne: RenderTarget;
 
   private shaderPaintingTwo: THREE.Mesh;
+  private renderTargetTwo: RenderTarget;
 
   private shaderPaintingThree: THREE.Mesh;
   private renderTargetThree: RenderTarget;
@@ -219,12 +220,18 @@ export class Scene {
     });
 
     this.shaderPaintingTwo = gltf.scene.children.find(child => child.name === 'shader-schilderij-2') as THREE.Mesh;
-    this.shaderPaintingTwo.material = new THREE.RawShaderMaterial({
-      vertexShader: vertexShaderTwo,
-      fragmentShader: fragmentShaderTwo,
-      uniforms: {
-        u_time: {value: 0.0}
-      }
+    this.renderTargetTwo = new RenderTarget({
+      el: this.shaderPaintingTwo,
+      shader: {
+        vertexShader: vertexShaderTwo,
+        fragmentShader: fragmentShaderTwo,
+        uniforms: {
+          u_time: {value: 0.0}
+        }
+      },
+      text: "'IMPACT'",
+      backgroundColor: 0x383838,
+      textColor: 0xe8e8e8
     });
 
     this.shaderPaintingThree = gltf.scene.children.find(child => child.name === 'shader-schilderij-3') as THREE.Mesh;
@@ -301,12 +308,6 @@ export class Scene {
       this.physics.handlePhysics({elapsedTime, camera: this.camera, userDirection: this.events.userDirection});
     }
 
-    if (this.shaderPaintingTwo && this.shaderPaintingTwo.material) {
-      if (!isMobile) {
-        (this.shaderPaintingTwo.material as THREE.RawShaderMaterial).uniforms.u_time.value = elapsedTime;
-      }
-    }
-
     if (this.renderTargetOne && this.renderTargetOne.renderTargetMaterial && this.renderTargetOne.renderTarget) {
       this.handleRenderTarget(this.renderTargetOne, elapsedTime, isMobile);
     }
@@ -315,6 +316,9 @@ export class Scene {
       this.handleRenderTarget(this.renderTargetThree, elapsedTime, isMobile);
     }
 
+    if (this.renderTargetTwo && this.renderTargetTwo.renderTargetMaterial && this.renderTargetTwo.renderTarget) {
+      this.handleRenderTarget(this.renderTargetTwo, elapsedTime, isMobile);
+    }
     this.renderer.render(this.scene, this.camera);
     stats.end();
     window.requestAnimationFrame(() => this.render(isMobile));

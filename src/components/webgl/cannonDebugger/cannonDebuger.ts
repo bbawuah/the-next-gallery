@@ -108,7 +108,6 @@ export default class CannonDebugRenderer {
     let mesh = this._meshes[index];
     if (!this._typeMatch(mesh, shape)) {
       if (mesh) {
-        //console.log(shape.type)
         this.scene.remove(mesh);
       }
       mesh = this._meshes[index] = this._createMesh(shape);
@@ -235,14 +234,10 @@ export default class CannonDebugRenderer {
                 new THREE.Vector3(v1.x, v1.y, v1.z),
                 new THREE.Vector3(v2.x, v2.y, v2.z)
               );
-              //const i = geometry.vertices.length - 3
-              //geometry.faces.push(new THREE.Face3(i, i + 1, i + 2))
             }
           }
         }
         geometry.setFromPoints(points);
-        //geometry.computeBoundingSphere()
-        //geometry.computeFaceNormals()
         mesh = new THREE.Mesh(geometry, material);
         shape.id = geometry.id;
         break;
