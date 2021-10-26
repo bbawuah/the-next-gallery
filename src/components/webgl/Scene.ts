@@ -18,6 +18,8 @@ import {vertexShader} from './Shaders/paintingOne/vertex';
 import {fragmentShader} from './Shaders/paintingOne/fragment';
 import {vertexShaderTwo} from './Shaders/paintingTwo/vertex';
 import {fragmentShaderTwo} from './Shaders/paintingTwo/fragment';
+import {fragmentShaderThree} from './Shaders/paintingThree/fragment';
+import {vertexShaderThree} from './Shaders/paintingThree/vertex';
 
 const sizes: Sizes = {
   width: window.innerWidth,
@@ -211,7 +213,9 @@ export class Scene {
           u_time: {value: 0.0}
         }
       },
-      text: 'NEXT'
+      text: 'NEXT',
+      backgroundColor: 0xe8e8e8,
+      textColor: 0x383838
     });
 
     this.shaderPaintingTwo = gltf.scene.children.find(child => child.name === 'shader-schilderij-2') as THREE.Mesh;
@@ -227,13 +231,15 @@ export class Scene {
     this.renderTargetThree = new RenderTarget({
       el: this.shaderPaintingThree,
       shader: {
-        vertexShader,
-        fragmentShader,
+        vertexShader: vertexShaderThree,
+        fragmentShader: fragmentShaderThree,
         uniforms: {
           u_time: {value: 0.0}
         }
       },
-      text: 'Be Unique'
+      text: "'INSPIRE'",
+      backgroundColor: 0x383838,
+      textColor: 0xe8e8e8
     });
 
     const looseWalls = gltf.scene.children.find(child => child.name === 'losse-muren') as THREE.Mesh;
