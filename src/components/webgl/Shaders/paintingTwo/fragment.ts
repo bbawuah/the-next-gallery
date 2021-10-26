@@ -47,7 +47,7 @@ vec3 palette(float t,  vec3 a,  vec3 b, vec3 c, vec3 d )
 void main() {
   vec2 uv = vUv;
     
-  uv *= 4.5; // Scale UV to make it nicer in that big screen !
+  uv *= 4.5;
 
   float displacement = pattern(uv);
   
