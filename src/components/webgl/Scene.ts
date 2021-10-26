@@ -302,7 +302,9 @@ export class Scene {
     }
 
     if (this.shaderPaintingTwo && this.shaderPaintingTwo.material) {
-      (this.shaderPaintingTwo.material as THREE.RawShaderMaterial).uniforms.u_time.value = elapsedTime;
+      if (!isMobile) {
+        (this.shaderPaintingTwo.material as THREE.RawShaderMaterial).uniforms.u_time.value = elapsedTime;
+      }
     }
 
     if (this.renderTargetOne && this.renderTargetOne.renderTargetMaterial && this.renderTargetOne.renderTarget) {
