@@ -43,7 +43,7 @@ export const metadata = [
     instagram: 'https://www.instagram.com/icrystalina/?hl=nl'
   },
   {
-    name: 'Mirella Agyeman',
+    name: 'Mirella Agyemann',
     instagram: 'https://www.instagram.com/mirellaabn/?hl=nl'
   },
   {
@@ -91,7 +91,7 @@ export const metadata = [
     instagram: 'https://www.instagram.com/kwameagyemann/?hl=nl'
   },
   {
-    name: 'TonnyGha',
+    name: 'Tonnygha',
     instagram: 'https://www.instagram.com/tonny.gha/?hl=nl'
   },
   {
