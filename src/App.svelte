@@ -210,6 +210,7 @@
         font-size: 13px;
         .instagram-icon {
           margin-left: 10px;
+          width: 15px;
         }
       }
     }
