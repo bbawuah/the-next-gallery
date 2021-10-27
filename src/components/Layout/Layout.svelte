@@ -110,6 +110,7 @@
       .logo-container {
         position: fixed;
         width: 100px;
+        z-index: 2;
       }
 
       .arrow-container {
