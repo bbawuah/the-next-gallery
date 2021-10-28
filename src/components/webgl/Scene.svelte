@@ -205,15 +205,14 @@
         touch-action: none;
         width: 25px;
       }
-    }
-
-    .exit-container {
-      display: flex;
-      align-items: center;
-      touch-action: none;
-      z-index: 1;
-      width: 25px;
-      transition: 0.175s ease-in-out;
+      .exit-container {
+        display: flex;
+        align-items: center;
+        touch-action: none;
+        z-index: 1;
+        width: 25px;
+        transition: 0.175s ease-in-out;
+      }
     }
 
     .keys {
@@ -275,6 +274,9 @@
 
   @media screen and (min-width: 1028px) {
     .canvas-container {
+      .scene-header {
+        padding: 50px;
+      }
       .keys {
         width: 100px;
         height: 100px;
