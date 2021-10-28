@@ -78,7 +78,7 @@
   <canvas class="webgl__canvas" bind:this={canvasElement} />
 
   <div class="scene-header">
-    {#if isMobileDevice && isPlaying}
+    {#if isPlaying}
       <div
         on:click={e => {
           onExit(layoutElement);
@@ -87,26 +87,26 @@
       >
         <Icon icon={IconType.close} />
       </div>
+
+      <div
+        on:click={e => {
+          hasMutedSound.update(value => !value);
+
+          if (soundIsMuted) {
+            audio.pause();
+          } else {
+            audio.play();
+          }
+        }}
+        class="sound-icon"
+      >
+        {#if soundIsMuted}
+          <Icon icon={IconType.headphoneMuted} />
+        {:else}
+          <Icon icon={IconType.headphone} />
+        {/if}
+      </div>
     {/if}
-
-    <div
-      on:click={e => {
-        hasMutedSound.update(value => !value);
-
-        if (soundIsMuted) {
-          audio.pause();
-        } else {
-          audio.play();
-        }
-      }}
-      class="sound-icon"
-    >
-      {#if soundIsMuted}
-        <Icon icon={IconType.headphoneMuted} />
-      {:else}
-        <Icon icon={IconType.headphone} />
-      {/if}
-    </div>
   </div>
 
   {#if progress === 100 && isPlaying}
@@ -205,15 +205,14 @@
         touch-action: none;
         width: 25px;
       }
-    }
-
-    .exit-container {
-      display: flex;
-      align-items: center;
-      touch-action: none;
-      z-index: 1;
-      width: 25px;
-      transition: 0.175s ease-in-out;
+      .exit-container {
+        display: flex;
+        align-items: center;
+        touch-action: none;
+        z-index: 1;
+        width: 25px;
+        transition: 0.175s ease-in-out;
+      }
     }
 
     .keys {
@@ -275,6 +274,9 @@
 
   @media screen and (min-width: 1028px) {
     .canvas-container {
+      .scene-header {
+        padding: 50px;
+      }
       .keys {
         width: 100px;
         height: 100px;
