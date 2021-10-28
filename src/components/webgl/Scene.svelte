@@ -78,7 +78,7 @@
   <canvas class="webgl__canvas" bind:this={canvasElement} />
 
   <div class="scene-header">
-    {#if isMobileDevice && isPlaying}
+    {#if isPlaying}
       <div
         on:click={e => {
           onExit(layoutElement);
@@ -87,26 +87,26 @@
       >
         <Icon icon={IconType.close} />
       </div>
+
+      <div
+        on:click={e => {
+          hasMutedSound.update(value => !value);
+
+          if (soundIsMuted) {
+            audio.pause();
+          } else {
+            audio.play();
+          }
+        }}
+        class="sound-icon"
+      >
+        {#if soundIsMuted}
+          <Icon icon={IconType.headphoneMuted} />
+        {:else}
+          <Icon icon={IconType.headphone} />
+        {/if}
+      </div>
     {/if}
-
-    <div
-      on:click={e => {
-        hasMutedSound.update(value => !value);
-
-        if (soundIsMuted) {
-          audio.pause();
-        } else {
-          audio.play();
-        }
-      }}
-      class="sound-icon"
-    >
-      {#if soundIsMuted}
-        <Icon icon={IconType.headphoneMuted} />
-      {:else}
-        <Icon icon={IconType.headphone} />
-      {/if}
-    </div>
   </div>
 
   {#if progress === 100 && isPlaying}
