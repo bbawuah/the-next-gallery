@@ -1,21 +1,14 @@
 import GSAP from 'gsap';
 import type {DeviceOrientationControls} from 'three/examples/jsm/controls/DeviceOrientationControls';
 import type {PointerLockControls} from 'three/examples/jsm/controls/PointerLockControls';
-import {
-  currentSession,
-  pointerLockerControls,
-  isMobileDevice as mobileDeviceSubscriber,
-  deviceOrientation as deviceOrientationSubscriber,
-  audioController,
-  hasMutedSound
-} from '../store/store';
+import {store} from '../store/store';
 
 let audio: HTMLAudioElement;
 export const interval = 250;
 
 let soundIsMuted: boolean;
 
-hasMutedSound.subscribe(value => {
+store.isMuted.subscribe(value => {
   soundIsMuted = value;
 });
 
@@ -26,23 +19,23 @@ export const onEnter = (el: HTMLElement): void => {
 
   GSAP.to(el, {duration: 0.5, opacity: 0});
 
-  audioController.subscribe(value => {
+  store.audioController.subscribe(value => {
     audio = value;
   });
 
-  pointerLockerControls.subscribe(value => {
+  store.pointerLockerControls.subscribe(value => {
     pointerLockerctrls = value;
   });
 
-  mobileDeviceSubscriber.subscribe(value => {
+  store.isMobileDevice.subscribe(value => {
     isMobileDevice = value;
   });
 
-  deviceOrientationSubscriber.subscribe(value => {
+  store.deviceOrientation.subscribe(value => {
     deviceOrientation = value;
   });
 
-  currentSession.update(() => true);
+  store.currentSession.update(() => true);
 
   playSound(audio);
 
@@ -62,19 +55,19 @@ export const onEnter = (el: HTMLElement): void => {
 
         GSAP.to(el, {duration: 0.5, opacity: 1});
         el.style.display = 'grid';
-        currentSession.update(() => false);
+        store.currentSession.update(() => false);
       });
     }
   }
 
-  currentSession.update(() => true);
+  store.currentSession.update(() => true);
 };
 
 export const onExit = (el: HTMLElement): void => {
   pauseSound(audio);
   let deviceOrientation: DeviceOrientationControls;
 
-  deviceOrientationSubscriber.subscribe(value => {
+  store.deviceOrientation.subscribe(value => {
     deviceOrientation = value;
   });
 
@@ -82,7 +75,7 @@ export const onExit = (el: HTMLElement): void => {
 
   GSAP.to(el, {duration: 0.5, opacity: 1});
   el.style.display = 'grid';
-  currentSession.update(() => false);
+  store.currentSession.update(() => false);
 };
 
 function handleSoundOnPageVisibility() {
@@ -93,7 +86,7 @@ function handleSoundOnPageVisibility() {
     if (document[hidden]) {
       audio.pause();
     } else {
-      currentSession.subscribe(value => {
+      store.currentSession.subscribe(value => {
         if (value) {
           playSound(audio);
         }

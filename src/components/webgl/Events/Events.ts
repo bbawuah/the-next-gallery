@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import {currentSession} from '../../../store/store';
+import {store} from '../../../store/store';
 
 export class Events {
   private _forward: boolean;
@@ -21,7 +21,7 @@ export class Events {
 
     this.walkingSpeed = 1.85;
 
-    currentSession.subscribe(value => {
+    store.currentSession.subscribe(value => {
       this.playerIsInScene = value;
     });
 

@@ -8,7 +8,7 @@ import type {Sizes} from './types';
 import {Events} from './Events/Events';
 import {PhysicsWorld} from './Physics/Physics';
 import {RenderTarget} from './RenderTarget/RenderTarget';
-import {deviceOrientation, isMobileDevice, pointerLockerControls} from '../../store/store';
+import {store} from '../../store/store';
 import {DeviceOrientationControls} from 'three/examples/jsm/controls/DeviceOrientationControls.js';
 import {PointerLockControls} from 'three/examples/jsm/controls/PointerLockControls';
 import {LoadingManager} from './LoadingManager/LoadingManager';
@@ -120,7 +120,7 @@ export class Scene {
 
     this.loadingManager = new LoadingManager(this.scene);
 
-    isMobileDevice.subscribe(value => {
+    store.isMobileDevice.subscribe(value => {
       this.isMobile = value;
     });
 
@@ -146,7 +146,7 @@ export class Scene {
     this.controls = new OrbitControls(this.camera, el); //Development
 
     this.deviceOrientationControls = new DeviceOrientationControls(this.camera);
-    deviceOrientation.update(() => this.deviceOrientationControls);
+    store.deviceOrientation.update(() => this.deviceOrientationControls);
 
     this.dracoLoader = new DRACOLoader(this.loadingManager.loadingManager);
     this.dracoLoader.setDecoderPath('draco/');
@@ -155,7 +155,7 @@ export class Scene {
     this.gltfLoader.setDRACOLoader(this.dracoLoader);
     this.gltfLoader.load('./static/gallery.glb', gltf => this.handleGltf(gltf));
 
-    isMobileDevice.subscribe(v => (this.isMobile = v));
+    store.isMobileDevice.subscribe(v => (this.isMobile = v));
 
     this.webXR = new WebXR({
       renderer: this.renderer,
@@ -165,7 +165,7 @@ export class Scene {
     });
 
     if (!this.isMobile) {
-      pointerLockerControls.update(() => new PointerLockControls(this.camera, el));
+      store.pointerLockerControls.update(() => new PointerLockControls(this.camera, el));
       this.events.handleKeyUpEvents();
       this.events.handleKeyDownEvents();
     }

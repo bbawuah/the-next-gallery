@@ -1,5 +1,5 @@
 import GSAP from 'gsap';
-import {audioController, currentSession, isMobileDevice, xrIsSupported} from '../../../store/store';
+import {store} from '../../../store/store';
 import type {Navigator} from 'webxr';
 import {playSound} from '../../../utils/onEnter';
 
@@ -15,7 +15,7 @@ export class VRButton {
     this.button = document.createElement('button');
     this.message = document.createElement('a');
 
-    currentSession.subscribe(value => {
+    store.currentSession.subscribe(value => {
       if (value) {
         GSAP.to(this.message, {duration: 0.25, left: '50%'});
         GSAP.to(this.button, {duration: 0.25, left: '50%'});
@@ -26,7 +26,7 @@ export class VRButton {
     });
 
     if ('xr' in this.navigator) {
-      xrIsSupported.subscribe(value => {
+      store.xrIsSupported.subscribe(value => {
         if (value) {
           this.showEnterVR(this.button);
           this.button.textContent = 'ENTER VR';
@@ -66,7 +66,7 @@ export class VRButton {
 
       self.renderer.xr.setSession(session);
 
-      audioController.subscribe(audio => {
+      store.audioController.subscribe(audio => {
         playSound(audio);
         audioElement = audio;
       });
@@ -141,7 +141,7 @@ export class VRButton {
   stylizeElement(element: HTMLElement, fontSize = 13, ignorePadding = false): void {
     let isMobile: boolean;
 
-    isMobileDevice.subscribe(value => {
+    store.isMobileDevice.subscribe(value => {
       isMobile = value;
     });
 

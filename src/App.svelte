@@ -7,7 +7,7 @@
   import ParagraphContainer from './components/ParagraphContainer/ParagraphContainer.svelte';
   import ProgressMeter from './components/ProgressMeter/ProgressMeter.svelte';
   import Scene from './components/webgl/Scene.svelte';
-  import {layoutContainer, progressRatio, xrIsSupported} from './store/store';
+  import {store} from './store/store';
   import {metadata} from './utils/creativesMetadata/creativesMetaData';
   import {IconType} from './utils/icons/types/IconType';
   import {onEnter} from './utils/onEnter';
@@ -22,19 +22,19 @@
   if ('xr' in webXRNavigator) {
     webXRNavigator.xr.isSessionSupported('immersive-vr').then(supported => {
       webXRIsSupported = supported;
-      xrIsSupported.update(() => supported);
+      store.xrIsSupported.update(() => supported);
     });
   }
 
-  layoutContainer.subscribe(value => {
+  store.layoutContainer.subscribe(value => {
     layoutElement = value;
   });
 
-  progressRatio.subscribe(value => {
+  store.progressRatio.subscribe(value => {
     progress = value;
   });
 
-  xrIsSupported.subscribe(value => {
+  store.xrIsSupported.subscribe(value => {
     webXRIsSupported = value;
   });
 </script>
