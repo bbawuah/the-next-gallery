@@ -28,6 +28,7 @@
   .keys-container {
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
     align-items: center;
     user-select: none;
     -webkit-touch-callout: none;
