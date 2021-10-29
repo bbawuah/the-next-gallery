@@ -43,7 +43,7 @@
       font-family: $font-text-light;
       color: $color-dark-grey;
       margin: 0;
-      font-size: 10px;
+      font-size: 12px;
       text-align: center;
       -webkit-touch-callout: none;
       -webkit-user-select: none;
