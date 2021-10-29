@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import GSAP from 'gsap';
-import {progressRatio} from '../../../store/store';
+import {store} from '../../../store/store';
 
 export class LoadingManager {
   private overlayGeometry: THREE.PlaneGeometry;
@@ -51,6 +51,6 @@ export class LoadingManager {
   }
 
   private onProgressLoadAssets(url: string, loaded: number, total: number): void {
-    progressRatio.update(() => Math.floor((loaded / total) * 100));
+    store.progressRatio.update(() => Math.floor((loaded / total) * 100));
   }
 }

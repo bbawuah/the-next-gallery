@@ -6,15 +6,7 @@
   import {IconType} from '../../utils/icons/types/IconType';
   import NavigationContainer from '../Navigation/NavigationContainer.svelte';
   import Icon from '../Icon/Icon.svelte';
-  import {
-    currentSession,
-    progressRatio,
-    isMobileDevice as mobileDeviceSubscriber,
-    layoutContainer,
-    hasMutedSound,
-    audioController,
-    canvasContainer
-  } from '../../store/store';
+  import {store} from '../../store/store';
   import {onExit} from '../../utils/onEnter';
 
   let isMobileDevice: boolean;
@@ -30,17 +22,17 @@
 
   let canvasContainerRef: HTMLElement;
 
-  audioController.subscribe(value => {
+  store.audioController.subscribe(value => {
     audio = value;
   });
 
-  hasMutedSound.subscribe(value => {
+  store.isMuted.subscribe(value => {
     soundIsMuted = value;
   });
 
   window.addEventListener('keydown', e => {
     if (e.key === 's') {
-      hasMutedSound.update(value => !value);
+      store.isMuted.update(value => !value);
 
       if (soundIsMuted) {
         audio.pause();
@@ -50,18 +42,18 @@
     }
   });
 
-  currentSession.subscribe(value => {
+  store.currentSession.subscribe(value => {
     isPlaying = value;
   });
-  progressRatio.subscribe(value => {
+  store.progressRatio.subscribe(value => {
     progress = value;
   });
 
-  mobileDeviceSubscriber.subscribe(value => {
+  store.isMobileDevice.subscribe(value => {
     isMobileDevice = value;
   });
 
-  layoutContainer.subscribe(value => {
+  store.layoutContainer.subscribe(value => {
     layoutElement = value;
   });
 
@@ -69,7 +61,7 @@
     if (canvasElement && canvasContainerRef) {
       scene = new Scene(canvasElement);
 
-      canvasContainer.update(() => canvasContainerRef);
+      store.canvasContainer.update(() => canvasContainerRef);
     }
   });
 </script>
@@ -90,7 +82,7 @@
 
       <div
         on:click={e => {
-          hasMutedSound.update(value => !value);
+          store.isMuted.update(value => !value);
 
           if (soundIsMuted) {
             audio.pause();
