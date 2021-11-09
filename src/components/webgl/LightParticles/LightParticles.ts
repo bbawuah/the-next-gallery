@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-
 export class LightParticles {
   private lightParticlesGeometry: THREE.BufferGeometry;
   private lightParticlesMaterial: THREE.RawShaderMaterial;

@@ -3,6 +3,7 @@ import createGeometry from 'three-bmfont-text';
 import loadFont from 'load-bmfont';
 import type {BufferGeometry} from 'three';
 import {createMSDFShader} from '../Shaders/msdf';
+
 interface ShaderProps {
   vertexShader: string;
   fragmentShader: string;
