@@ -1,7 +1,7 @@
 <script lang="ts">
+  import GSAP from 'gsap';
   import {IconType} from '../../utils/icons/types/IconType';
   import Icon from '../Icon/Icon.svelte';
-  import GSAP from 'gsap';
   import {onMount} from 'svelte';
   import {store} from '../../store/store';
   import {onEnter} from '../../utils/onEnter';

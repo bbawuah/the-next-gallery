@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import Stats from 'stats-js';
-import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js';
+// import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js';
 import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader';
 import type {GLTF} from 'three/examples/jsm/loaders/GLTFLoader';
 import {DRACOLoader} from 'three/examples/jsm/loaders/DRACOLoader';
@@ -66,7 +66,7 @@ export class Scene {
   private camera: THREE.PerspectiveCamera;
   private scene: THREE.Scene;
 
-  private controls: OrbitControls;
+  // private controls: OrbitControls;
 
   private material: THREE.MeshBasicMaterial;
   private mesh: THREE.Mesh;
@@ -143,7 +143,7 @@ export class Scene {
       this.scene.add(this.mesh);
     }
 
-    this.controls = new OrbitControls(this.camera, el); //Development
+    // this.controls = new OrbitControls(this.camera, el);
 
     this.deviceOrientationControls = new DeviceOrientationControls(this.camera);
     store.deviceOrientation.update(() => this.deviceOrientationControls);
