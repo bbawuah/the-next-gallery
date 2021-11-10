@@ -31,7 +31,7 @@ export class LoadingManager {
              uniform float u_alpha;
        
              void main() {
-               gl_FragColor = vec4(.6, 0.6, 0.6, u_alpha);
+               gl_FragColor = vec4(0.6, 0.6, 0.6, u_alpha);
              }
              `,
       transparent: true
