@@ -117,12 +117,13 @@ export class Scene {
 
     this.camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100);
     this.camera.position.z = -1;
-
-    this.loadingManager = new LoadingManager(this.scene);
+    this.camera.rotateY(180);
 
     store.isMobileDevice.subscribe(value => {
       this.isMobile = value;
     });
+
+    this.loadingManager = new LoadingManager(this.scene);
 
     this.textureLoader = new THREE.TextureLoader(this.loadingManager.loadingManager);
     this.bakedTexture = this.textureLoader.load('./static/map.jpg');
