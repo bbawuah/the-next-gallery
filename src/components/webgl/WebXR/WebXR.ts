@@ -52,7 +52,6 @@ export class WebXR {
     this.dolly = new THREE.Object3D();
     this.dolly.add(this.camera);
     this.dolly.position.y = 0.8;
-    this.dolly.rotateY(90);
     this.scene.add(this.dolly);
 
     this.dummyCam = new THREE.Object3D();
