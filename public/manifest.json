@@ -48,20 +48,20 @@
   "start_url": "https://www.thenext.gallery/?source=pwa",
   "background_color": "#fff",
   "display": "standalone",
-  "scope": "/",
+  "scope": "https://www.thenext.gallery/",
   "theme_color": "#fff",
   "shortcuts": [],
   "description": "A digital showcase of creatives and talents in a way you’ve never seen before.",
   "screenshots": [
     {
-      "src": "/images/screenshot1.png",
+      "src": "screenshot-one.png",
       "type": "image/png",
-      "sizes": "540x720"
+      "sizes": "1143x1143"
     },
     {
-      "src": "/images/screenshot2.jpg",
+      "src": "screenshot-two.png",
       "type": "image/jpg",
-      "sizes": "540x720"
+      "sizes": "1143x1143"
     }
   ]
 }
