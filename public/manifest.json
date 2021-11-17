@@ -45,10 +45,10 @@
       "purpose": "any maskable"
     }
   ],
-  "start_url": "https://www.thenext.gallery/?source=pwa",
+  "start_url": "index.html/?source=pwa",
   "background_color": "#fff",
   "display": "standalone",
-  "scope": "https://www.thenext.gallery/",
+  "scope": "./",
   "theme_color": "#fff",
   "shortcuts": [],
   "description": "A digital showcase of creatives and talents in a way you’ve never seen before.",
