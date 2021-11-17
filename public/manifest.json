@@ -45,10 +45,10 @@
       "purpose": "any maskable"
     }
   ],
-  "start_url": "index.html/?source=pwa",
   "background_color": "#fff",
   "display": "standalone",
-  "scope": "./",
+  "start_url": "/?source=pwa",
+  "scope": "/",
   "theme_color": "#fff",
   "shortcuts": [],
   "description": "A digital showcase of creatives and talents in a way you’ve never seen before.",
@@ -56,12 +56,12 @@
     {
       "src": "screenshot-one.png",
       "type": "image/png",
-      "sizes": "1143x1143"
+      "sizes": "1134x1134"
     },
     {
       "src": "screenshot-two.png",
       "type": "image/jpg",
-      "sizes": "1143x1143"
+      "sizes": "1134x1134"
     }
   ]
 }
