@@ -67,17 +67,21 @@ const contentToCache = [
   './index.html'
 ];
 
-self.addEventListener('install', function (event) {
+self.addEventListener('install', function (event: ExtendableEvent) {
   console.log('[Service Worker] Install');
-  const preCache = async () => {
-    const cache = await caches.open(cacheName);
-    return cache.addAll([contentToCache]);
-  };
-
-  event.waitUntil(preCache);
+  event.waitUntil(
+    caches
+      .open(cacheName)
+      .then(cache => {
+        cache.addAll(contentToCache);
+      })
+      .catch(e => {
+        console.log(e);
+      })
+  );
 });
 
-self.addEventListener('fetch', e => {
+self.addEventListener('fetch', (e: FetchEvent) => {
   e.respondWith(
     (async () => {
       const r = await caches.match(e.request);
@@ -94,3 +98,5 @@ self.addEventListener('fetch', e => {
     })()
   );
 });
+
+export {};
