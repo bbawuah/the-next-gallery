@@ -70,7 +70,12 @@ self.addEventListener('install', function (event) {
     (async () => {
       const cache = await caches.open(cacheName);
       console.log('[Service Worker] Caching all: app shell and content');
-      await cache.addAll(contentToCache);
+
+      try {
+        await cache.addAll(contentToCache);
+      } catch (e) {
+        console.log('failed to cache content');
+      }
     })()
   );
 });
@@ -84,8 +89,8 @@ self.addEventListener('fetch', e => {
         return r;
       }
       const response = await fetch(e.request);
-
       const cache = await caches.open(cacheName);
+
       console.log(`[Service Worker] Caching new resource: ${e.request.url}`);
       cache.put(e.request, response.clone());
       return response;
