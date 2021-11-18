@@ -20,7 +20,7 @@
   const year = new Date().getFullYear();
 
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./service-worker.ts', {scope: '.'});
+    navigator.serviceWorker.register('./service-worker.js', {scope: '.'});
     console.log('test');
   }
 
