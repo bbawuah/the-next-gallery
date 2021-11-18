@@ -26,10 +26,6 @@
     });
   }
 
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./service-worker.js', {scope: '.'});
-  }
-
   store.layoutContainer.subscribe(value => {
     layoutElement = value;
   });
