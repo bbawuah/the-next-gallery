@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-misused-new */
 /// <reference types="svelte" />
 
 declare module 'three-bmfont-text';
