@@ -1,12 +1,15 @@
 const cacheName = 'js13kPWA-v1';
 const contentToCache = [
+  './static/',
   './static/map.jpg',
-  '/fonts/helvetica.fnt',
-  '/fonts/helvetica.png',
-  '/fonts/HelveticaNeue-Bold-02.ttf',
-  '/fonts/HelveticaNeue-Light-08.ttf',
-  '/fonts/HelveticaNeue-01.ttf',
+  './fonts/',
+  './fonts/helvetica.fnt',
+  './fonts/helvetica.png',
+  './fonts/HelveticaNeue-Bold-02.ttf',
+  './fonts/HelveticaNeue-Light-08.ttf',
+  './fonts/HelveticaNeue-01.ttf',
   './static/gallery.glb',
+  './static/photos',
   './static/photos/dalis.jpg',
   './static/photos/jamil.jpg',
   './static/photos/porchia.jpg',
@@ -59,20 +62,19 @@ const contentToCache = [
   './static/photos/emmanuel-meta.png',
   './static/photos/denitio-meta.png',
   './static/sound/ambient-sound.mp3',
-  '/build/bundle.js',
-  '/build/bundle.css',
+  './build/bundle.js',
+  './build/bundle.css',
   './index.html'
 ];
 
 self.addEventListener('install', function (event) {
   console.log('[Service Worker] Install');
-  event.waitUntil(
-    (async () => {
-      const cache = await caches.open(cacheName);
-      console.log('[Service Worker] Caching all: app shell and content');
-      await cache.addAll(contentToCache);
-    })()
-  );
+  const preCache = async () => {
+    const cache = await caches.open(cacheName);
+    return cache.addAll([contentToCache]);
+  };
+
+  event.waitUntil(preCache);
 });
 
 self.addEventListener('fetch', e => {
@@ -84,8 +86,8 @@ self.addEventListener('fetch', e => {
         return r;
       }
       const response = await fetch(e.request);
-
       const cache = await caches.open(cacheName);
+
       console.log(`[Service Worker] Caching new resource: ${e.request.url}`);
       cache.put(e.request, response.clone());
       return response;
