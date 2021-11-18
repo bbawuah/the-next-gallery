@@ -5,7 +5,7 @@ self.addEventListener('install', function (event) {
   console.log('[Service Worker] Install');
   const preCache = async () => {
     const cache = await caches.open(cacheName);
-    return cache.addAll([contentToCache]);
+    return;
   };
 
   event.waitUntil(preCache);
