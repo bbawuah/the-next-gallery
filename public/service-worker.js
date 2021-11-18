@@ -1,15 +1,12 @@
 const cacheName = 'js13kPWA-v1';
 const contentToCache = [
-  './static/',
   './static/map.jpg',
-  './fonts/',
   './fonts/helvetica.fnt',
   './fonts/helvetica.png',
   './fonts/HelveticaNeue-Bold-02.ttf',
   './fonts/HelveticaNeue-Light-08.ttf',
   './fonts/HelveticaNeue-01.ttf',
   './static/gallery.glb',
-  './static/photos',
   './static/photos/dalis.jpg',
   './static/photos/jamil.jpg',
   './static/photos/porchia.jpg',
