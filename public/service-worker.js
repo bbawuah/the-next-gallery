@@ -61,7 +61,8 @@ const contentToCache = [
   './static/sound/ambient-sound.mp3',
   '/build/bundle.js',
   '/build/bundle.css',
-  './index.html'
+  './index.html',
+  './offline.html'
 ];
 
 self.addEventListener('install', function (event) {
@@ -83,11 +84,19 @@ self.addEventListener('fetch', e => {
       if (r) {
         return r;
       }
-      const response = await fetch(e.request);
-      const cache = await caches.open(cacheName);
-      console.log(`[Service Worker] Caching new resource: ${e.request.url}`);
-      cache.put(e.request, response.clone());
-      return response;
+
+      try {
+        const response = await fetch(e.request);
+
+        const cache = await caches.open(cacheName);
+        console.log(`[Service Worker] Caching new resource: ${e.request.url}`);
+        cache.put(e.request, response.clone());
+        return response;
+      } catch (e) {
+        caches.open(cacheName).then(function (cache) {
+          return cache.match('/offline.html');
+        });
+      }
     })()
   );
 });
