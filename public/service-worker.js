@@ -61,8 +61,7 @@ const contentToCache = [
   './static/sound/ambient-sound.mp3',
   '/build/bundle.js',
   '/build/bundle.css',
-  './index.html',
-  './offline.html'
+  './index.html'
 ];
 
 self.addEventListener('install', function (event) {
