@@ -94,7 +94,7 @@ self.addEventListener('fetch', e => {
         return response;
       } catch (e) {
         caches.open(cacheName).then(function (cache) {
-          return cache.match('/offline.html');
+          return cache.match('./offline.html');
         });
       }
     })()
