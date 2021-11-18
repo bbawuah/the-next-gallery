@@ -19,10 +19,10 @@
 
   const year = new Date().getFullYear();
 
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./service-worker.js', {scope: '.'});
-    console.log('test');
-  }
+  // if ('serviceWorker' in navigator) {
+  //   navigator.serviceWorker.register('./service-worker.js', {scope: '.'});
+  //   console.log('test');
+  // }
 
   if ('xr' in webXRNavigator) {
     webXRNavigator.xr.isSessionSupported('immersive-vr').then(supported => {
