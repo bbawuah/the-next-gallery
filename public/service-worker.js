@@ -81,12 +81,16 @@ self.addEventListener('install', function (event) {
 
 self.addEventListener('fetch', e => {
   e.respondWith(async function () {
-    const r = await caches.match(e.request);
-    console.log(`[Service Worker] Fetching resource: ${e.request.url}`);
-    if (r) {
-      return r;
-    }
+    try {
+      const r = await caches.match(e.request);
+      console.log(`[Service Worker] Fetching resource: ${e.request.url}`);
+      if (r) {
+        return r;
+      }
 
-    return fetch(e.request);
+      return fetch(e.request);
+    } catch (e) {
+      console.log(e);
+    }
   });
 });
