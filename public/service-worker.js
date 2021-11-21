@@ -66,27 +66,26 @@ const contentToCache = [
 
 self.addEventListener('install', function (event) {
   console.log('[Service Worker] Install');
-  const preCache = async () => {
-    const cache = await caches.open(cacheName);
 
-    try {
+  event.waitUntil(
+    caches.open(cacheName).then(cache => {
       return cache.addAll(contentToCache);
-    } catch (e) {
-      return;
-    }
-  };
-
-  event.waitUntil(preCache());
+    })
+  );
 });
 
 self.addEventListener('fetch', e => {
-  e.respondWith(async function () {
-    const r = await caches.match(e.request);
-    console.log(`[Service Worker] Fetching resource: ${e.request.url}`);
-    if (r) {
-      return r;
-    }
-
-    return fetch(e.request);
-  });
+  e.respondWith(
+    caches.match(e.request).then(resp => {
+      return (
+        resp ||
+        fetch(e.request).then(response => {
+          return caches.open(cacheName).then(cache => {
+            cache.put(e.request, response.clone());
+            return response;
+          });
+        })
+      );
+    })
+  );
 });
