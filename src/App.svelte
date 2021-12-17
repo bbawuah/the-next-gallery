@@ -131,7 +131,10 @@
         </div>
 
         <footer class="footer">
-          <p class="copyright">Copyright &copy; {year} <Link href="https://github.com/bbawuah">Brian Bawuah</Link></p>
+          <p class="copyright">
+            BASED ON <Link href="https://shutdown.gallery/">THE SHUTDOWN.GALLERY</Link>
+            By <Link href="https://github.com/bbawuah">Brian Bawuah</Link>
+          </p>
         </footer>
         <div class="logo-bottom">
           <Icon icon={IconType.close} />
