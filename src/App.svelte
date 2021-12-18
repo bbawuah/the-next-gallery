@@ -137,11 +137,10 @@
             >,
             <Link href="https://threejs-journey.com/">THREEJS-JOURNEY</Link>,
             <Link href="https://threejs.org/">THREEJS</Link>,
-            <Link href="https://twitter.com/NikLever">NikLever</Link>,
-            <Link href="https://tympanus.net/codrops/2020/06/02/kinetic-typography-with-three-js/">Mario Carrillo</Link
-            >,
-            <Link href="https://developers.google.com/web/fundamentals/primers/service-workers">Matt Gaunt</Link>. MADE
-            BY <Link href="https://github.com/bbawuah/the-next-gallery">Brian Bawuah</Link>
+            <Link href="https://twitter.com/NikLever">NIKLEVER</Link>,
+            <Link href="https://tympanus.net/codrops/2020/06/02/kinetic-typography-with-three-js/">MARIO CARILLO</Link>,
+            <Link href="https://developers.google.com/web/fundamentals/primers/service-workers">MATT GAUNT</Link>. MADE
+            BY <Link href="https://github.com/bbawuah/the-next-gallery">BRIAN BAWUAH</Link>
           </p>
         </footer>
         <div class="logo-bottom">
