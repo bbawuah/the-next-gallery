@@ -160,10 +160,8 @@ export class Scene {
       this.scene.add(this.mesh);
     }
 
-    // this.controls = new OrbitControls(this.camera, el);
-
     this.deviceOrientationControls = new DeviceOrientationControls(this.camera);
-    store.deviceOrientation.update(() => this.deviceOrientationControls);
+    this.deviceOrientationControls.connect();
 
     this.dracoLoader = new DRACOLoader(this.loadingManager.loadingManager);
     this.dracoLoader.setDecoderPath('draco/');

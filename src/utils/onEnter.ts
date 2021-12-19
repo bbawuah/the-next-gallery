@@ -1,5 +1,4 @@
 import GSAP from 'gsap';
-import type {DeviceOrientationControls} from 'three/examples/jsm/controls/DeviceOrientationControls';
 import type {PointerLockControls} from 'three/examples/jsm/controls/PointerLockControls';
 import {store} from '../store/store';
 
@@ -14,8 +13,6 @@ store.isMuted.subscribe(value => {
 
 export const onEnter = (el: HTMLElement): void => {
   let pointerLockerctrls: PointerLockControls;
-  let isMobileDevice: boolean;
-  let deviceOrientation: DeviceOrientationControls;
 
   GSAP.to(el, {duration: 0.5, opacity: 0});
 
@@ -25,14 +22,6 @@ export const onEnter = (el: HTMLElement): void => {
 
   store.pointerLockerControls.subscribe(value => {
     pointerLockerctrls = value;
-  });
-
-  store.isMobileDevice.subscribe(value => {
-    isMobileDevice = value;
-  });
-
-  store.deviceOrientation.subscribe(value => {
-    deviceOrientation = value;
   });
 
   store.currentSession.update(() => true);
@@ -45,20 +34,16 @@ export const onEnter = (el: HTMLElement): void => {
     el.style.display = 'none';
   }, 500);
 
-  if (isMobileDevice) {
-    deviceOrientation.connect();
-  } else {
-    if (pointerLockerctrls) {
-      pointerLockerctrls.lock();
-      pointerLockerctrls.addEventListener('unlock', () => {
-        audio.pause();
+  if (pointerLockerctrls) {
+    pointerLockerctrls.lock();
+    pointerLockerctrls.addEventListener('unlock', () => {
+      audio.pause();
 
-        GSAP.to(el, {duration: 0.5, opacity: 1});
-        el.style.display = 'block';
+      GSAP.to(el, {duration: 0.5, opacity: 1});
+      el.style.display = 'block';
 
-        store.currentSession.update(() => false);
-      });
-    }
+      store.currentSession.update(() => false);
+    });
   }
 
   store.currentSession.update(() => true);
@@ -66,13 +51,6 @@ export const onEnter = (el: HTMLElement): void => {
 
 export const onExit = (el: HTMLElement): void => {
   pauseSound(audio);
-  let deviceOrientation: DeviceOrientationControls;
-
-  store.deviceOrientation.subscribe(value => {
-    deviceOrientation = value;
-  });
-
-  deviceOrientation.disconnect();
 
   GSAP.to(el, {duration: 0.5, opacity: 1});
   el.style.display = 'block';
