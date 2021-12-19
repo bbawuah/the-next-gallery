@@ -72,7 +72,7 @@
         });
 
         scroll.on('scroll', ev => {
-          const speed = ev.speed < 0.2 && ev.speed > -0.2 ? 0.0 : ev.speed;
+          const speed = ev.speed < 0.1 && ev.speed > -0.1 ? 0.0 : ev.speed;
           store.scrollSpeed.update(() => speed);
         });
       }

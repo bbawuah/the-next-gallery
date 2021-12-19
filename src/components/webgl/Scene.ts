@@ -102,6 +102,11 @@ export class Scene {
 
   private webXR: WebXR;
 
+  private composer: EffectComposer;
+  private shaderPass: ShaderPass;
+  private renderPass: RenderPass;
+  private glitchPass: GlitchPass;
+
   public isMobile: boolean;
 
   public deviceOrientationControls: DeviceOrientationControls;
@@ -110,10 +115,7 @@ export class Scene {
 
   public scrollSpeed: number;
 
-  private composer: EffectComposer;
-  private shaderPass: ShaderPass;
-  private renderPass: RenderPass;
-  private glitchPass: GlitchPass;
+  public currentSession: boolean;
 
   constructor(el: HTMLCanvasElement) {
     this.renderer = new THREE.WebGLRenderer({
@@ -131,7 +133,7 @@ export class Scene {
     this.camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100);
     this.camera.position.z = -1;
 
-    this.camera.rotateY(45);
+    this.camera.rotateY(220);
 
     store.isMobileDevice.subscribe(value => {
       this.isMobile = value;
@@ -189,6 +191,7 @@ export class Scene {
       this.composer.addPass(this.renderPass);
 
       store.currentSession.subscribe(v => {
+        this.currentSession = v;
         if (!v) {
           this.composer.addPass(this.shaderPass);
         } else {
@@ -197,7 +200,10 @@ export class Scene {
       });
 
       store.scrollSpeed.subscribe(v => {
-        this.camera.rotation.y = this.camera.rotation.y + v * 0.01;
+        if (this.currentSession) {
+          this.camera.rotation.y = this.camera.rotation.y + v * 0.01;
+        }
+
         this.shaderPass.uniforms.scrollSpeed.value = v + 0.0;
       });
 
@@ -351,12 +357,9 @@ export class Scene {
       this.handleRenderTarget(this.renderTargetTwo, elapsedTime, isMobile);
     }
 
-    if (isMobile) {
-      this.deviceOrientationControls.update();
-      this.renderer.render(this.scene, this.camera);
-    } else {
-      this.composer.render();
-    }
+    this.deviceOrientationControls.update();
+    this.composer.render();
+
     window.requestAnimationFrame(() => this.render(isMobile));
   }
 }
