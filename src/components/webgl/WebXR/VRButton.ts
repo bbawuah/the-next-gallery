@@ -20,8 +20,8 @@ export class VRButton {
         GSAP.to(this.message, {duration: 0.25, left: '50%'});
         GSAP.to(this.button, {duration: 0.25, left: '50%'});
       } else {
-        GSAP.to(this.message, {duration: 0.25, left: '75%'});
-        GSAP.to(this.button, {duration: 0.25, left: '75%'});
+        GSAP.to(this.message, {duration: 0.25, left: '90%'});
+        GSAP.to(this.button, {duration: 0.25, left: '90%'});
       }
     });
 
@@ -148,9 +148,9 @@ export class VRButton {
     element.style.position = 'absolute';
     element.style.top = isMobile ? '25px' : '50px';
     if (!ignorePadding) element.style.padding = '12px 6px';
-    element.style.border = '1px solid #fff';
+    element.style.border = '1px solid #000';
     element.style.borderRadius = '4px';
-    element.style.color = '#fff';
+    element.style.color = '#000';
     element.style.font = `normal ${fontSize}px sans-serif`;
     element.style.textAlign = 'center';
     element.style.opacity = '0.5';
@@ -158,7 +158,7 @@ export class VRButton {
     element.style.height = isMobile ? '40px' : '50px';
     element.style.width = 'max-content';
     element.style.zIndex = '999';
-    element.style.left = '75%';
+    element.style.left = '90%';
     element.style.background = 'transparent';
     element.style.transform = 'translate(-50%, 0)';
   }

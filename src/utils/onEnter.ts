@@ -54,7 +54,8 @@ export const onEnter = (el: HTMLElement): void => {
         audio.pause();
 
         GSAP.to(el, {duration: 0.5, opacity: 1});
-        el.style.display = 'grid';
+        el.style.display = 'block';
+
         store.currentSession.update(() => false);
       });
     }
@@ -74,7 +75,8 @@ export const onExit = (el: HTMLElement): void => {
   deviceOrientation.disconnect();
 
   GSAP.to(el, {duration: 0.5, opacity: 1});
-  el.style.display = 'grid';
+  el.style.display = 'block';
+
   store.currentSession.update(() => false);
 };
 

@@ -1,5 +1,3 @@
-import {noise} from '../functions/noise';
-
 export const fragmentShaderThree = `
 precision mediump float;
 uniform sampler2D u_texture;
@@ -7,7 +5,6 @@ uniform sampler2D u_texture;
 varying vec2 vUv;
 varying float vTime;
 
-${noise}
 
 void main() {
   vec2 uv = vUv;

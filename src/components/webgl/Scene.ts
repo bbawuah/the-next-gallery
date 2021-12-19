@@ -20,6 +20,12 @@ import {vertexShaderTwo} from './Shaders/paintingTwo/vertex';
 import {fragmentShaderTwo} from './Shaders/paintingTwo/fragment';
 import {fragmentShaderThree} from './Shaders/paintingThree/fragment';
 import {vertexShaderThree} from './Shaders/paintingThree/vertex';
+import {EffectComposer} from 'three/examples/jsm/postprocessing/EffectComposer.js';
+// import {ShaderPass} from 'three/examples/jsm/postprocessing/ShaderPass.js';
+import {RenderPass} from 'three/examples/jsm/postprocessing/RenderPass.js';
+import {GlitchPass} from 'three/examples/jsm/postprocessing/GlitchPass.js';
+import {ShaderPass} from 'three/examples/jsm/postprocessing/ShaderPass';
+import {postProcessingShader} from './Shaders/postprocessing/shader';
 
 const sizes: Sizes = {
   width: window.innerWidth,
@@ -102,6 +108,13 @@ export class Scene {
 
   public events: Events;
 
+  public scrollSpeed: number;
+
+  private composer: EffectComposer;
+  private shaderPass: ShaderPass;
+  private renderPass: RenderPass;
+  private glitchPass: GlitchPass;
+
   constructor(el: HTMLCanvasElement) {
     this.renderer = new THREE.WebGLRenderer({
       canvas: el
@@ -117,7 +130,8 @@ export class Scene {
 
     this.camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100);
     this.camera.position.z = -1;
-    this.camera.rotateY(180);
+
+    this.camera.rotateY(45);
 
     store.isMobileDevice.subscribe(value => {
       this.isMobile = value;
@@ -145,6 +159,26 @@ export class Scene {
     }
 
     // this.controls = new OrbitControls(this.camera, el);
+
+    this.renderPass = new RenderPass(this.scene, this.camera);
+    this.composer = new EffectComposer(this.renderer);
+    this.glitchPass = new GlitchPass();
+    this.shaderPass = new ShaderPass(postProcessingShader);
+
+    this.composer.addPass(this.renderPass);
+
+    store.currentSession.subscribe(v => {
+      if (!v) {
+        this.composer.addPass(this.shaderPass);
+      } else {
+        this.composer.removePass(this.shaderPass);
+      }
+    });
+
+    store.scrollSpeed.subscribe(v => {
+      this.camera.rotation.y = this.camera.rotation.y + v * 0.01;
+      this.shaderPass.uniforms.scrollSpeed.value = v + 0.0;
+    });
 
     this.deviceOrientationControls = new DeviceOrientationControls(this.camera);
     store.deviceOrientation.update(() => this.deviceOrientationControls);
@@ -320,7 +354,9 @@ export class Scene {
     if (this.renderTargetTwo && this.renderTargetTwo.renderTargetMaterial && this.renderTargetTwo.renderTarget) {
       this.handleRenderTarget(this.renderTargetTwo, elapsedTime, isMobile);
     }
-    this.renderer.render(this.scene, this.camera);
+
+    this.composer.render();
+    // this.renderer.render(this.scene, this.camera);
     stats.end();
     window.requestAnimationFrame(() => this.render(isMobile));
   }
