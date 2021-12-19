@@ -20,6 +20,12 @@ import {vertexShaderTwo} from './Shaders/paintingTwo/vertex';
 import {fragmentShaderTwo} from './Shaders/paintingTwo/fragment';
 import {fragmentShaderThree} from './Shaders/paintingThree/fragment';
 import {vertexShaderThree} from './Shaders/paintingThree/vertex';
+import {EffectComposer} from 'three/examples/jsm/postprocessing/EffectComposer.js';
+// import {ShaderPass} from 'three/examples/jsm/postprocessing/ShaderPass.js';
+import {RenderPass} from 'three/examples/jsm/postprocessing/RenderPass.js';
+import {GlitchPass} from 'three/examples/jsm/postprocessing/GlitchPass.js';
+import {ShaderPass} from 'three/examples/jsm/postprocessing/ShaderPass';
+import {postProcessingShader} from './Shaders/postprocessing/shader';
 
 const sizes: Sizes = {
   width: window.innerWidth,
@@ -102,6 +108,13 @@ export class Scene {
 
   public events: Events;
 
+  public scrollSpeed: number;
+
+  private composer: EffectComposer;
+  private shaderPass: ShaderPass;
+  private renderPass: RenderPass;
+  private glitchPass: GlitchPass;
+
   constructor(el: HTMLCanvasElement) {
     this.renderer = new THREE.WebGLRenderer({
       canvas: el
@@ -117,13 +130,15 @@ export class Scene {
 
     this.camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100);
     this.camera.position.z = -1;
-    this.camera.rotateY(180);
+
+    this.camera.rotateY(45);
 
     store.isMobileDevice.subscribe(value => {
       this.isMobile = value;
     });
 
     this.loadingManager = new LoadingManager(this.scene);
+    console.log(this.loadingManager);
 
     this.textureLoader = new THREE.TextureLoader(this.loadingManager.loadingManager);
     this.bakedTexture = this.textureLoader.load('./static/map.jpg');
@@ -166,6 +181,26 @@ export class Scene {
     });
 
     if (!this.isMobile) {
+      this.renderPass = new RenderPass(this.scene, this.camera);
+      this.composer = new EffectComposer(this.renderer);
+      this.glitchPass = new GlitchPass();
+      this.shaderPass = new ShaderPass(postProcessingShader);
+
+      this.composer.addPass(this.renderPass);
+
+      store.currentSession.subscribe(v => {
+        if (!v) {
+          this.composer.addPass(this.shaderPass);
+        } else {
+          this.composer.removePass(this.shaderPass);
+        }
+      });
+
+      store.scrollSpeed.subscribe(v => {
+        this.camera.rotation.y = this.camera.rotation.y + v * 0.01;
+        this.shaderPass.uniforms.scrollSpeed.value = v + 0.0;
+      });
+
       store.pointerLockerControls.update(() => new PointerLockControls(this.camera, el));
       this.events.handleKeyUpEvents();
       this.events.handleKeyDownEvents();
@@ -299,11 +334,6 @@ export class Scene {
   private render(isMobileDevice: boolean): void {
     const isMobile = isMobileDevice;
     const elapsedTime = this.clock.getElapsedTime();
-    stats.begin();
-
-    if (isMobile) {
-      this.deviceOrientationControls.update();
-    }
 
     if (this.physics) {
       this.physics.handlePhysics({elapsedTime, camera: this.camera, userDirection: this.events.userDirection});
@@ -320,8 +350,13 @@ export class Scene {
     if (this.renderTargetTwo && this.renderTargetTwo.renderTargetMaterial && this.renderTargetTwo.renderTarget) {
       this.handleRenderTarget(this.renderTargetTwo, elapsedTime, isMobile);
     }
-    this.renderer.render(this.scene, this.camera);
-    stats.end();
+
+    if (isMobile) {
+      this.deviceOrientationControls.update();
+      this.renderer.render(this.scene, this.camera);
+    } else {
+      this.composer.render();
+    }
     window.requestAnimationFrame(() => this.render(isMobile));
   }
 }

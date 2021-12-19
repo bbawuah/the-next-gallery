@@ -18,6 +18,7 @@ class Store {
   public xrIsSupported: Writable<boolean>;
   public layoutContainer: Writable<HTMLElement>;
   public isMobileDevice: Writable<boolean>;
+  public scrollSpeed: Writable<0>;
 
   constructor() {
     this.progressRatio = writable(0);
@@ -30,6 +31,7 @@ class Store {
     this.audioController = writable(audio);
     this.isMuted = writable(false);
     this.xrIsSupported = writable();
+    this.scrollSpeed = writable(0);
   }
 }
 

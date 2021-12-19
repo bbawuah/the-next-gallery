@@ -16,7 +16,7 @@
 
   let progress: number;
   let isPlaying: boolean;
-  let layoutElement: HTMLElement;
+  let layoutContainer: HTMLElement;
   let audio: HTMLAudioElement;
   let soundIsMuted: boolean;
 
@@ -45,6 +45,7 @@
   store.currentSession.subscribe(value => {
     isPlaying = value;
   });
+
   store.progressRatio.subscribe(value => {
     progress = value;
   });
@@ -54,7 +55,7 @@
   });
 
   store.layoutContainer.subscribe(value => {
-    layoutElement = value;
+    layoutContainer = value;
   });
 
   onMount(() => {
@@ -73,7 +74,7 @@
     {#if isPlaying}
       <div
         on:click={e => {
-          onExit(layoutElement);
+          onExit(layoutContainer);
         }}
         class="exit-container"
       >
