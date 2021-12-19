@@ -161,7 +161,10 @@ export class Scene {
     }
 
     this.deviceOrientationControls = new DeviceOrientationControls(this.camera);
-    this.deviceOrientationControls.connect();
+
+    if (this.isMobile) {
+      this.deviceOrientationControls.connect();
+    }
 
     this.dracoLoader = new DRACOLoader(this.loadingManager.loadingManager);
     this.dracoLoader.setDecoderPath('draco/');
@@ -197,7 +200,7 @@ export class Scene {
 
     if (!this.isMobile) {
       store.scrollSpeed.subscribe(v => {
-        if (this.currentSession) {
+        if (!this.currentSession) {
           this.camera.rotation.y = this.camera.rotation.y + v * 0.01;
         }
 
@@ -354,7 +357,10 @@ export class Scene {
       this.handleRenderTarget(this.renderTargetTwo, elapsedTime, isMobile);
     }
 
-    this.deviceOrientationControls.update();
+    if (this.isMobile) {
+      this.deviceOrientationControls.update();
+    }
+
     this.composer.render();
 
     window.requestAnimationFrame(() => this.render(isMobile));

@@ -264,6 +264,17 @@
       font-size: 5.5rem;
       margin: 0;
     }
+
+    .text.styled-text.landing:nth-of-type(1) {
+      left: -7%;
+    }
+
+    .text.styled-text.landing:nth-of-type(2) {
+      right: 10%;
+    }
+    .text.styled-text.inspire {
+      bottom: 20%;
+    }
   }
 
   @media screen and (min-width: 1450px) {
