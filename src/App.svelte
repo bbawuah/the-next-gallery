@@ -10,7 +10,6 @@
   let progress: number;
 
   store.progressRatio.subscribe(value => {
-    console.log(value);
     progress = value;
   });
 

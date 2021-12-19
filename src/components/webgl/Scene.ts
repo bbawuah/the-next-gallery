@@ -140,7 +140,6 @@ export class Scene {
     });
 
     this.loadingManager = new LoadingManager(this.scene);
-    console.log(this.loadingManager);
 
     this.textureLoader = new THREE.TextureLoader(this.loadingManager.loadingManager);
     this.bakedTexture = this.textureLoader.load('./static/map.jpg');
