@@ -52,7 +52,6 @@ export class LoadingManager {
   }
 
   private onProgressLoadAssets(url: string, loaded: number, total: number): void {
-    console.log(Math.floor((loaded / total) * 100));
     store.progressRatio.update(() => Math.floor((loaded / total) * 100));
   }
 }

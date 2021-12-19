@@ -102,6 +102,11 @@ export class Scene {
 
   private webXR: WebXR;
 
+  private composer: EffectComposer;
+  private shaderPass: ShaderPass;
+  private renderPass: RenderPass;
+  private glitchPass: GlitchPass;
+
   public isMobile: boolean;
 
   public deviceOrientationControls: DeviceOrientationControls;
@@ -110,10 +115,7 @@ export class Scene {
 
   public scrollSpeed: number;
 
-  private composer: EffectComposer;
-  private shaderPass: ShaderPass;
-  private renderPass: RenderPass;
-  private glitchPass: GlitchPass;
+  public currentSession: boolean;
 
   constructor(el: HTMLCanvasElement) {
     this.renderer = new THREE.WebGLRenderer({
@@ -131,14 +133,13 @@ export class Scene {
     this.camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100);
     this.camera.position.z = -1;
 
-    this.camera.rotateY(45);
+    this.camera.rotateY(220);
 
     store.isMobileDevice.subscribe(value => {
       this.isMobile = value;
     });
 
     this.loadingManager = new LoadingManager(this.scene);
-    console.log(this.loadingManager);
 
     this.textureLoader = new THREE.TextureLoader(this.loadingManager.loadingManager);
     this.bakedTexture = this.textureLoader.load('./static/map.jpg');
@@ -159,10 +160,11 @@ export class Scene {
       this.scene.add(this.mesh);
     }
 
-    // this.controls = new OrbitControls(this.camera, el);
-
     this.deviceOrientationControls = new DeviceOrientationControls(this.camera);
-    store.deviceOrientation.update(() => this.deviceOrientationControls);
+
+    if (this.isMobile) {
+      this.deviceOrientationControls.connect();
+    }
 
     this.dracoLoader = new DRACOLoader(this.loadingManager.loadingManager);
     this.dracoLoader.setDecoderPath('draco/');
@@ -180,24 +182,28 @@ export class Scene {
       particles: this.particles.lightParticles
     });
 
+    this.renderPass = new RenderPass(this.scene, this.camera);
+    this.composer = new EffectComposer(this.renderer);
+    this.glitchPass = new GlitchPass();
+    this.shaderPass = new ShaderPass(postProcessingShader);
+
+    this.composer.addPass(this.renderPass);
+
+    store.currentSession.subscribe(v => {
+      this.currentSession = v;
+      if (!v) {
+        this.composer.addPass(this.shaderPass);
+      } else {
+        this.composer.removePass(this.shaderPass);
+      }
+    });
+
     if (!this.isMobile) {
-      this.renderPass = new RenderPass(this.scene, this.camera);
-      this.composer = new EffectComposer(this.renderer);
-      this.glitchPass = new GlitchPass();
-      this.shaderPass = new ShaderPass(postProcessingShader);
-
-      this.composer.addPass(this.renderPass);
-
-      store.currentSession.subscribe(v => {
-        if (!v) {
-          this.composer.addPass(this.shaderPass);
-        } else {
-          this.composer.removePass(this.shaderPass);
-        }
-      });
-
       store.scrollSpeed.subscribe(v => {
-        this.camera.rotation.y = this.camera.rotation.y + v * 0.01;
+        if (!this.currentSession) {
+          this.camera.rotation.y = this.camera.rotation.y + v * 0.01;
+        }
+
         this.shaderPass.uniforms.scrollSpeed.value = v + 0.0;
       });
 
@@ -351,12 +357,12 @@ export class Scene {
       this.handleRenderTarget(this.renderTargetTwo, elapsedTime, isMobile);
     }
 
-    if (isMobile) {
+    if (this.isMobile) {
       this.deviceOrientationControls.update();
-      this.renderer.render(this.scene, this.camera);
-    } else {
-      this.composer.render();
     }
+
+    this.composer.render();
+
     window.requestAnimationFrame(() => this.render(isMobile));
   }
 }

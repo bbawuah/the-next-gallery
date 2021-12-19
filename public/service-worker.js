@@ -76,16 +76,13 @@ self.addEventListener('install', function (event) {
 
 self.addEventListener('fetch', e => {
   e.respondWith(
-    caches.match(e.request).then(resp => {
-      return (
-        resp ||
-        fetch(e.request).then(response => {
-          return caches.open(cacheName).then(cache => {
-            cache.put(e.request, response.clone());
-            return response;
-          });
-        })
-      );
+    caches.match(e.request).then(() => {
+      return fetch(e.request).then(response => {
+        return caches.open(cacheName).then(cache => {
+          cache.put(e.request, response.clone());
+          return response;
+        });
+      });
     })
   );
 });

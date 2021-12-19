@@ -7,11 +7,23 @@
   let webXRIsSupported: boolean;
   let webXRNavigator: Navigator = navigator as any as Navigator;
 
-  let progress: number;
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('./service-worker.js').then(
+        function (registration) {
+          // Registration was successful
+          console.log('ServiceWorker registration successful with scope: ', registration.scope);
+        },
+        function (err) {
+          // registration failed :(
+          console.log('ServiceWorker registration failed: ', err);
+        }
+      );
+    });
+  }
 
-  store.progressRatio.subscribe(value => {
-    console.log(value);
-    progress = value;
+  store.xrIsSupported.subscribe(value => {
+    webXRIsSupported = value;
   });
 
   if ('xr' in webXRNavigator) {

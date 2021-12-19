@@ -2,42 +2,19 @@
   import LocomotiveScroll from 'locomotive-scroll';
   import {onMount} from 'svelte';
   import ParagraphContainer from '../ParagraphContainer/ParagraphContainer.svelte';
-
-  import GSAP from 'gsap';
   import {store} from '../../store/store';
   import {onEnter} from '../../utils/onEnter';
   import {IconType} from '../../utils/icons/types/IconType';
   import Link from '../Link/Link.svelte';
   import Icon from '../Icon/Icon.svelte';
   import Button from '../Button/Button.svelte';
-  import Scene from '../webgl/Scene.svelte';
 
   let progress: number;
-  let webXRIsSupported: boolean;
-  let webXRNavigator: Navigator = navigator as any as Navigator;
 
-  let callToAction: HTMLParagraphElement;
   let layoutContainer: HTMLElement;
   let isMobile: boolean;
   let onMouseOver: () => void;
   let onMouseLeave: () => void;
-
-  // let sectionElement: HTMLElement;
-
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function () {
-      navigator.serviceWorker.register('./service-worker.js').then(
-        function (registration) {
-          // Registration was successful
-          console.log('ServiceWorker registration successful with scope: ', registration.scope);
-        },
-        function (err) {
-          // registration failed :(
-          console.log('ServiceWorker registration failed: ', err);
-        }
-      );
-    });
-  }
 
   store.progressRatio.subscribe(value => {
     progress = value;
@@ -55,10 +32,6 @@
     progress = value;
   });
 
-  store.xrIsSupported.subscribe(value => {
-    webXRIsSupported = value;
-  });
-
   onMount(() => {
     if (layoutContainer) {
       store.layoutContainer.update(() => layoutContainer);
@@ -72,7 +45,7 @@
         });
 
         scroll.on('scroll', ev => {
-          const speed = ev.speed < 0.2 && ev.speed > -0.2 ? 0.0 : ev.speed;
+          const speed = ev.speed < 0.1 && ev.speed > -0.1 ? 0.0 : ev.speed;
           store.scrollSpeed.update(() => speed);
         });
       }
@@ -216,6 +189,41 @@
     text-align: center;
   }
 
+  .text.styled-text {
+    font-size: 5.5rem;
+    margin: 0;
+    width: auto;
+  }
+
+  .text.styled-text.landing:nth-of-type(1) {
+    position: absolute;
+    left: -10%;
+    top: 0;
+    font-family: $font-text-regular;
+  }
+
+  .text.styled-text.landing:nth-of-type(2) {
+    position: absolute;
+    right: -10%;
+    bottom: 0;
+    font-family: $font-text-regular;
+  }
+
+  .text.styled-text.inspire {
+    position: absolute;
+    left: auto;
+    bottom: 10%;
+    color: $color-white;
+    font-family: $font-text-regular;
+  }
+
+  .text.styled-text.impact {
+    position: absolute;
+    bottom: 10%;
+    color: $color-white;
+    font-family: $font-text-regular;
+  }
+
   .outro {
     z-index: 1;
     align-self: flex-end;
@@ -233,8 +241,8 @@
 
   .logo-top {
     position: absolute;
-    left: -39%;
-    width: 50%;
+    left: -60%;
+    width: 100%;
     bottom: -5px;
     opacity: 0.075;
   }
@@ -242,8 +250,8 @@
   .logo-bottom {
     position: absolute;
     opacity: 0.075;
-    right: -33%;
-    width: 50%;
+    right: -60%;
+    width: 100%;
     bottom: -5px;
   }
 
@@ -258,31 +266,14 @@
     }
 
     .text.styled-text.landing:nth-of-type(1) {
-      position: absolute;
-      left: -100px;
-      top: 0;
-      font-family: $font-text-regular;
+      left: -7%;
     }
 
     .text.styled-text.landing:nth-of-type(2) {
-      position: absolute;
-      right: 80px;
-      bottom: 0;
-      font-family: $font-text-regular;
+      right: 10%;
     }
-
     .text.styled-text.inspire {
-      position: absolute;
-      left: auto;
-      bottom: 200px;
-      font-family: $font-text-regular;
-    }
-
-    .text.styled-text.impact {
-      position: absolute;
-      right: 80px;
-      bottom: 0;
-      font-family: $font-text-regular;
+      bottom: 20%;
     }
   }
 

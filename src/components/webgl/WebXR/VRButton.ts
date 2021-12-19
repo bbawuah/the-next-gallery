@@ -20,8 +20,8 @@ export class VRButton {
         GSAP.to(this.message, {duration: 0.25, left: '50%'});
         GSAP.to(this.button, {duration: 0.25, left: '50%'});
       } else {
-        GSAP.to(this.message, {duration: 0.25, left: '90%'});
-        GSAP.to(this.button, {duration: 0.25, left: '90%'});
+        GSAP.to(this.message, {duration: 0.25, left: '50%'});
+        GSAP.to(this.button, {duration: 0.25, left: '50%'});
       }
     });
 
@@ -94,11 +94,6 @@ export class VRButton {
     button.onmouseenter = function () {
       button.style.fontSize = '12px';
       button.textContent = currentSession === null ? 'ENTER VR' : 'EXIT VR';
-      button.style.opacity = '1.0';
-    };
-
-    button.onmouseleave = function () {
-      button.style.opacity = '0.5';
     };
 
     button.onclick = function () {
@@ -149,17 +144,15 @@ export class VRButton {
     element.style.top = isMobile ? '25px' : '50px';
     if (!ignorePadding) element.style.padding = '12px 6px';
     element.style.border = '1px solid #000';
-    element.style.borderRadius = '4px';
     element.style.color = '#000';
     element.style.font = `normal ${fontSize}px sans-serif`;
     element.style.textAlign = 'center';
-    element.style.opacity = '0.5';
     element.style.outline = 'none';
     element.style.height = isMobile ? '40px' : '50px';
     element.style.width = 'max-content';
     element.style.zIndex = '999';
     element.style.left = '90%';
-    element.style.background = 'transparent';
+    element.style.background = '#fff';
     element.style.transform = 'translate(-50%, 0)';
   }
 }
