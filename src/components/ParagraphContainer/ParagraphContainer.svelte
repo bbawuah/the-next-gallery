@@ -16,6 +16,7 @@
   .content-section {
     width: 100vw;
     height: 75vh;
+    padding: 25px;
     display: grid;
     justify-items: center;
     align-items: center;

@@ -181,23 +181,23 @@ export class Scene {
       particles: this.particles.lightParticles
     });
 
+    this.renderPass = new RenderPass(this.scene, this.camera);
+    this.composer = new EffectComposer(this.renderer);
+    this.glitchPass = new GlitchPass();
+    this.shaderPass = new ShaderPass(postProcessingShader);
+
+    this.composer.addPass(this.renderPass);
+
+    store.currentSession.subscribe(v => {
+      this.currentSession = v;
+      if (!v) {
+        this.composer.addPass(this.shaderPass);
+      } else {
+        this.composer.removePass(this.shaderPass);
+      }
+    });
+
     if (!this.isMobile) {
-      this.renderPass = new RenderPass(this.scene, this.camera);
-      this.composer = new EffectComposer(this.renderer);
-      this.glitchPass = new GlitchPass();
-      this.shaderPass = new ShaderPass(postProcessingShader);
-
-      this.composer.addPass(this.renderPass);
-
-      store.currentSession.subscribe(v => {
-        this.currentSession = v;
-        if (!v) {
-          this.composer.addPass(this.shaderPass);
-        } else {
-          this.composer.removePass(this.shaderPass);
-        }
-      });
-
       store.scrollSpeed.subscribe(v => {
         if (this.currentSession) {
           this.camera.rotation.y = this.camera.rotation.y + v * 0.01;
