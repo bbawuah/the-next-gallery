@@ -4,11 +4,9 @@
 
 <style type="text/scss">
   .navigation-container {
-    position: absolute;
     display: flex;
     justify-content: space-between;
     flex-direction: row-reverse;
-    bottom: 15vh;
     touch-action: none;
     left: 0;
     width: 100%;

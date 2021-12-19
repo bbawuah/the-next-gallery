@@ -77,16 +77,8 @@ function handleSoundOnPageVisibility() {
 
 export function playSound(sound: HTMLAudioElement): void {
   if (!soundIsMuted) {
-    sound.volume = 0;
+    sound.volume = 0.2;
     sound.play();
-
-    const fadeIn = setInterval(() => {
-      sound.volume += 0.05;
-
-      if (sound.volume === 0.2) {
-        clearInterval(fadeIn);
-      }
-    }, interval);
   }
 }
 
