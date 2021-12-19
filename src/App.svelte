@@ -7,6 +7,13 @@
   let webXRIsSupported: boolean;
   let webXRNavigator: Navigator = navigator as any as Navigator;
 
+  let progress: number;
+
+  store.progressRatio.subscribe(value => {
+    console.log(value);
+    progress = value;
+  });
+
   if ('xr' in webXRNavigator) {
     webXRNavigator.xr.isSessionSupported('immersive-vr').then(supported => {
       webXRIsSupported = supported;

@@ -18,7 +18,6 @@
 
   let callToAction: HTMLParagraphElement;
   let layoutContainer: HTMLElement;
-  let scrollDownArrow: HTMLElement;
   let isMobile: boolean;
   let onMouseOver: () => void;
   let onMouseLeave: () => void;
@@ -26,7 +25,18 @@
   // let sectionElement: HTMLElement;
 
   if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function () {});
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('./service-worker.js').then(
+        function (registration) {
+          // Registration was successful
+          console.log('ServiceWorker registration successful with scope: ', registration.scope);
+        },
+        function (err) {
+          // registration failed :(
+          console.log('ServiceWorker registration failed: ', err);
+        }
+      );
+    });
   }
 
   store.progressRatio.subscribe(value => {
@@ -36,12 +46,6 @@
   store.isMobileDevice.subscribe(value => {
     isMobile = value;
   });
-
-  const renderScrollIndicator = (el: HTMLElement): void => {
-    setTimeout(() => {
-      GSAP.to(el, {duration: 0.5, opacity: 1});
-    }, 1000);
-  };
 
   store.layoutContainer.subscribe(value => {
     layoutContainer = value;
@@ -56,45 +60,27 @@
   });
 
   onMount(() => {
-    if (layoutContainer && scrollDownArrow) {
+    if (layoutContainer) {
       store.layoutContainer.update(() => layoutContainer);
 
-      const scroll = new LocomotiveScroll({
-        el: document.querySelector('[data-scroll-container]'),
-        smooth: true,
-        reloadOnContextChange: true,
-        lerp: 0.3,
-        getSpeed: true
-      });
+      if (!isMobile) {
+        const scroll = new LocomotiveScroll({
+          el: document.querySelector('[data-scroll-container]'),
+          smooth: true,
+          lerp: 0.3,
+          getSpeed: true
+        });
 
-      scroll.on('scroll', ev => {
-        const speed = ev.speed < 0.2 && ev.speed > -0.2 ? 0.0 : ev.speed;
-        store.scrollSpeed.update(() => speed);
-      });
-
-      if (callToAction) {
-        onMouseOver = () => {
-          if (progress === 100) {
-            GSAP.to(callToAction, {duration: 0.5, opacity: 1});
-          }
-        };
-
-        onMouseLeave = () => {
-          GSAP.to(callToAction, {duration: 0.5, opacity: 0});
-        };
+        scroll.on('scroll', ev => {
+          const speed = ev.speed < 0.2 && ev.speed > -0.2 ? 0.0 : ev.speed;
+          store.scrollSpeed.update(() => speed);
+        });
       }
-
-      renderScrollIndicator(scrollDownArrow);
     }
   });
 </script>
 
 <section class="container" bind:this={layoutContainer} data-scroll-container={true}>
-  <div class="arrow-container" bind:this={scrollDownArrow}>
-    <p class="scroll-text">scroll</p>
-    <Icon size={'small'} icon={IconType.arrowDown} />
-  </div>
-
   <ParagraphContainer hasBackground={true}>
     <p
       class="text styled-text landing"
@@ -168,7 +154,7 @@
 
     <footer class="footer">
       <p class="copyright">
-        BASED ON <Link href="https://shutdown.gallery/">THE SHUTDOWN.GALLERY</Link>. THANKS TO <Link
+        INSPIRED BY <Link href="https://shutdown.gallery/">THE SHUTDOWN.GALLERY</Link>. THANKS TO <Link
           href="https://svelte.dev/">SVELTE</Link
         >,
         <Link href="https://threejs-journey.com/">THREEJS-JOURNEY</Link>,
@@ -204,31 +190,6 @@
     -khtml-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
-
-    .arrow-container {
-      position: absolute;
-      bottom: 0;
-      opacity: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      width: 10px;
-      left: 50%;
-      transform: translate(-50%, 0);
-
-      :global(svg) {
-        position: relative;
-        transition: 0.175s ease-in-out;
-        position: 0.125px;
-        animation: lineairAnimation 0.95s infinite;
-      }
-
-      .scroll-text {
-        margin: 0;
-        font-family: $font-text-light;
-        font-size: 15px;
-      }
-    }
 
     @keyframes lineairAnimation {
       0% {
@@ -289,10 +250,6 @@
   @media screen and (min-width: 1028px) {
     .text {
       font-size: 25px;
-    }
-
-    .metadata-grid-container {
-      margin: 65 0;
     }
 
     .text.styled-text {

@@ -45,6 +45,7 @@
   store.currentSession.subscribe(value => {
     isPlaying = value;
   });
+
   store.progressRatio.subscribe(value => {
     progress = value;
   });

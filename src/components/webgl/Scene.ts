@@ -138,6 +138,7 @@ export class Scene {
     });
 
     this.loadingManager = new LoadingManager(this.scene);
+    console.log(this.loadingManager);
 
     this.textureLoader = new THREE.TextureLoader(this.loadingManager.loadingManager);
     this.bakedTexture = this.textureLoader.load('./static/map.jpg');
@@ -160,26 +161,6 @@ export class Scene {
 
     // this.controls = new OrbitControls(this.camera, el);
 
-    this.renderPass = new RenderPass(this.scene, this.camera);
-    this.composer = new EffectComposer(this.renderer);
-    this.glitchPass = new GlitchPass();
-    this.shaderPass = new ShaderPass(postProcessingShader);
-
-    this.composer.addPass(this.renderPass);
-
-    store.currentSession.subscribe(v => {
-      if (!v) {
-        this.composer.addPass(this.shaderPass);
-      } else {
-        this.composer.removePass(this.shaderPass);
-      }
-    });
-
-    store.scrollSpeed.subscribe(v => {
-      this.camera.rotation.y = this.camera.rotation.y + v * 0.01;
-      this.shaderPass.uniforms.scrollSpeed.value = v + 0.0;
-    });
-
     this.deviceOrientationControls = new DeviceOrientationControls(this.camera);
     store.deviceOrientation.update(() => this.deviceOrientationControls);
 
@@ -200,6 +181,26 @@ export class Scene {
     });
 
     if (!this.isMobile) {
+      this.renderPass = new RenderPass(this.scene, this.camera);
+      this.composer = new EffectComposer(this.renderer);
+      this.glitchPass = new GlitchPass();
+      this.shaderPass = new ShaderPass(postProcessingShader);
+
+      this.composer.addPass(this.renderPass);
+
+      store.currentSession.subscribe(v => {
+        if (!v) {
+          this.composer.addPass(this.shaderPass);
+        } else {
+          this.composer.removePass(this.shaderPass);
+        }
+      });
+
+      store.scrollSpeed.subscribe(v => {
+        this.camera.rotation.y = this.camera.rotation.y + v * 0.01;
+        this.shaderPass.uniforms.scrollSpeed.value = v + 0.0;
+      });
+
       store.pointerLockerControls.update(() => new PointerLockControls(this.camera, el));
       this.events.handleKeyUpEvents();
       this.events.handleKeyDownEvents();
@@ -333,11 +334,6 @@ export class Scene {
   private render(isMobileDevice: boolean): void {
     const isMobile = isMobileDevice;
     const elapsedTime = this.clock.getElapsedTime();
-    stats.begin();
-
-    if (isMobile) {
-      this.deviceOrientationControls.update();
-    }
 
     if (this.physics) {
       this.physics.handlePhysics({elapsedTime, camera: this.camera, userDirection: this.events.userDirection});
@@ -355,9 +351,12 @@ export class Scene {
       this.handleRenderTarget(this.renderTargetTwo, elapsedTime, isMobile);
     }
 
-    this.composer.render();
-    // this.renderer.render(this.scene, this.camera);
-    stats.end();
+    if (isMobile) {
+      this.deviceOrientationControls.update();
+      this.renderer.render(this.scene, this.camera);
+    } else {
+      this.composer.render();
+    }
     window.requestAnimationFrame(() => this.render(isMobile));
   }
 }
