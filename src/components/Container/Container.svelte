@@ -234,7 +234,7 @@
   .logo-top {
     position: absolute;
     left: -39%;
-    width: 65%;
+    width: 50%;
     bottom: -5px;
     opacity: 0.075;
   }
@@ -243,7 +243,7 @@
     position: absolute;
     opacity: 0.075;
     right: -33%;
-    width: 65%;
+    width: 50%;
     bottom: -5px;
   }
 
