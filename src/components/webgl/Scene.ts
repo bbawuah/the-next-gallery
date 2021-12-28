@@ -14,6 +14,7 @@ import {LoadingManager} from './LoadingManager/LoadingManager';
 import {LightParticles} from './LightParticles/LightParticles';
 import {WebXR} from './WebXR/WebXR';
 import {Sky} from 'three/examples/jsm/objects/Sky.js';
+import {Water} from './Water/Water';
 import {EffectComposer} from 'three/examples/jsm/postprocessing/EffectComposer.js';
 // import {ShaderPass} from 'three/examples/jsm/postprocessing/ShaderPass.js';
 import {RenderPass} from 'three/examples/jsm/postprocessing/RenderPass.js';
@@ -53,6 +54,7 @@ export class Scene {
   private vaseOne: THREE.Texture;
   private vaseTwo: THREE.Texture;
   private sky: Sky;
+  private water: Water;
   private sun: THREE.Vector3;
 
   private physics: PhysicsWorld;
@@ -100,19 +102,38 @@ export class Scene {
     this.sky.scale.setScalar(450000);
     this.scene.add(this.sky);
 
+    const waterGeometry = new THREE.PlaneGeometry(20000, 20000);
+
+    this.water = new Water(waterGeometry, {
+      textureWidth: 512,
+      textureHeight: 512,
+      waterNormals: new THREE.TextureLoader().load('static/waternormals.jpg', function (texture) {
+        texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+      }),
+      sunDirection: new THREE.Vector3(),
+      sunColor: 0xffffff,
+      waterColor: 0x17727a,
+      distortionScale: 3.7
+    });
+
+    this.water.rotation.x = -Math.PI / 2;
+    this.water.position.y = -1;
+
+    this.scene.add(this.water);
+
     this.effectController = {
       turbidity: 10,
       rayleigh: 1.246,
       mieCoefficient: 0.069,
       mieDirectionalG: 0.7,
-      elevation: 0,
+      elevation: 70,
       azimuth: 180,
       exposure: this.renderer.toneMappingExposure
     };
 
     const uniforms = this.sky.material.uniforms;
 
-    const phi = THREE.MathUtils.degToRad(90 - 10);
+    const phi = THREE.MathUtils.degToRad(90 - 50);
     const theta = THREE.MathUtils.degToRad(180);
 
     this.sun.setFromSphericalCoords(1, phi, theta);
@@ -325,6 +346,10 @@ export class Scene {
     stats.begin();
     const isMobile = isMobileDevice;
     const elapsedTime = this.clock.getElapsedTime();
+
+    if (this.water) {
+      (this.water.material as any).uniforms['time'].value += 1.0 / 60.0;
+    }
 
     // this.controls.update();
 

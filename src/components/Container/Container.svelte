@@ -54,7 +54,7 @@
 </script>
 
 <section class="container" bind:this={layoutContainer} data-scroll-container={true}>
-  <ParagraphContainer hasBackground={true}>
+  <ParagraphContainer>
     <p
       class="text styled-text landing"
       data-scroll-speed="-1.75"
@@ -83,7 +83,7 @@
     </p>
   </ParagraphContainer>
 
-  <ParagraphContainer hasBackground={true}>
+  <ParagraphContainer>
     <div>
       <p class="text">
         The Next Gallery is an immersive digital experience that showcases a selection of creatives and talents.
@@ -104,7 +104,7 @@
     <p class="text styled-text impact">IMPACT</p>
   </ParagraphContainer>
 
-  <ParagraphContainer hasBackground={true}>
+  <ParagraphContainer>
     <div class="outro">
       <p class="text">
         Each individual is successful in their own way and on their own terms. The creation of their impactful art began

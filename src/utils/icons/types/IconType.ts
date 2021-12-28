@@ -12,5 +12,9 @@ export enum IconType {
   close = 'close',
   headphone = 'headphone',
   headphoneMuted = 'headphoneMuted',
-  soundKey = 'soundKey'
+  soundKey = 'soundKey',
+  a = 'a',
+  w = 'w',
+  d = 'd',
+  s = 's'
 }

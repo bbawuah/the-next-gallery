@@ -31,7 +31,7 @@
   });
 
   window.addEventListener('keydown', e => {
-    if (e.key === 's') {
+    if (e.key === 'm') {
       store.isMuted.update(value => !value);
 
       if (soundIsMuted) {
@@ -115,7 +115,11 @@
             }}
             class="up"
           >
-            <Icon icon={IconType.up} />
+            {#if isMobileDevice}
+              <Icon icon={IconType.up} />
+            {:else}
+              <Icon icon={IconType.w} />
+            {/if}
           </div>
 
           <div
@@ -127,7 +131,11 @@
               scene.events.backward = false;
             }}
           >
-            <Icon icon={IconType.bottom} />
+            {#if isMobileDevice}
+              <Icon icon={IconType.bottom} />
+            {:else}
+              <Icon icon={IconType.s} />
+            {/if}
           </div>
 
           <div
@@ -139,7 +147,11 @@
               scene.events.left = false;
             }}
           >
-            <Icon icon={IconType.left} />
+            {#if isMobileDevice}
+              <Icon icon={IconType.left} />
+            {:else}
+              <Icon icon={IconType.a} />
+            {/if}
           </div>
 
           <div
@@ -151,7 +163,11 @@
               scene.events.right = false;
             }}
           >
-            <Icon icon={IconType.right} />
+            {#if isMobileDevice}
+              <Icon icon={IconType.right} />
+            {:else}
+              <Icon icon={IconType.d} />
+            {/if}
           </div>
         </div>
 
