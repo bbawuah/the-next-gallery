@@ -1,78 +1,43 @@
 import * as THREE from 'three';
 import Stats from 'stats-js';
-// import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js';
+import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js';
 import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader';
 import type {GLTF} from 'three/examples/jsm/loaders/GLTFLoader';
 import {DRACOLoader} from 'three/examples/jsm/loaders/DRACOLoader';
 import type {Sizes} from './types';
 import {Events} from './Events/Events';
 import {PhysicsWorld} from './Physics/Physics';
-import {RenderTarget} from './RenderTarget/RenderTarget';
 import {store} from '../../store/store';
 import {DeviceOrientationControls} from 'three/examples/jsm/controls/DeviceOrientationControls.js';
 import {PointerLockControls} from 'three/examples/jsm/controls/PointerLockControls';
 import {LoadingManager} from './LoadingManager/LoadingManager';
 import {LightParticles} from './LightParticles/LightParticles';
 import {WebXR} from './WebXR/WebXR';
-import {vertexShader} from './Shaders/paintingOne/vertex';
-import {fragmentShader} from './Shaders/paintingOne/fragment';
-import {vertexShaderTwo} from './Shaders/paintingTwo/vertex';
-import {fragmentShaderTwo} from './Shaders/paintingTwo/fragment';
-import {fragmentShaderThree} from './Shaders/paintingThree/fragment';
-import {vertexShaderThree} from './Shaders/paintingThree/vertex';
+import {Sky} from 'three/examples/jsm/objects/Sky.js';
 import {EffectComposer} from 'three/examples/jsm/postprocessing/EffectComposer.js';
 // import {ShaderPass} from 'three/examples/jsm/postprocessing/ShaderPass.js';
 import {RenderPass} from 'three/examples/jsm/postprocessing/RenderPass.js';
 import {GlitchPass} from 'three/examples/jsm/postprocessing/GlitchPass.js';
 import {ShaderPass} from 'three/examples/jsm/postprocessing/ShaderPass';
 import {postProcessingShader} from './Shaders/postprocessing/shader';
+import {physicalObjects, portraitNames} from '../../utils/metaData';
 
 const sizes: Sizes = {
   width: window.innerWidth,
   height: window.innerHeight
 };
 
-const portraitNames = [
-  'dalis',
-  'jamil',
-  'porchia',
-  'junior',
-  'kwame',
-  'soraja',
-  'samantha',
-  'darryl',
-  'les',
-  'terry-afram',
-  'tonny',
-  'kenneth',
-  'mirella',
-  'crystalina',
-  'bonsu',
-  'eben',
-  'jaysi',
-  'meester-kwame',
-  'crystalina',
-  'ronald',
-  'eoboafo',
-  'shaneequa',
-  'churchbwoygram',
-  'othnell',
-  'branco',
-  'emmanuel',
-  'denitio'
-];
-
 const stats = new Stats();
 
-// stats.showPanel(1);
-// document.body.appendChild(stats.dom);
+stats.showPanel(1);
+document.body.appendChild(stats.dom);
 
 export class Scene {
   private renderer: THREE.WebGLRenderer;
   private camera: THREE.PerspectiveCamera;
   private scene: THREE.Scene;
 
-  // private controls: OrbitControls;
+  private controls: OrbitControls;
 
   private material: THREE.MeshBasicMaterial;
   private mesh: THREE.Mesh;
@@ -82,19 +47,17 @@ export class Scene {
   private textureLoader: THREE.TextureLoader;
 
   private bakedTexture: THREE.Texture;
+  private floorTexture: THREE.Texture;
+  private tessalationTexture: THREE.Texture;
+  private woodenWallsTexture: THREE.Texture;
+  private vaseOne: THREE.Texture;
+  private vaseTwo: THREE.Texture;
+  private sky: Sky;
+  private sun: THREE.Vector3;
 
   private physics: PhysicsWorld;
 
   private clock: THREE.Clock;
-
-  private shaderPaintingOne: THREE.Mesh;
-  private renderTargetOne: RenderTarget;
-
-  private shaderPaintingTwo: THREE.Mesh;
-  private renderTargetTwo: RenderTarget;
-
-  private shaderPaintingThree: THREE.Mesh;
-  private renderTargetThree: RenderTarget;
 
   private particles: LightParticles;
 
@@ -117,6 +80,8 @@ export class Scene {
 
   public currentSession: boolean;
 
+  public effectController: any;
+
   constructor(el: HTMLCanvasElement) {
     this.renderer = new THREE.WebGLRenderer({
       canvas: el
@@ -124,14 +89,46 @@ export class Scene {
     this.renderer.setSize(sizes.width, sizes.height);
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.renderer.outputEncoding = THREE.sRGBEncoding;
+    this.renderer.toneMapping = THREE.ReinhardToneMapping;
+    this.renderer.toneMappingExposure = 1.5;
 
     this.scene = new THREE.Scene();
-    this.scene.background = new THREE.Color(0xffffff);
+
+    this.sun = new THREE.Vector3();
+
+    this.sky = new Sky();
+    this.sky.scale.setScalar(450000);
+    this.scene.add(this.sky);
+
+    this.effectController = {
+      turbidity: 10,
+      rayleigh: 1.246,
+      mieCoefficient: 0.069,
+      mieDirectionalG: 0.7,
+      elevation: 0,
+      azimuth: 180,
+      exposure: this.renderer.toneMappingExposure
+    };
+
+    const uniforms = this.sky.material.uniforms;
+
+    const phi = THREE.MathUtils.degToRad(90 - 10);
+    const theta = THREE.MathUtils.degToRad(180);
+
+    this.sun.setFromSphericalCoords(1, phi, theta);
+
+    uniforms['turbidity'].value = 10;
+    uniforms['rayleigh'].value = 1.246;
+    uniforms['mieCoefficient'].value = 0.069;
+    uniforms['mieDirectionalG'].value = 0.7;
+    uniforms['sunPosition'].value.copy(this.sun);
 
     this.particles = new LightParticles(this.scene);
 
     this.camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100);
-    this.camera.position.z = -1;
+    this.camera.position.z = 0;
+    this.camera.position.y = 0.5;
+    this.camera.position.x = 3;
 
     this.camera.rotateY(220);
 
@@ -139,12 +136,27 @@ export class Scene {
       this.isMobile = value;
     });
 
+    // this.controls = new OrbitControls(this.camera, el);
+
     this.loadingManager = new LoadingManager(this.scene);
 
     this.textureLoader = new THREE.TextureLoader(this.loadingManager.loadingManager);
-    this.bakedTexture = this.textureLoader.load('./static/map.jpg');
-    this.bakedTexture.flipY = false;
-    this.bakedTexture.encoding = THREE.sRGBEncoding;
+
+    this.bakedTexture = this.textureLoader.load('./static/interior-base.jpg');
+    this.tessalationTexture = this.textureLoader.load('./static/tessalation-tent.jpg');
+    this.woodenWallsTexture = this.textureLoader.load('./static/wooden-walls-1.jpg');
+    this.vaseOne = this.textureLoader.load('./static/vases-one.jpg');
+    this.vaseTwo = this.textureLoader.load('./static/vases-two.jpg');
+    this.floorTexture = this.textureLoader.load('./static/floor.jpg');
+
+    this.loadTextures([
+      this.bakedTexture,
+      this.tessalationTexture,
+      this.woodenWallsTexture,
+      this.vaseOne,
+      this.vaseTwo,
+      this.floorTexture
+    ]);
 
     this.material = new THREE.MeshBasicMaterial({map: this.bakedTexture});
 
@@ -191,11 +203,11 @@ export class Scene {
 
     store.currentSession.subscribe(v => {
       this.currentSession = v;
-      if (!v) {
-        this.composer.addPass(this.shaderPass);
-      } else {
-        this.composer.removePass(this.shaderPass);
-      }
+      // if (!v) {
+      //   this.composer.addPass(this.shaderPass);
+      // } else {
+      //   this.composer.removePass(this.shaderPass);
+      // }
     });
 
     if (!this.isMobile) {
@@ -230,75 +242,62 @@ export class Scene {
   }
 
   private handleGltf(gltf: GLTF): void {
+    const floor = ['floor', 'tent-foundation'];
+    const baseGeometry = [
+      'kleine-rotsen',
+      'randen',
+      'randen001',
+      'trap',
+      'trap-leuning',
+      'trap-steuning',
+      'tweede-verdieping'
+    ];
+
+    const vase = ['vase-one', 'vase-one001', 'vase-one002', 'vase-one003', 'vase-one004', 'vase-one005', 'vase-one006'];
+
+    const vaseTwo = ['vase-two002', 'vase-two004', 'vase-two005', 'vase-two010'];
+
     gltf.scene.traverse(child => {
-      (child as THREE.Mesh).material = this.material;
+      if (baseGeometry.includes(child.name)) {
+        (child as THREE.Mesh).material = this.material;
+      }
+
+      if (physicalObjects.includes(child.name)) {
+        console.log(`found ${child.name}`);
+        this.physics.createPhysics(child as THREE.Mesh);
+      }
+
+      if (floor.includes(child.name)) {
+        (child as THREE.Mesh).material = new THREE.MeshBasicMaterial({map: this.floorTexture});
+      }
+
+      if (child.name === 'tessalation-tent') {
+        (child as THREE.Mesh).material = new THREE.MeshBasicMaterial({map: this.tessalationTexture});
+      }
+
+      if (child.name.includes('muren')) {
+        (child as THREE.Mesh).material = new THREE.MeshBasicMaterial({map: this.woodenWallsTexture});
+        this.physics.createPhysics(child as THREE.Mesh);
+      }
+
+      if (vase.includes(child.name)) {
+        (child as THREE.Mesh).material = new THREE.MeshBasicMaterial({map: this.vaseOne});
+      }
+
+      if (vaseTwo.includes(child.name)) {
+        (child as THREE.Mesh).material = new THREE.MeshBasicMaterial({map: this.vaseTwo});
+      }
+
+      if (child.name.includes('tree')) {
+        (child as THREE.Mesh).material = new THREE.MeshBasicMaterial({color: new THREE.Color(0x9b9b9b)});
+      }
+
+      if (child.name.includes('leaves')) {
+        (child as THREE.Mesh).material = new THREE.MeshBasicMaterial({color: new THREE.Color(0x93e788)});
+      }
     });
 
-    const darkGrey = new THREE.MeshBasicMaterial({color: new THREE.Color(0x9b9b9b)});
-
-    const stairs = gltf.scene.children.find(child => child.name === 'treden') as THREE.Mesh;
-    stairs.material = darkGrey;
-    this.physics.createPhysics(stairs);
-
-    const portraitsSides = gltf.scene.children.find(child => child.name === 'randen') as THREE.Mesh;
-    portraitsSides.material = darkGrey;
-
-    const metaSides = gltf.scene.children.find(child => child.name === 'namenbordjes-randen') as THREE.Mesh;
-    metaSides.material = darkGrey;
-
-    this.shaderPaintingOne = gltf.scene.children.find(child => child.name === 'shader-schilderij') as THREE.Mesh;
-    this.renderTargetOne = new RenderTarget({
-      el: this.shaderPaintingOne,
-      shader: {
-        vertexShader,
-        fragmentShader,
-        uniforms: {
-          u_time: {value: 0.0}
-        }
-      },
-      text: 'NEXT',
-      backgroundColor: 0xe8e8e8,
-      textColor: 0x383838
-    });
-
-    this.shaderPaintingTwo = gltf.scene.children.find(child => child.name === 'shader-schilderij-2') as THREE.Mesh;
-    this.renderTargetTwo = new RenderTarget({
-      el: this.shaderPaintingTwo,
-      shader: {
-        vertexShader: vertexShaderTwo,
-        fragmentShader: fragmentShaderTwo,
-        uniforms: {
-          u_time: {value: 0.0}
-        }
-      },
-      text: "'IMPACT'",
-      backgroundColor: 0x383838,
-      textColor: 0xe8e8e8
-    });
-
-    this.shaderPaintingThree = gltf.scene.children.find(child => child.name === 'shader-schilderij-3') as THREE.Mesh;
-    this.renderTargetThree = new RenderTarget({
-      el: this.shaderPaintingThree,
-      shader: {
-        vertexShader: vertexShaderThree,
-        fragmentShader: fragmentShaderThree,
-        uniforms: {
-          u_time: {value: 0.0}
-        }
-      },
-      text: "'INSPIRE'",
-      backgroundColor: 0x383838,
-      textColor: 0xe8e8e8
-    });
-
-    const looseWalls = gltf.scene.children.find(child => child.name === 'losse-muren') as THREE.Mesh;
-    this.physics.createPhysics(looseWalls);
-
-    const handrail = gltf.scene.children.find(child => child.name === 'trapLeuning') as THREE.Mesh;
-    handrail.material = darkGrey;
-
-    this.addPortraits(gltf);
-    this.addMeta(gltf);
+    // this.addPortraits(gltf);
     this.scene.add(gltf.scene);
   }
 
@@ -315,46 +314,22 @@ export class Scene {
     });
   }
 
-  private addMeta(gltfScene: GLTF): void {
-    portraitNames.forEach(name => {
-      const meta = this.textureLoader.load(`./static/photos/${name}-meta.png`);
-      meta.flipY = false;
-      const material = new THREE.MeshBasicMaterial({map: meta});
-
-      const mesh = gltfScene.scene.children.find(child => child.name === `${name}-meta`) as THREE.Mesh;
-      mesh.material = material;
+  private loadTextures(textures: THREE.Texture[]): void {
+    textures.forEach(texture => {
+      texture.flipY = false;
+      texture.encoding = THREE.sRGBEncoding;
     });
   }
 
-  private handleRenderTarget(renderTarget: RenderTarget, elapsedTime: number, isMobile: boolean): void {
-    if (!isMobile) {
-      (renderTarget.renderTargetMaterial as THREE.RawShaderMaterial).uniforms.u_time.value = elapsedTime;
-    }
-
-    this.renderer.setRenderTarget(renderTarget.renderTarget);
-
-    this.renderer.render(renderTarget.renderTargetScene, renderTarget.renderTargetCamera);
-    this.renderer.setRenderTarget(null);
-  }
-
   private render(isMobileDevice: boolean): void {
+    stats.begin();
     const isMobile = isMobileDevice;
     const elapsedTime = this.clock.getElapsedTime();
 
+    // this.controls.update();
+
     if (this.physics) {
       this.physics.handlePhysics({elapsedTime, camera: this.camera, userDirection: this.events.userDirection});
-    }
-
-    if (this.renderTargetOne && this.renderTargetOne.renderTargetMaterial && this.renderTargetOne.renderTarget) {
-      this.handleRenderTarget(this.renderTargetOne, elapsedTime, isMobile);
-    }
-
-    if (this.renderTargetThree && this.renderTargetThree.renderTargetMaterial && this.renderTargetThree.renderTarget) {
-      this.handleRenderTarget(this.renderTargetThree, elapsedTime, isMobile);
-    }
-
-    if (this.renderTargetTwo && this.renderTargetTwo.renderTargetMaterial && this.renderTargetTwo.renderTarget) {
-      this.handleRenderTarget(this.renderTargetTwo, elapsedTime, isMobile);
     }
 
     if (this.isMobile) {
@@ -362,6 +337,7 @@ export class Scene {
     }
 
     this.composer.render();
+    stats.end();
 
     window.requestAnimationFrame(() => this.render(isMobile));
   }
