@@ -152,7 +152,7 @@ export class VRButton {
     element.style.width = 'max-content';
     element.style.zIndex = '999';
     element.style.left = '90%';
-    element.style.background = '#fff';
+    element.style.background = 'transparent';
     element.style.transform = 'translate(-50%, 0)';
   }
 }

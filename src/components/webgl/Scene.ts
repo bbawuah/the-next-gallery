@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import Stats from 'stats-js';
-import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js';
+// import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js';
 import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader';
 import type {GLTF} from 'three/examples/jsm/loaders/GLTFLoader';
 import {DRACOLoader} from 'three/examples/jsm/loaders/DRACOLoader';
@@ -38,7 +38,7 @@ export class Scene {
   private camera: THREE.PerspectiveCamera;
   private scene: THREE.Scene;
 
-  private controls: OrbitControls;
+  // private controls: OrbitControls;
 
   private material: THREE.MeshBasicMaterial;
   private mesh: THREE.Mesh;
@@ -54,7 +54,7 @@ export class Scene {
   private vaseOne: THREE.Texture;
   private vaseTwo: THREE.Texture;
   private sky: Sky;
-  private water: Water;
+  private water: any;
   private sun: THREE.Vector3;
 
   private physics: PhysicsWorld;
@@ -146,7 +146,7 @@ export class Scene {
 
     this.particles = new LightParticles(this.scene);
 
-    this.camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100);
+    this.camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 1000);
     this.camera.position.z = 0;
     this.camera.position.y = 0.5;
     this.camera.position.x = 3;
@@ -310,7 +310,7 @@ export class Scene {
       }
 
       if (child.name.includes('tree')) {
-        (child as THREE.Mesh).material = new THREE.MeshBasicMaterial({color: new THREE.Color(0x9b9b9b)});
+        (child as THREE.Mesh).material = new THREE.MeshBasicMaterial({color: new THREE.Color(0xffe7d3)});
       }
 
       if (child.name.includes('leaves')) {
@@ -318,7 +318,7 @@ export class Scene {
       }
     });
 
-    // this.addPortraits(gltf);
+    this.addPortraits(gltf);
     this.scene.add(gltf.scene);
   }
 
