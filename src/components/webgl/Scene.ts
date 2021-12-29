@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import Stats from 'stats-js';
-// import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js';
+import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js';
 import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader';
 import type {GLTF} from 'three/examples/jsm/loaders/GLTFLoader';
 import {DRACOLoader} from 'three/examples/jsm/loaders/DRACOLoader';
@@ -22,6 +22,7 @@ import {GlitchPass} from 'three/examples/jsm/postprocessing/GlitchPass.js';
 import {ShaderPass} from 'three/examples/jsm/postprocessing/ShaderPass';
 import {postProcessingShader} from './Shaders/postprocessing/shader';
 import {physicalObjects, portraitNames} from '../../utils/metaData';
+import {CollissionMesh} from './CollisionMesh/CollissionMesh';
 
 const sizes: Sizes = {
   width: window.innerWidth,
@@ -38,7 +39,7 @@ export class Scene {
   private camera: THREE.PerspectiveCamera;
   private scene: THREE.Scene;
 
-  // private controls: OrbitControls;
+  private controls: OrbitControls;
 
   private material: THREE.MeshBasicMaterial;
   private mesh: THREE.Mesh;
@@ -72,6 +73,8 @@ export class Scene {
   private renderPass: RenderPass;
   private glitchPass: GlitchPass;
 
+  private collissionMesh: CollissionMesh;
+
   public isMobile: boolean;
 
   public deviceOrientationControls: DeviceOrientationControls;
@@ -81,8 +84,6 @@ export class Scene {
   public scrollSpeed: number;
 
   public currentSession: boolean;
-
-  public effectController: any;
 
   constructor(el: HTMLCanvasElement) {
     this.renderer = new THREE.WebGLRenderer({
@@ -102,6 +103,8 @@ export class Scene {
     this.sky.scale.setScalar(450000);
     this.scene.add(this.sky);
 
+    this.collissionMesh = new CollissionMesh(this.scene);
+
     const waterGeometry = new THREE.PlaneGeometry(20000, 20000);
 
     this.water = new Water(waterGeometry, {
@@ -120,16 +123,6 @@ export class Scene {
     this.water.position.y = -1;
 
     this.scene.add(this.water);
-
-    this.effectController = {
-      turbidity: 10,
-      rayleigh: 1.246,
-      mieCoefficient: 0.069,
-      mieDirectionalG: 0.7,
-      elevation: 70,
-      azimuth: 180,
-      exposure: this.renderer.toneMappingExposure
-    };
 
     const uniforms = this.sky.material.uniforms;
 
@@ -165,7 +158,7 @@ export class Scene {
 
     this.bakedTexture = this.textureLoader.load('./static/interior-base.jpg');
     this.tessalationTexture = this.textureLoader.load('./static/tessalation-tent.jpg');
-    this.woodenWallsTexture = this.textureLoader.load('./static/wooden-walls-1.jpg');
+    this.woodenWallsTexture = this.textureLoader.load('./static/wooden-walls.jpg');
     this.vaseOne = this.textureLoader.load('./static/vases-one.jpg');
     this.vaseTwo = this.textureLoader.load('./static/vases-two.jpg');
     this.floorTexture = this.textureLoader.load('./static/floor.jpg');
@@ -284,7 +277,6 @@ export class Scene {
       }
 
       if (physicalObjects.includes(child.name)) {
-        console.log(`found ${child.name}`);
         this.physics.createPhysics(child as THREE.Mesh);
       }
 
@@ -323,13 +315,13 @@ export class Scene {
   }
 
   private addPortraits(gltfScene: GLTF): void {
-    portraitNames.forEach(name => {
-      const portrait = this.textureLoader.load(`./static/photos/${name}.jpg`);
+    portraitNames.forEach(creative => {
+      const portrait = this.textureLoader.load(`./static/photos/${creative.name}.jpg`);
       portrait.flipY = false;
       portrait.minFilter = THREE.LinearFilter;
       const material = new THREE.MeshBasicMaterial({map: portrait});
 
-      const mesh = gltfScene.scene.children.find(child => child.name === name) as THREE.Mesh;
+      const mesh = gltfScene.scene.children.find(child => child.name === creative.name) as THREE.Mesh;
 
       mesh.material = material;
     });

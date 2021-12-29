@@ -178,7 +178,7 @@
 
       {#if !isMobileDevice}
         <IconWithText icon={IconType.mouse} message={'Use your mouse to look around'} />
-        <IconWithText icon={IconType.escape} message={'Press escape to leave the gallery'} />
+        <IconWithText icon={IconType.escape} message={'Press escape to leave the experience'} />
         <IconWithText icon={IconType.soundKey} message={'Press the M key to toggle the sound'} />
       {:else}
         <IconWithText icon={IconType.phone} message={'Rotate your device to look around'} />

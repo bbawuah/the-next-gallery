@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import CannonDebugRenderer from '../cannonDebugger/cannonDebuger';
 import CannonUtils from '../cannonDebugger/cannonUtils';
 import * as dat from 'dat.gui';
+import {portraitNames} from '../../../utils/metaData';
 
 interface RenderProps {
   camera: THREE.PerspectiveCamera;
@@ -23,12 +24,6 @@ export class PhysicsWorld {
   private firstFloorPartOne: CANNON.Body;
   private firstFloorPartTwo: CANNON.Body;
   private firstFloorPartThree: CANNON.Body;
-  private firstFloorPartFour: CANNON.Body;
-
-  private fenceOne: CANNON.Body;
-  private fenceTwo: CANNON.Body;
-  private fenceThree: CANNON.Body;
-  private backwall: CANNON.Body;
 
   public physicsWorld: CANNON.World;
   public sphereBody: CANNON.Body;
@@ -73,6 +68,24 @@ export class PhysicsWorld {
     this.firstFloorPartThree = new CANNON.Body({
       shape: new CANNON.Box(new CANNON.Vec3(5.2, 0.2, 8)),
       position: new CANNON.Vec3(5, 5.8, -11)
+    });
+
+    portraitNames.forEach(creative => {
+      const shape = new CANNON.Box(new CANNON.Vec3(0.75, 0.075, 0.75));
+      const position = new CANNON.Vec3(creative.coordinates.x, creative.coordinates.y, creative.coordinates.z);
+
+      const body = new CANNON.Body({
+        shape,
+        position,
+        isTrigger: true
+      });
+
+      body.addEventListener('collide', (event: CANNON.EventTarget) => {
+        console.log(event);
+        console.log(`you are looking at ${creative.name}`);
+      });
+
+      this.physicsWorld.addBody(body);
     });
 
     this.physicsWorld.addBody(this.sphereBody);
