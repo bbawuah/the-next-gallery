@@ -16,10 +16,7 @@ import {WebXR} from './WebXR/WebXR';
 import {Sky} from 'three/examples/jsm/objects/Sky.js';
 import {Water} from './Water/Water';
 import {EffectComposer} from 'three/examples/jsm/postprocessing/EffectComposer.js';
-// import {ShaderPass} from 'three/examples/jsm/postprocessing/ShaderPass.js';
 import {RenderPass} from 'three/examples/jsm/postprocessing/RenderPass.js';
-import {ShaderPass} from 'three/examples/jsm/postprocessing/ShaderPass';
-import {postProcessingShader} from './Shaders/postprocessing/shader';
 import {physicalObjects, portraitNames} from '../../utils/metaData';
 import {CollissionMesh} from './CollisionMesh/CollissionMesh';
 
@@ -63,7 +60,6 @@ export class Scene {
   private webXR: WebXR;
 
   private composer: EffectComposer;
-  private shaderPass: ShaderPass;
   private renderPass: RenderPass;
 
   private collissionMesh: CollissionMesh;
@@ -201,7 +197,6 @@ export class Scene {
 
     this.renderPass = new RenderPass(this.scene, this.camera);
     this.composer = new EffectComposer(this.renderer);
-    this.shaderPass = new ShaderPass(postProcessingShader);
 
     this.composer.addPass(this.renderPass);
 

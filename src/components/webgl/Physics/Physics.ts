@@ -1,8 +1,6 @@
 import * as CANNON from 'cannon-es';
 import * as THREE from 'three';
 import CannonDebugRenderer from '../cannonDebugger/cannonDebuger';
-import CannonUtils from '../cannonDebugger/cannonUtils';
-import * as dat from 'dat.gui';
 import {portraitNames} from '../../../utils/metaData';
 import {store} from '../../../store/store';
 
@@ -63,6 +61,26 @@ export class PhysicsWorld {
       position: new CANNON.Vec3(5, 5.6, -11)
     });
 
+    const wallOne = new CANNON.Body({
+      shape: new CANNON.Box(new CANNON.Vec3(5.2, 1.72, 25)),
+      position: new CANNON.Vec3(29.3, 1.7, 2)
+    });
+
+    const wallTwo = new CANNON.Body({
+      shape: new CANNON.Box(new CANNON.Vec3(5.2, 1.72, 25)),
+      position: new CANNON.Vec3(-29.3, 1.7, 2)
+    });
+
+    const wallThree = new CANNON.Body({
+      shape: new CANNON.Box(new CANNON.Vec3(28.1, 1.7, 5)),
+      position: new CANNON.Vec3(-0.5, 1.7, -27)
+    });
+
+    const wallFour = new CANNON.Body({
+      shape: new CANNON.Box(new CANNON.Vec3(28.1, 1.7, 5)),
+      position: new CANNON.Vec3(-0.5, 1.7, 32)
+    });
+
     this.collissions = [];
 
     portraitNames.forEach((creative, index) => {
@@ -75,10 +93,8 @@ export class PhysicsWorld {
         isTrigger: true
       });
 
-      body.addEventListener('collide', event => {
-        console.log(event);
+      body.addEventListener('collide', () => {
         store.creativeIndex.update(() => index);
-        console.log(`you are looking at ${creative.slug}`);
       });
 
       this.collissions.push(body);
@@ -101,6 +117,10 @@ export class PhysicsWorld {
     this.physicsWorld.addBody(this.firstFloorPartOne);
     this.physicsWorld.addBody(this.firstFloorPartTwo);
     this.physicsWorld.addBody(this.firstFloorPartThree);
+    this.physicsWorld.addBody(wallOne);
+    this.physicsWorld.addBody(wallTwo);
+    this.physicsWorld.addBody(wallThree);
+    this.physicsWorld.addBody(wallFour);
 
     this.cannonDebugRenderer = new CannonDebugRenderer(props.scene, this.physicsWorld);
   }
