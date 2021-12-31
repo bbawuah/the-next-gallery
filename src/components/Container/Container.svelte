@@ -183,17 +183,9 @@
     color: $color-dark-grey;
     text-align: center;
   }
-
-  .text-path {
-    position: absolute;
-    left: 0;
-    bottom: -100px;
-    width: 100vw;
-    height: 50%;
-    // transform: scale(0.5);
-  }
   h1.text {
     font-family: $font-title-italic;
+    z-index: 0;
   }
   .text.styled-text {
     font-family: $font-title-regular;
@@ -204,33 +196,34 @@
 
   .text.styled-text.landing:nth-of-type(1) {
     position: absolute;
-    left: -10%;
-    top: 0;
+    left: 0%;
+    top: 80px;
+  }
+
+  .text-path {
+    position: absolute;
+    left: 0;
+    bottom: -150px;
+    width: 100vw;
+    height: 50%;
   }
 
   textPath {
     font-family: $font-title-regular;
-    font-size: 2rem;
+    font-size: 4rem;
     text-transform: uppercase;
     fill: #5a5a5a;
   }
 
   .text.styled-text.landing:nth-of-type(2) {
     position: absolute;
-    right: -10%;
+    right: 2%;
     bottom: 0;
-  }
-
-  .text.styled-text.inspire {
-    position: absolute;
-    left: auto;
-    bottom: 5%;
-    color: $color-dark-grey;
   }
 
   .text.styled-text.impact {
     position: absolute;
-    bottom: 10%;
+    bottom: 15%;
     color: $color-dark-grey;
   }
 
@@ -242,6 +235,7 @@
   .footer {
     align-self: flex-end;
     margin-bottom: 20px;
+    text-align: center;
     .copyright {
       margin: 0;
       font-family: $font-title-regular;
@@ -250,8 +244,27 @@
   }
 
   @media screen and (min-width: 1028px) {
+    .text.styled-text.landing:nth-of-type(1) {
+      left: -10%;
+    }
+
+    .text.styled-text.landing:nth-of-type(2) {
+      right: -10%;
+    }
     .text {
       font-size: 25px;
+    }
+
+    .text-path {
+      bottom: -100px;
+    }
+
+    textPath {
+      font-size: 2rem;
+    }
+
+    .text.styled-text.impact {
+      bottom: 10%;
     }
 
     .text.styled-text {
@@ -265,9 +278,6 @@
 
     .text.styled-text.landing:nth-of-type(2) {
       right: 10%;
-    }
-    .text.styled-text.inspire {
-      bottom: 20%;
     }
   }
 

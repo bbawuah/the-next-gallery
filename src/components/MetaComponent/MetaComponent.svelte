@@ -67,14 +67,14 @@
   section {
     position: fixed;
     top: 0;
-    right: 0;
-    width: 35%;
-    height: 100%;
+    left: 0;
+    width: 100%;
+    height: 400px;
     z-index: 10;
-    padding: 25px;
+    padding: 40px 25px;
     background-color: rgba(134, 134, 134, 0.5);
     background: linear-gradient(
-      90deg,
+      360deg,
       rgba(102, 102, 102, 0) 0%,
       rgba(192, 192, 192, 0.4) 35%,
       rgba(255, 231, 211, 0.9) 100%
@@ -109,6 +109,22 @@
           width: 23px;
         }
       }
+    }
+  }
+
+  @media screen and (min-width: 1028px) {
+    .section {
+      right: 0;
+      width: 35%;
+      height: 100%;
+      padding: 25px;
+
+      background: linear-gradient(
+        360deg,
+        rgba(102, 102, 102, 0) 0%,
+        rgba(192, 192, 192, 0.4) 35%,
+        rgba(255, 231, 211, 0.9) 100%
+      );
     }
   }
 

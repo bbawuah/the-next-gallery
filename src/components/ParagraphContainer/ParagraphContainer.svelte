@@ -38,10 +38,17 @@
   .content-section.whole:before {
     content: '';
     position: absolute;
-    top: 15%;
-    width: 75%;
+    top: 30%;
+    width: 85%;
     height: 150%;
     border-radius: 45%;
     box-shadow: 0px 100px 200px 1000px #fff;
+  }
+
+  @media screen and (min-width: 1028px) {
+    .content-section.whole:before {
+      top: 15%;
+      width: 75%;
+    }
   }
 </style>
