@@ -137,7 +137,7 @@ export class Scene {
     this.camera.position.y = 0.5;
     this.camera.position.x = 3;
 
-    this.camera.rotateY(134);
+    this.camera.rotateY(135);
 
     store.isMobileDevice.subscribe(value => {
       this.isMobile = value;
@@ -181,6 +181,9 @@ export class Scene {
 
     this.deviceOrientationControls = new DeviceOrientationControls(this.camera);
     store.deviceOrientation.update(() => this.deviceOrientationControls);
+    this.deviceOrientationControls.enabled = false;
+
+    console.log(this.deviceOrientationControls);
 
     this.dracoLoader = new DRACOLoader(this.loadingManager.loadingManager);
     this.dracoLoader.setDecoderPath('draco/');

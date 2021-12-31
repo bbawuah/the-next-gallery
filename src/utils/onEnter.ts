@@ -46,6 +46,7 @@ export const onEnter = (el: HTMLElement): void => {
   }, 500);
 
   if (isMobileDevice) {
+    deviceOrientation.enabled = true;
     deviceOrientation.connect();
   } else {
     if (pointerLockerctrls) {
@@ -72,6 +73,7 @@ export const onExit = (el: HTMLElement): void => {
     deviceOrientation = value;
   });
 
+  deviceOrientation.enabled = false;
   deviceOrientation.disconnect();
 
   GSAP.to(el, {duration: 0.5, opacity: 1});
