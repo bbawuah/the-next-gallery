@@ -192,9 +192,9 @@
 <style type="text/scss">
   @import '../../styles/styles.scss';
   .canvas-container {
-    position: relative;
+    position: fixed;
     width: 100%;
-    height: 100vh;
+    height: 100%;
     overflow: hidden;
     display: flex;
     flex-direction: column;

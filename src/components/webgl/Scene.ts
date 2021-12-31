@@ -183,8 +183,6 @@ export class Scene {
     store.deviceOrientation.update(() => this.deviceOrientationControls);
     this.deviceOrientationControls.enabled = false;
 
-    console.log(this.deviceOrientationControls);
-
     this.dracoLoader = new DRACOLoader(this.loadingManager.loadingManager);
     this.dracoLoader.setDecoderPath('draco/');
 
