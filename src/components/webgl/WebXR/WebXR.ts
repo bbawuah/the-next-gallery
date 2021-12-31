@@ -4,6 +4,8 @@ import type {ButtonStates, LeftController, RightController} from './types';
 import {XRControllerModelFactory} from 'three/examples/jsm/webxr/XRControllerModelFactory.js';
 import {TeleportMesh} from './TeleportMesh';
 import {teleportLocations} from './teleportLocations';
+import {portraitNames} from '../../../utils/metaData';
+import {store} from '../../../store/store';
 interface Props {
   renderer: THREE.WebGLRenderer;
   scene: THREE.Scene;
@@ -59,16 +61,18 @@ export class WebXR {
     this.camera.add(this.dummyCam);
     this.controllers = this.buildControllers();
 
-    const locations: THREE.Vector3[] = teleportLocations;
+    store.vrSession.subscribe(v => {
+      if (v) {
+        portraitNames.forEach(location => {
+          const teleport = new TeleportMesh();
+          teleport.position.copy(location.coordinates);
+          this.scene.add(teleport);
+          this.teleports.push(teleport);
+        });
 
-    locations.forEach(location => {
-      const teleport = new TeleportMesh();
-      teleport.position.copy(location);
-      this.scene.add(teleport);
-      this.teleports.push(teleport);
+        this.teleports.forEach(teleport => this.collisionObjects.push(teleport.children[0]));
+      }
     });
-
-    this.teleports.forEach(teleport => this.collisionObjects.push(teleport.children[0]));
 
     this.render();
   }

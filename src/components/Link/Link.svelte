@@ -11,6 +11,7 @@
     text-decoration: none;
     color: $color-dark-grey;
     letter-spacing: -0.05em;
-    font-family: $font-text-bold;
+    font-family: $font-title-regular;
+    font-weight: 700;
   }
 </style>

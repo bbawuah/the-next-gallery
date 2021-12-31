@@ -14,13 +14,13 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    font-family: $font-text-bold;
+    font-family: $font-title-regular;
     position: absolute;
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
     z-index: 2;
-    color: $color-white;
+    color: $color-dark-grey;
 
     .progress-meter {
       font-size: 2rem;

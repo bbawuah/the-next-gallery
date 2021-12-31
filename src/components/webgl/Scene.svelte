@@ -8,6 +8,7 @@
   import Icon from '../Icon/Icon.svelte';
   import {store} from '../../store/store';
   import {onExit} from '../../utils/onEnter';
+  import MetaComponent from '../MetaComponent/MetaComponent.svelte';
 
   let isMobileDevice: boolean;
 
@@ -68,6 +69,7 @@
 </script>
 
 <div class="canvas-container" bind:this={canvasContainerRef}>
+  <MetaComponent />
   <canvas class="webgl__canvas" bind:this={canvasElement} />
 
   <div class="scene-header">
@@ -276,7 +278,7 @@
     }
 
     p {
-      font-family: $font-text-light;
+      font-family: $font-text;
       color: #363636;
       margin: 0;
       text-align: center;

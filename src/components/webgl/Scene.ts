@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import Stats from 'stats-js';
-import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js';
+// import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js';
 import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader';
 import type {GLTF} from 'three/examples/jsm/loaders/GLTFLoader';
 import {DRACOLoader} from 'three/examples/jsm/loaders/DRACOLoader';
@@ -18,7 +18,6 @@ import {Water} from './Water/Water';
 import {EffectComposer} from 'three/examples/jsm/postprocessing/EffectComposer.js';
 // import {ShaderPass} from 'three/examples/jsm/postprocessing/ShaderPass.js';
 import {RenderPass} from 'three/examples/jsm/postprocessing/RenderPass.js';
-import {GlitchPass} from 'three/examples/jsm/postprocessing/GlitchPass.js';
 import {ShaderPass} from 'three/examples/jsm/postprocessing/ShaderPass';
 import {postProcessingShader} from './Shaders/postprocessing/shader';
 import {physicalObjects, portraitNames} from '../../utils/metaData';
@@ -39,7 +38,7 @@ export class Scene {
   private camera: THREE.PerspectiveCamera;
   private scene: THREE.Scene;
 
-  private controls: OrbitControls;
+  // private controls: OrbitControls;
 
   private material: THREE.MeshBasicMaterial;
   private mesh: THREE.Mesh;
@@ -71,7 +70,6 @@ export class Scene {
   private composer: EffectComposer;
   private shaderPass: ShaderPass;
   private renderPass: RenderPass;
-  private glitchPass: GlitchPass;
 
   private collissionMesh: CollissionMesh;
 
@@ -144,7 +142,7 @@ export class Scene {
     this.camera.position.y = 0.5;
     this.camera.position.x = 3;
 
-    this.camera.rotateY(220);
+    this.camera.rotateY(134);
 
     store.isMobileDevice.subscribe(value => {
       this.isMobile = value;
@@ -210,27 +208,15 @@ export class Scene {
 
     this.renderPass = new RenderPass(this.scene, this.camera);
     this.composer = new EffectComposer(this.renderer);
-    this.glitchPass = new GlitchPass();
     this.shaderPass = new ShaderPass(postProcessingShader);
 
     this.composer.addPass(this.renderPass);
 
-    store.currentSession.subscribe(v => {
-      this.currentSession = v;
-      // if (!v) {
-      //   this.composer.addPass(this.shaderPass);
-      // } else {
-      //   this.composer.removePass(this.shaderPass);
-      // }
-    });
-
     if (!this.isMobile) {
       store.scrollSpeed.subscribe(v => {
         if (!this.currentSession) {
-          this.camera.rotation.y = this.camera.rotation.y + v * 0.01;
+          this.camera.rotation.y = this.camera.rotation.y + v * 0.00099;
         }
-
-        this.shaderPass.uniforms.scrollSpeed.value = v + 0.0;
       });
 
       store.pointerLockerControls.update(() => new PointerLockControls(this.camera, el));
@@ -316,12 +302,12 @@ export class Scene {
 
   private addPortraits(gltfScene: GLTF): void {
     portraitNames.forEach(creative => {
-      const portrait = this.textureLoader.load(`./static/photos/${creative.name}.jpg`);
+      const portrait = this.textureLoader.load(`./static/photos/${creative.slug}.jpg`);
       portrait.flipY = false;
       portrait.minFilter = THREE.LinearFilter;
       const material = new THREE.MeshBasicMaterial({map: portrait});
 
-      const mesh = gltfScene.scene.children.find(child => child.name === creative.name) as THREE.Mesh;
+      const mesh = gltfScene.scene.children.find(child => child.name === creative.slug) as THREE.Mesh;
 
       mesh.material = material;
     });

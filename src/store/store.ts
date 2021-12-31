@@ -18,7 +18,9 @@ class Store {
   public xrIsSupported: Writable<boolean>;
   public layoutContainer: Writable<HTMLElement>;
   public isMobileDevice: Writable<boolean>;
-  public scrollSpeed: Writable<0>;
+  public scrollSpeed: Writable<number>;
+  public creativeIndex: Writable<number>;
+  public vrSession: Writable<boolean>;
 
   constructor() {
     this.progressRatio = writable(0);
@@ -32,6 +34,8 @@ class Store {
     this.isMuted = writable(false);
     this.xrIsSupported = writable();
     this.scrollSpeed = writable(0);
+    this.creativeIndex = writable(null);
+    this.vrSession = writable(false);
   }
 }
 

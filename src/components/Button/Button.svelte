@@ -16,10 +16,11 @@
 
   .button {
     padding: 20px;
-    font-family: $font-text-regular;
+    font-family: $font-title-regular;
     background-color: $color-dark-grey;
     color: $color-white;
     align-self: start;
+    font-weight: 500;
     width: 100%;
     font-size: 22.125px;
     margin-top: 25px;

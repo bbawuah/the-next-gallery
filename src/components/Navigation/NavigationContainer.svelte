@@ -10,6 +10,7 @@
     touch-action: none;
     left: 0;
     width: 100%;
+    transition: 0.175s cubic-bezier(0.6, -0.28, 0.735, 0.045);
     z-index: 1;
     padding: 0 25px;
   }

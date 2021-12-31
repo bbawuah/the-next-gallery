@@ -4,6 +4,7 @@ import CannonDebugRenderer from '../cannonDebugger/cannonDebuger';
 import CannonUtils from '../cannonDebugger/cannonUtils';
 import * as dat from 'dat.gui';
 import {portraitNames} from '../../../utils/metaData';
+import {store} from '../../../store/store';
 
 interface RenderProps {
   camera: THREE.PerspectiveCamera;
@@ -15,15 +16,12 @@ interface SceneProps {
   scene: THREE.Scene;
 }
 
-const gui = new dat.GUI({width: 340});
-
-gui.domElement.parentElement.style.zIndex = '10';
-
 export class PhysicsWorld {
   private planeBody: CANNON.Body;
   private firstFloorPartOne: CANNON.Body;
   private firstFloorPartTwo: CANNON.Body;
   private firstFloorPartThree: CANNON.Body;
+  private collissions: CANNON.Body[];
 
   public physicsWorld: CANNON.World;
   public sphereBody: CANNON.Body;
@@ -52,25 +50,22 @@ export class PhysicsWorld {
 
     this.firstFloorPartOne = new CANNON.Body({
       shape: new CANNON.Box(new CANNON.Vec3(7.6, 0.2, 16)),
-      position: new CANNON.Vec3(-8.2, 5.8, 0)
+      position: new CANNON.Vec3(-8.2, 5.6, 0)
     });
 
     this.firstFloorPartTwo = new CANNON.Body({
       shape: new CANNON.Box(new CANNON.Vec3(5.2, 0.2, 8)),
-      position: new CANNON.Vec3(5.1, 5.8, 12)
+      position: new CANNON.Vec3(5.1, 5.6, 12)
     });
 
     this.firstFloorPartThree = new CANNON.Body({
       shape: new CANNON.Box(new CANNON.Vec3(5.2, 0.2, 8)),
-      position: new CANNON.Vec3(5, 5.8, -11)
+      position: new CANNON.Vec3(5, 5.6, -11)
     });
 
-    this.firstFloorPartThree = new CANNON.Body({
-      shape: new CANNON.Box(new CANNON.Vec3(5.2, 0.2, 8)),
-      position: new CANNON.Vec3(5, 5.8, -11)
-    });
+    this.collissions = [];
 
-    portraitNames.forEach(creative => {
+    portraitNames.forEach((creative, index) => {
       const shape = new CANNON.Box(new CANNON.Vec3(0.75, 0.075, 0.75));
       const position = new CANNON.Vec3(creative.coordinates.x, creative.coordinates.y, creative.coordinates.z);
 
@@ -80,12 +75,25 @@ export class PhysicsWorld {
         isTrigger: true
       });
 
-      body.addEventListener('collide', (event: CANNON.EventTarget) => {
+      body.addEventListener('collide', event => {
         console.log(event);
-        console.log(`you are looking at ${creative.name}`);
+        store.creativeIndex.update(() => index);
+        console.log(`you are looking at ${creative.slug}`);
       });
 
+      this.collissions.push(body);
+
       this.physicsWorld.addBody(body);
+    });
+
+    this.physicsWorld.addEventListener('endContact', event => {
+      if (
+        (event.bodyA === this.sphereBody && this.collissions.includes(event.bodyB)) ||
+        (event.bodyB === this.sphereBody && this.collissions.includes(event.bodya))
+      ) {
+        store.creativeIndex.update(() => null);
+        console.log('The sphere exited the trigger!', event);
+      }
     });
 
     this.physicsWorld.addBody(this.sphereBody);
