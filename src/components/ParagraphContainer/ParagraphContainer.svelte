@@ -39,7 +39,7 @@
     content: '';
     position: absolute;
     top: 30%;
-    width: 85%;
+    width: 200%;
     height: 150%;
     border-radius: 45%;
     box-shadow: 0px 100px 200px 1000px #fff;

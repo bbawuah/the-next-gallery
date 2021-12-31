@@ -36,19 +36,19 @@
     if (layoutContainer) {
       store.layoutContainer.update(() => layoutContainer);
 
-      if (!isMobile) {
-        const scroll = new LocomotiveScroll({
-          el: document.querySelector('[data-scroll-container]'),
-          smooth: true,
-          lerp: 0.099999999,
-          getSpeed: true
-        });
+      // if (!isMobile) {
+      const scroll = new LocomotiveScroll({
+        el: document.querySelector('[data-scroll-container]'),
+        smooth: true,
+        lerp: 0.099999999,
+        getSpeed: true
+      });
 
-        scroll.on('scroll', ev => {
-          const speed = ev.speed < 0.1 && ev.speed > -0.1 ? 0.0 : ev.speed;
-          store.scrollSpeed.update(() => speed);
-        });
-      }
+      scroll.on('scroll', ev => {
+        const speed = ev.speed < 0.1 && ev.speed > -0.1 ? 0.0 : ev.speed;
+        store.scrollSpeed.update(() => speed);
+      });
+      // }
     }
   });
 </script>
