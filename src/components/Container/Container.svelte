@@ -245,11 +245,12 @@
 
   @media screen and (min-width: 1028px) {
     .text.styled-text.landing:nth-of-type(1) {
-      left: -10%;
+      left: -7.5%;
+      top: 0px;
     }
 
     .text.styled-text.landing:nth-of-type(2) {
-      right: -10%;
+      right: 10%;
     }
     .text {
       font-size: 25px;
@@ -272,13 +273,14 @@
       margin: 0;
     }
 
-    .text.styled-text.landing:nth-of-type(1) {
-      left: -7%;
-    }
+    // .text.styled-text.landing:nth-of-type(1) {
+    //   left: -7%;
+    //   top: 0px;
+    // }
 
-    .text.styled-text.landing:nth-of-type(2) {
-      right: 10%;
-    }
+    // .text.styled-text.landing:nth-of-type(2) {
+    //   right: 10%;
+    // }
   }
 
   @media screen and (min-width: 1450px) {

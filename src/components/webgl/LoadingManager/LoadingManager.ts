@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import GSAP from 'gsap';
-import {CustomEase} from 'gsap/CustomEase';
+import {CustomEase} from '../../../utils/CustomEase';
 import {store} from '../../../store/store';
 
 GSAP.registerPlugin(CustomEase);
