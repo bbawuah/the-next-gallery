@@ -8,11 +8,27 @@
   import Button from '../Button/Button.svelte';
 
   let progress: number;
+  let svgElement: SVGSVGElement;
+  let pathElement: SVGPathElement;
+  let textPathElement: SVGTextPathElement;
 
   let layoutContainer: HTMLElement;
   let isMobile: boolean;
   let onMouseOver: () => void;
   let onMouseLeave: () => void;
+
+  const updateTextPathOffset = (offset: number) => {
+    textPathElement.setAttribute('startOffset', offset.toString());
+  };
+
+  const onScroll = () => {
+    requestAnimationFrame(() => {
+      const rect = svgElement.getBoundingClientRect();
+      const pathLength = pathElement.getTotalLength();
+      const scrollPercentage = rect.y / window.innerHeight;
+      updateTextPathOffset(scrollPercentage * 0.1 * pathLength);
+    });
+  };
 
   store.progressRatio.subscribe(value => {
     progress = value;
@@ -46,6 +62,10 @@
           const speed = ev.speed < 0.1 && ev.speed > -0.1 ? 0.0 : ev.speed;
           store.scrollSpeed.update(() => speed);
         });
+      }
+
+      if (svgElement && textPathElement && pathElement) {
+        window.addEventListener('scroll', onScroll);
       }
     }
   });
@@ -94,14 +114,24 @@
       </p>
     </div>
 
-    <svg class="text-path" width="679" height="65" viewBox="0 0 679 65" xmlns="http://www.w3.org/2000/svg">
+    <svg
+      bind:this={svgElement}
+      class="text-path"
+      width="679"
+      height="65"
+      viewBox="0 0 679 65"
+      xmlns="http://www.w3.org/2000/svg"
+    >
       <path
+        bind:this={pathElement}
         id="curve"
         fill="transparent"
         d="M1 32.4999C60 8.83325 206.6 -24.3001 321 32.4999C435.4 89.2999 607 56.1666 678.5 32.4999"
       />
       <text width="679">
-        <textPath xlink:href="#curve"> Inspire Inspire Inspire Inspire Inspire Inspire</textPath>
+        <textPath bind:this={textPathElement} xlink:href="#curve">
+          Inspire Inspire Inspire Inspire Inspire Inspire</textPath
+        >
       </text>
     </svg>
   </ParagraphContainer>
