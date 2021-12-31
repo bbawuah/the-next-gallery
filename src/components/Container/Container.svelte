@@ -40,7 +40,7 @@
         const scroll = new LocomotiveScroll({
           el: document.querySelector('[data-scroll-container]'),
           smooth: true,
-          lerp: 0.075,
+          lerp: 0.099999999,
           getSpeed: true
         });
 
