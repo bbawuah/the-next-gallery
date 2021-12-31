@@ -26,7 +26,7 @@
   }
 
   .background {
-    background-color: #fff;
+    background-color: #ffe7d3;
     height: 100vh;
   }
 
@@ -42,7 +42,7 @@
     width: 200%;
     height: 150%;
     border-radius: 45%;
-    box-shadow: 0px 100px 200px 1000px #fff;
+    box-shadow: 0px 100px 200px 1000px #ffe7d3;
   }
 
   @media screen and (min-width: 1028px) {

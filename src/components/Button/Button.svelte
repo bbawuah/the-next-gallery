@@ -22,6 +22,7 @@
     align-self: start;
     font-weight: 500;
     width: 100%;
+    max-width: 450px;
     font-size: 22.125px;
     margin-top: 25px;
     cursor: pointer;
