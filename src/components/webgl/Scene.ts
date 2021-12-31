@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import Stats from 'stats-js';
+// import Stats from 'stats-js';
 // import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js';
 import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader';
 import type {GLTF} from 'three/examples/jsm/loaders/GLTFLoader';
@@ -27,11 +27,6 @@ const sizes: Sizes = {
   width: window.innerWidth,
   height: window.innerHeight
 };
-
-const stats = new Stats();
-
-stats.showPanel(1);
-document.body.appendChild(stats.dom);
 
 export class Scene {
   private renderer: THREE.WebGLRenderer;
@@ -318,7 +313,7 @@ export class Scene {
   }
 
   private render(isMobileDevice: boolean): void {
-    stats.begin();
+    // stats.begin();
     const isMobile = isMobileDevice;
     const elapsedTime = this.clock.getElapsedTime();
 
@@ -337,7 +332,7 @@ export class Scene {
     }
 
     this.composer.render();
-    stats.end();
+    // stats.end();
 
     window.requestAnimationFrame(() => this.render(isMobile));
   }

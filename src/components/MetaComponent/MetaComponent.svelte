@@ -9,6 +9,11 @@
   let shouldRenderLink: boolean = false;
   let metaContainer: HTMLElement;
   let currentSession: boolean;
+  let isMobile: boolean;
+
+  store.isMobileDevice.subscribe(value => {
+    isMobile = value;
+  });
 
   const handleEvent = (e: KeyboardEvent) => {
     if (e.key === 'Enter') {
@@ -54,7 +59,12 @@
           <a href={portraitNames[creativeIndex].instagram} target="__blank" class="instagram-icon">
             <Icon icon={IconType.instagram} />
           </a>
-          <p>Press enter to visit Instagram</p>
+
+          {#if !isMobile}
+            <p>Press enter to visit Instagram</p>
+          {:else}
+            <p>Tab to visit Instagram</p>
+          {/if}
         </div>
       {/if}
     </div>

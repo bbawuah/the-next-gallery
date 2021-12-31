@@ -4,9 +4,7 @@
   import ParagraphContainer from '../ParagraphContainer/ParagraphContainer.svelte';
   import {store} from '../../store/store';
   import {onEnter} from '../../utils/onEnter';
-  import {IconType} from '../../utils/icons/types/IconType';
   import Link from '../Link/Link.svelte';
-  import Icon from '../Icon/Icon.svelte';
   import Button from '../Button/Button.svelte';
 
   let progress: number;
@@ -36,7 +34,6 @@
     if (layoutContainer) {
       store.layoutContainer.update(() => layoutContainer);
 
-      // if (!isMobile) {
       const scroll = new LocomotiveScroll({
         el: document.querySelector('[data-scroll-container]'),
         smooth: true,
@@ -48,7 +45,6 @@
         const speed = ev.speed < 0.1 && ev.speed > -0.1 ? 0.0 : ev.speed;
         store.scrollSpeed.update(() => speed);
       });
-      // }
     }
   });
 </script>
@@ -75,9 +71,6 @@
   </ParagraphContainer>
 
   <ParagraphContainer hasBackground={true}>
-    <!-- <p class="text styled-text inspire" data-scroll-speed="2.75" data-scroll={true} data-scroll-direction={'vertical'}>
-      INSPIRE
-    </p> -->
     <div>
       <p class="text">
         The Next Gallery is an immersive digital experience that showcases a selection of creatives and talents.
