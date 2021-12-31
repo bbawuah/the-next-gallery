@@ -100,6 +100,7 @@
 
   <ParagraphContainer hasBackground={true}>
     <div>
+      <p class="text styled-text">INSPIRE</p>
       <p class="text">
         The Next Gallery is an immersive digital experience that showcases a selection of creatives and talents.
       </p>
@@ -129,16 +130,14 @@
         d="M1 32.4999C60 8.83325 206.6 -24.3001 321 32.4999C435.4 89.2999 607 56.1666 678.5 32.4999"
       />
       <text width="679">
-        <textPath bind:this={textPathElement} xlink:href="#curve">
-          Inspire Inspire Inspire Inspire Inspire Inspire</textPath
-        >
+        <textPath bind:this={textPathElement} xlink:href="#curve"> 'CAUSE CREATIVES ARE THE NEW ATHLETES</textPath>
       </text>
     </svg>
   </ParagraphContainer>
 
   <ParagraphContainer>
     <div class="outro">
-      <p class="text styled-text impact">IMPACT</p>
+      <p class="text styled-text">IMPACT</p>
       <p class="text">
         Each individual is successful in their own way and on their own terms. The creation of their impactful art began
         the moment they started listening and following the directions of their heart.
