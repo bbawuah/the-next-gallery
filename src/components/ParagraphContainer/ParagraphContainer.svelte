@@ -2,9 +2,11 @@
   import classNames from 'classnames';
 
   export let hasBackground: boolean = false;
+  export let hasWhole: boolean = false;
 
   const classes = classNames('content-section', {
-    ['background']: hasBackground
+    ['background']: hasBackground,
+    ['whole']: hasWhole
   });
 </script>
 
@@ -15,7 +17,7 @@
 <style>
   .content-section {
     width: 100vw;
-    height: 75vh;
+    height: 100vh;
     padding: 25px;
     display: grid;
     justify-items: center;
@@ -26,5 +28,27 @@
   .background {
     background-color: #fff;
     height: 100vh;
+  }
+
+  .content-section.whole {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .content-section.whole:before {
+    content: '';
+    position: absolute;
+    top: 30%;
+    width: 200%;
+    height: 150%;
+    border-radius: 45%;
+    box-shadow: 0px 100px 200px 1000px #fff;
+  }
+
+  @media screen and (min-width: 1028px) {
+    .content-section.whole:before {
+      top: 15%;
+      width: 75%;
+    }
   }
 </style>

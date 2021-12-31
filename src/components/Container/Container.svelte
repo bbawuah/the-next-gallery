@@ -4,9 +4,7 @@
   import ParagraphContainer from '../ParagraphContainer/ParagraphContainer.svelte';
   import {store} from '../../store/store';
   import {onEnter} from '../../utils/onEnter';
-  import {IconType} from '../../utils/icons/types/IconType';
   import Link from '../Link/Link.svelte';
-  import Icon from '../Icon/Icon.svelte';
   import Button from '../Button/Button.svelte';
 
   let progress: number;
@@ -36,28 +34,26 @@
     if (layoutContainer) {
       store.layoutContainer.update(() => layoutContainer);
 
-      if (!isMobile) {
-        const scroll = new LocomotiveScroll({
-          el: document.querySelector('[data-scroll-container]'),
-          smooth: true,
-          lerp: 0.3,
-          getSpeed: true
-        });
+      const scroll = new LocomotiveScroll({
+        el: document.querySelector('[data-scroll-container]'),
+        smooth: true,
+        lerp: 0.099999999,
+        getSpeed: true
+      });
 
-        scroll.on('scroll', ev => {
-          const speed = ev.speed < 0.1 && ev.speed > -0.1 ? 0.0 : ev.speed;
-          store.scrollSpeed.update(() => speed);
-        });
-      }
+      scroll.on('scroll', ev => {
+        const speed = ev.speed < 0.1 && ev.speed > -0.1 ? 0.0 : ev.speed;
+        store.scrollSpeed.update(() => speed);
+      });
     }
   });
 </script>
 
 <section class="container" bind:this={layoutContainer} data-scroll-container={true}>
-  <ParagraphContainer hasBackground={true}>
+  <ParagraphContainer hasWhole={true}>
     <p
       class="text styled-text landing"
-      data-scroll-speed="-1.75"
+      data-scroll-speed="-4.0"
       data-scroll={true}
       data-scroll-direction={'horizontal'}
     >
@@ -71,15 +67,6 @@
       data-scroll-direction={'horizontal'}
     >
       GALLERY
-    </p>
-    <div class="logo-top">
-      <Icon icon={IconType.close} />
-    </div>
-  </ParagraphContainer>
-
-  <ParagraphContainer>
-    <p class="text styled-text inspire" data-scroll-speed="2.75" data-scroll={true} data-scroll-direction={'vertical'}>
-      INSPIRE
     </p>
   </ParagraphContainer>
 
@@ -98,13 +85,21 @@
         talents, arts and crafts in unique ways.
       </p>
     </div>
+
+    <svg class="text-path" width="679" height="65" viewBox="0 0 679 65" xmlns="http://www.w3.org/2000/svg">
+      <path
+        id="curve"
+        fill="transparent"
+        d="M1 32.4999C60 8.83325 206.6 -24.3001 321 32.4999C435.4 89.2999 607 56.1666 678.5 32.4999"
+      />
+      <text width="679">
+        <textPath xlink:href="#curve"> Inspire Inspire Inspire Inspire Inspire Inspire</textPath>
+      </text>
+    </svg>
   </ParagraphContainer>
 
   <ParagraphContainer>
     <p class="text styled-text impact">IMPACT</p>
-  </ParagraphContainer>
-
-  <ParagraphContainer hasBackground={true}>
     <div class="outro">
       <p class="text">
         Each individual is successful in their own way and on their own terms. The creation of their impactful art began
@@ -127,21 +122,14 @@
 
     <footer class="footer">
       <p class="copyright">
-        INSPIRED BY <Link href="https://shutdown.gallery/">THE SHUTDOWN.GALLERY</Link>. THANKS TO <Link
+        INSPIRED BY <Link href="https://shutdown.gallery/">THE SHUTDOWN.GALLERY</Link>. MADE WITH <Link
           href="https://svelte.dev/">SVELTE</Link
-        >,
-        <Link href="https://threejs-journey.com/">THREEJS-JOURNEY</Link>,
-        <Link href="https://threejs.org/">THREEJS</Link>,
-        <Link href="https://twitter.com/NikLever">NIKLEVER</Link>,
-        <Link href="https://tympanus.net/codrops/2020/06/02/kinetic-typography-with-three-js/">MARIO CARILLO</Link>,
-        <Link href="https://developers.google.com/web/fundamentals/primers/service-workers">MATT GAUNT</Link>. MADE BY <Link
-          href="https://github.com/bbawuah/the-next-gallery">BRIAN BAWUAH</Link
+        > AND
+        <Link href="https://threejs.org/">THREEJS</Link> BY <Link href="https://github.com/bbawuah/the-next-gallery"
+          >BRIAN BAWUAH</Link
         >
       </p>
     </footer>
-    <div class="logo-bottom">
-      <Icon icon={IconType.close} />
-    </div>
   </ParagraphContainer>
 </section>
 
@@ -183,45 +171,53 @@
     max-width: 650px;
     font-size: 22.125px;
     line-height: 129.49%;
-    font-family: $font-text-light;
+    font-family: $font-title-regular;
     letter-spacing: -0.025em;
-    color: $color-light-grey;
+    color: $color-dark-grey;
     text-align: center;
   }
-
+  h1.text {
+    font-family: $font-title-italic;
+    z-index: 0;
+  }
   .text.styled-text {
-    font-size: 5.5rem;
+    font-family: $font-title-regular;
+    font-size: 3.5rem;
     margin: 0;
     width: auto;
   }
 
   .text.styled-text.landing:nth-of-type(1) {
     position: absolute;
-    left: -10%;
-    top: 0;
-    font-family: $font-text-regular;
+    left: 0%;
+    top: 80px;
+  }
+
+  .text-path {
+    position: absolute;
+    left: 0;
+    bottom: -150px;
+    width: 100vw;
+    height: 50%;
+  }
+
+  textPath {
+    font-family: $font-title-regular;
+    font-size: 4rem;
+    text-transform: uppercase;
+    fill: #5a5a5a;
   }
 
   .text.styled-text.landing:nth-of-type(2) {
     position: absolute;
-    right: -10%;
+    right: 2%;
     bottom: 0;
-    font-family: $font-text-regular;
-  }
-
-  .text.styled-text.inspire {
-    position: absolute;
-    left: auto;
-    bottom: 10%;
-    color: $color-white;
-    font-family: $font-text-regular;
   }
 
   .text.styled-text.impact {
     position: absolute;
-    bottom: 10%;
-    color: $color-white;
-    font-family: $font-text-regular;
+    bottom: 15%;
+    color: $color-dark-grey;
   }
 
   .outro {
@@ -232,32 +228,37 @@
   .footer {
     align-self: flex-end;
     margin-bottom: 20px;
+    text-align: center;
     .copyright {
       margin: 0;
-      font-family: $font-text-light;
+      font-family: $font-title-regular;
       font-weight: 300;
     }
   }
 
-  .logo-top {
-    position: absolute;
-    left: -60%;
-    width: 100%;
-    bottom: -5px;
-    opacity: 0.075;
-  }
-
-  .logo-bottom {
-    position: absolute;
-    opacity: 0.075;
-    right: -60%;
-    width: 100%;
-    bottom: -5px;
-  }
-
   @media screen and (min-width: 1028px) {
+    .text.styled-text.landing:nth-of-type(1) {
+      left: -7.5%;
+      top: 0px;
+    }
+
+    .text.styled-text.landing:nth-of-type(2) {
+      right: 10%;
+    }
     .text {
       font-size: 25px;
+    }
+
+    .text-path {
+      bottom: -100px;
+    }
+
+    textPath {
+      font-size: 2rem;
+    }
+
+    .text.styled-text.impact {
+      bottom: 10%;
     }
 
     .text.styled-text {
@@ -265,16 +266,14 @@
       margin: 0;
     }
 
-    .text.styled-text.landing:nth-of-type(1) {
-      left: -7%;
-    }
+    // .text.styled-text.landing:nth-of-type(1) {
+    //   left: -7%;
+    //   top: 0px;
+    // }
 
-    .text.styled-text.landing:nth-of-type(2) {
-      right: 10%;
-    }
-    .text.styled-text.inspire {
-      bottom: 20%;
-    }
+    // .text.styled-text.landing:nth-of-type(2) {
+    //   right: 10%;
+    // }
   }
 
   @media screen and (min-width: 1450px) {

@@ -66,6 +66,8 @@ export class VRButton {
 
       self.renderer.xr.setSession(session);
 
+      store.vrSession.update(() => true);
+
       store.audioController.subscribe(audio => {
         playSound(audio);
         audioElement = audio;
@@ -80,6 +82,8 @@ export class VRButton {
 
     function onSessionEnded(): void {
       currentSession.removeEventListener('end', onSessionEnded);
+
+      store.vrSession.update(() => false);
 
       audioElement.pause();
       self.stylizeElement(button);
@@ -145,14 +149,14 @@ export class VRButton {
     if (!ignorePadding) element.style.padding = '12px 6px';
     element.style.border = '1px solid #000';
     element.style.color = '#000';
-    element.style.font = `normal ${fontSize}px sans-serif`;
+    element.style.font = `normal ${fontSize}px Muse-Regular`;
     element.style.textAlign = 'center';
     element.style.outline = 'none';
     element.style.height = isMobile ? '40px' : '50px';
     element.style.width = 'max-content';
     element.style.zIndex = '999';
     element.style.left = '90%';
-    element.style.background = '#fff';
+    element.style.background = 'transparent';
     element.style.transform = 'translate(-50%, 0)';
   }
 }

@@ -2,6 +2,9 @@ import * as CANNON from 'cannon-es';
 import * as THREE from 'three';
 import CannonDebugRenderer from '../cannonDebugger/cannonDebuger';
 import CannonUtils from '../cannonDebugger/cannonUtils';
+import * as dat from 'dat.gui';
+import {portraitNames} from '../../../utils/metaData';
+import {store} from '../../../store/store';
 
 interface RenderProps {
   camera: THREE.PerspectiveCamera;
@@ -12,17 +15,13 @@ interface RenderProps {
 interface SceneProps {
   scene: THREE.Scene;
 }
+
 export class PhysicsWorld {
   private planeBody: CANNON.Body;
-  private leftWall: CANNON.Body;
-  private rightWall: CANNON.Body;
-  private frontWall: CANNON.Body;
-  private backwall: CANNON.Body;
   private firstFloorPartOne: CANNON.Body;
   private firstFloorPartTwo: CANNON.Body;
-  private fenceOne: CANNON.Body;
-  private fenceTwo: CANNON.Body;
-  private fenceThree: CANNON.Body;
+  private firstFloorPartThree: CANNON.Body;
+  private collissions: CANNON.Body[];
 
   public physicsWorld: CANNON.World;
   public sphereBody: CANNON.Body;
@@ -40,95 +39,114 @@ export class PhysicsWorld {
       mass: 1,
       type: CANNON.Body.DYNAMIC,
       position: new CANNON.Vec3(0, 2, -5),
-      shape: new CANNON.Sphere(0.9)
+      shape: new CANNON.Sphere(0.7)
     });
 
     this.planeBody = new CANNON.Body({
-      position: new CANNON.Vec3(0, 0.5, 0),
+      position: new CANNON.Vec3(0, 0, 0),
       shape: new CANNON.Plane()
     });
     this.planeBody.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), -Math.PI / 2);
 
-    this.leftWall = new CANNON.Body({
-      shape: new CANNON.Box(new CANNON.Vec3(0.2, 7, 30.5)),
-      position: new CANNON.Vec3(-15.6, 7.6, 0)
-    });
-
-    this.rightWall = new CANNON.Body({
-      shape: new CANNON.Box(new CANNON.Vec3(0.2, 7, 30.5)),
-      position: new CANNON.Vec3(15.6, 7.6, 0)
-    });
-
-    this.frontWall = new CANNON.Body({
-      shape: new CANNON.Box(new CANNON.Vec3(15.5, 7, 0.2)),
-      position: new CANNON.Vec3(0, 7.6, -30.8)
-    });
-
-    this.backwall = new CANNON.Body({
-      shape: new CANNON.Box(new CANNON.Vec3(15.5, 7, 0.2)),
-      position: new CANNON.Vec3(0, 7.6, 30.8)
-    });
-
     this.firstFloorPartOne = new CANNON.Body({
-      shape: new CANNON.Box(new CANNON.Vec3(8, 0.2, 10.5)),
-      position: new CANNON.Vec3(-8, 8.5, 20.5)
+      shape: new CANNON.Box(new CANNON.Vec3(7.6, 0.2, 16)),
+      position: new CANNON.Vec3(-8.2, 5.6, 0)
     });
 
     this.firstFloorPartTwo = new CANNON.Body({
-      shape: new CANNON.Box(new CANNON.Vec3(8, 0.2, 5)),
-      position: new CANNON.Vec3(8, 8.5, 25.6)
+      shape: new CANNON.Box(new CANNON.Vec3(5.2, 0.2, 8)),
+      position: new CANNON.Vec3(5.1, 5.6, 12)
     });
 
-    this.fenceOne = new CANNON.Body({
-      shape: new CANNON.Box(new CANNON.Vec3(8, 0.5, 0.2)),
-      position: new CANNON.Vec3(-8, 9.3, 9.3)
+    this.firstFloorPartThree = new CANNON.Body({
+      shape: new CANNON.Box(new CANNON.Vec3(5.2, 0.2, 8)),
+      position: new CANNON.Vec3(5, 5.6, -11)
     });
 
-    this.fenceTwo = new CANNON.Body({
-      shape: new CANNON.Box(new CANNON.Vec3(0.2, 0.5, 5.3)),
-      position: new CANNON.Vec3(-0.2, 9.3, 14.7)
+    this.collissions = [];
+
+    portraitNames.forEach((creative, index) => {
+      const shape = new CANNON.Box(new CANNON.Vec3(0.75, 0.075, 0.75));
+      const position = new CANNON.Vec3(creative.coordinates.x, creative.coordinates.y, creative.coordinates.z);
+
+      const body = new CANNON.Body({
+        shape,
+        position,
+        isTrigger: true
+      });
+
+      body.addEventListener('collide', event => {
+        console.log(event);
+        store.creativeIndex.update(() => index);
+        console.log(`you are looking at ${creative.slug}`);
+      });
+
+      this.collissions.push(body);
+
+      this.physicsWorld.addBody(body);
     });
 
-    this.fenceThree = new CANNON.Body({
-      shape: new CANNON.Box(new CANNON.Vec3(6, 0.5, 0.2)),
-      position: new CANNON.Vec3(9.2, 9.3, 20)
+    this.physicsWorld.addEventListener('endContact', event => {
+      if (
+        (event.bodyA === this.sphereBody && this.collissions.includes(event.bodyB)) ||
+        (event.bodyB === this.sphereBody && this.collissions.includes(event.bodya))
+      ) {
+        store.creativeIndex.update(() => null);
+        console.log('The sphere exited the trigger!', event);
+      }
     });
 
     this.physicsWorld.addBody(this.sphereBody);
     this.physicsWorld.addBody(this.planeBody);
-    this.physicsWorld.addBody(this.leftWall);
-    this.physicsWorld.addBody(this.rightWall);
-    this.physicsWorld.addBody(this.frontWall);
-    this.physicsWorld.addBody(this.backwall);
     this.physicsWorld.addBody(this.firstFloorPartOne);
     this.physicsWorld.addBody(this.firstFloorPartTwo);
-    this.physicsWorld.addBody(this.fenceOne);
-    this.physicsWorld.addBody(this.fenceTwo);
-    this.physicsWorld.addBody(this.fenceThree);
+    this.physicsWorld.addBody(this.firstFloorPartThree);
 
     this.cannonDebugRenderer = new CannonDebugRenderer(props.scene, this.physicsWorld);
   }
 
   public createPhysics(mesh: THREE.Mesh): void {
-    const shape = CannonUtils.CreateTrimesh(mesh.geometry);
+    const shape = this.createTrimesh(mesh.geometry);
 
-    const physicsBody = new CANNON.Body({
+    const body = new CANNON.Body({
       mass: 0,
       shape: shape
     });
 
-    physicsBody.position.x = mesh.position.x;
-    physicsBody.position.y = mesh.position.y;
-    physicsBody.position.z = mesh.position.z;
+    body.position.x = mesh.position.x;
+    body.position.y = mesh.position.y;
+    body.position.z = mesh.position.z;
 
-    this.physicsWorld.addBody(physicsBody);
+    this.physicsWorld.addBody(body);
+  }
+
+  public createTrimesh(geometry: THREE.BufferGeometry): CANNON.Trimesh {
+    const vertices = this.getVertices(geometry);
+
+    if (!vertices.length) return null;
+
+    const indices = Object.keys(vertices).map(Number);
+    return new CANNON.Trimesh(vertices as unknown as number[], indices);
+  }
+
+  getVertices(geometry: THREE.BufferGeometry): Float32Array {
+    const position = geometry.attributes.position;
+    const vertices = new Float32Array(position.count * 3);
+    for (let i = 0; i < position.count; i += 3) {
+      vertices[i] = position.getX(i);
+      vertices[i + 1] = position.getY(i);
+      vertices[i + 2] = position.getZ(i);
+    }
+    return vertices;
   }
 
   public handlePhysics(props: RenderProps): void {
     const {camera, userDirection, elapsedTime} = props;
+
     let oldElapsedTime = 0;
     const deltaTime = elapsedTime - oldElapsedTime;
     oldElapsedTime = elapsedTime;
+
     const position = new THREE.Vector3(
       this.sphereBody.position.x,
       this.sphereBody.position.y,

@@ -82,19 +82,19 @@ export class Events {
 
   public handleKeyUpEvents(): void {
     window.addEventListener('keyup', e => {
-      if (e.key === 'ArrowDown') {
+      if (e.key === 's') {
         this.backward = false;
       }
 
-      if (e.key === 'ArrowUp') {
+      if (e.key === 'w') {
         this.forward = false;
       }
 
-      if (e.key === 'ArrowLeft') {
+      if (e.key === 'a') {
         this.left = false;
       }
 
-      if (e.key === 'ArrowRight') {
+      if (e.key === 'd') {
         this.right = false;
       }
     });
@@ -103,19 +103,19 @@ export class Events {
   public handleKeyDownEvents(): void {
     window.addEventListener('keydown', e => {
       if (this.playerIsInScene) {
-        if (e.key === 'ArrowDown') {
+        if (e.key === 's') {
           this.backward = true;
         }
 
-        if (e.key === 'ArrowUp') {
+        if (e.key === 'w') {
           this.forward = true;
         }
 
-        if (e.key === 'ArrowLeft') {
+        if (e.key === 'a') {
           this.left = true;
         }
 
-        if (e.key === 'ArrowRight') {
+        if (e.key === 'd') {
           this.right = true;
         }
       }

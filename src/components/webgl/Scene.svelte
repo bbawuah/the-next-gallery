@@ -8,6 +8,7 @@
   import Icon from '../Icon/Icon.svelte';
   import {store} from '../../store/store';
   import {onExit} from '../../utils/onEnter';
+  import MetaComponent from '../MetaComponent/MetaComponent.svelte';
 
   let isMobileDevice: boolean;
 
@@ -31,7 +32,7 @@
   });
 
   window.addEventListener('keydown', e => {
-    if (e.key === 's') {
+    if (e.key === 'm') {
       store.isMuted.update(value => !value);
 
       if (soundIsMuted) {
@@ -68,6 +69,7 @@
 </script>
 
 <div class="canvas-container" bind:this={canvasContainerRef}>
+  <MetaComponent />
   <canvas class="webgl__canvas" bind:this={canvasElement} />
 
   <div class="scene-header">
@@ -115,7 +117,11 @@
             }}
             class="up"
           >
-            <Icon icon={IconType.up} />
+            {#if isMobileDevice}
+              <Icon icon={IconType.up} />
+            {:else}
+              <Icon icon={IconType.w} />
+            {/if}
           </div>
 
           <div
@@ -127,7 +133,11 @@
               scene.events.backward = false;
             }}
           >
-            <Icon icon={IconType.bottom} />
+            {#if isMobileDevice}
+              <Icon icon={IconType.bottom} />
+            {:else}
+              <Icon icon={IconType.s} />
+            {/if}
           </div>
 
           <div
@@ -139,7 +149,11 @@
               scene.events.left = false;
             }}
           >
-            <Icon icon={IconType.left} />
+            {#if isMobileDevice}
+              <Icon icon={IconType.left} />
+            {:else}
+              <Icon icon={IconType.a} />
+            {/if}
           </div>
 
           <div
@@ -151,7 +165,11 @@
               scene.events.right = false;
             }}
           >
-            <Icon icon={IconType.right} />
+            {#if isMobileDevice}
+              <Icon icon={IconType.right} />
+            {:else}
+              <Icon icon={IconType.d} />
+            {/if}
           </div>
         </div>
 
@@ -162,8 +180,8 @@
 
       {#if !isMobileDevice}
         <IconWithText icon={IconType.mouse} message={'Use your mouse to look around'} />
-        <IconWithText icon={IconType.escape} message={'Press escape to leave the gallery'} />
-        <IconWithText icon={IconType.soundKey} message={'Press the S key to toggle the sound'} />
+        <IconWithText icon={IconType.escape} message={'Press escape to leave the experience'} />
+        <IconWithText icon={IconType.soundKey} message={'Press the M key to toggle the sound'} />
       {:else}
         <IconWithText icon={IconType.phone} message={'Rotate your device to look around'} />
       {/if}
@@ -187,7 +205,7 @@
       height: 100%;
       top: 0;
       left: 0;
-      z-index: 1;
+      z-index: 0;
     }
 
     .scene-header {
@@ -260,7 +278,7 @@
     }
 
     p {
-      font-family: $font-text-light;
+      font-family: $font-text;
       color: #363636;
       margin: 0;
       text-align: center;
