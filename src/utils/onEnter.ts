@@ -46,6 +46,7 @@ export const onEnter = (el: HTMLElement): void => {
   }, 500);
 
   if (isMobileDevice) {
+    deviceOrientation.enabled = true;
     deviceOrientation.connect();
   } else {
     if (pointerLockerctrls) {

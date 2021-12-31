@@ -34,17 +34,19 @@
     if (layoutContainer) {
       store.layoutContainer.update(() => layoutContainer);
 
-      const scroll = new LocomotiveScroll({
-        el: document.querySelector('[data-scroll-container]'),
-        smooth: true,
-        lerp: 0.099999999,
-        getSpeed: true
-      });
+      if (!isMobile) {
+        const scroll = new LocomotiveScroll({
+          el: document.querySelector('[data-scroll-container]'),
+          smooth: true,
+          lerp: 0.099999999,
+          getSpeed: true
+        });
 
-      scroll.on('scroll', ev => {
-        const speed = ev.speed < 0.1 && ev.speed > -0.1 ? 0.0 : ev.speed;
-        store.scrollSpeed.update(() => speed);
-      });
+        scroll.on('scroll', ev => {
+          const speed = ev.speed < 0.1 && ev.speed > -0.1 ? 0.0 : ev.speed;
+          store.scrollSpeed.update(() => speed);
+        });
+      }
     }
   });
 </script>
@@ -99,8 +101,8 @@
   </ParagraphContainer>
 
   <ParagraphContainer>
-    <p class="text styled-text impact">IMPACT</p>
     <div class="outro">
+      <p class="text styled-text impact">IMPACT</p>
       <p class="text">
         Each individual is successful in their own way and on their own terms. The creation of their impactful art began
         the moment they started listening and following the directions of their heart.
@@ -196,16 +198,18 @@
   .text-path {
     position: absolute;
     left: 0;
-    bottom: -150px;
+    bottom: 50%;
     width: 100vw;
     height: 50%;
+    transform: translate(0, 50%);
+    opacity: 0.18;
   }
 
   textPath {
     font-family: $font-title-regular;
     font-size: 4rem;
     text-transform: uppercase;
-    fill: #5a5a5a;
+    fill: #999;
   }
 
   .text.styled-text.landing:nth-of-type(2) {
@@ -215,8 +219,6 @@
   }
 
   .text.styled-text.impact {
-    position: absolute;
-    bottom: 15%;
     color: $color-dark-grey;
   }
 
@@ -250,30 +252,17 @@
     }
 
     .text-path {
-      bottom: -100px;
+      bottom: 50%;
     }
 
     textPath {
       font-size: 2rem;
     }
 
-    .text.styled-text.impact {
-      bottom: 10%;
-    }
-
     .text.styled-text {
       font-size: 5.5rem;
       margin: 0;
     }
-
-    // .text.styled-text.landing:nth-of-type(1) {
-    //   left: -7%;
-    //   top: 0px;
-    // }
-
-    // .text.styled-text.landing:nth-of-type(2) {
-    //   right: 10%;
-    // }
   }
 
   @media screen and (min-width: 1450px) {
