@@ -73,7 +73,6 @@ export const onExit = (el: HTMLElement): void => {
     deviceOrientation = value;
   });
 
-  deviceOrientation.enabled = false;
   deviceOrientation.disconnect();
 
   GSAP.to(el, {duration: 0.5, opacity: 1});
