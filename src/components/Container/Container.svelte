@@ -61,7 +61,13 @@
     >
       THE NEXT
     </p>
-    <h1 class="text">A digital showcase of creatives and talents in a way you’ve never seen before.</h1>
+    <div class="landing-content-container">
+      <h1 class="text">A digital showcase of creatives and talents in a way you’ve never seen before.</h1>
+
+      {#if progress !== 100}
+        <p>Loading the experience.. {progress}%</p>
+      {/if}
+    </div>
     <p
       class="text styled-text landing"
       data-scroll-speed="3.75"
@@ -127,8 +133,8 @@
         INSPIRED BY <Link href="https://shutdown.gallery/">THE SHUTDOWN.GALLERY</Link>. MADE WITH <Link
           href="https://svelte.dev/">SVELTE</Link
         > AND
-        <Link href="https://threejs.org/">THREEJS</Link> BY <Link href="https://github.com/bbawuah/the-next-gallery"
-          >BRIAN BAWUAH</Link
+        <Link href="https://threejs.org/">THREEJS.</Link> CREATED BY <Link
+          href="https://github.com/bbawuah/the-next-gallery">BRIAN BAWUAH</Link
         >
       </p>
     </footer>
@@ -178,6 +184,17 @@
     color: $color-dark-grey;
     text-align: center;
   }
+
+  .landing-content-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: $font-title-italic;
+
+    p {
+      font-size: 1.5rem;
+    }
+  }
   h1.text {
     font-family: $font-title-italic;
     z-index: 0;
@@ -202,14 +219,14 @@
     width: 100vw;
     height: 50%;
     transform: translate(0, 50%);
-    opacity: 0.18;
+    opacity: 0.2;
   }
 
   textPath {
     font-family: $font-title-regular;
     font-size: 4rem;
     text-transform: uppercase;
-    fill: #999;
+    fill: #88725f;
   }
 
   .text.styled-text.landing:nth-of-type(2) {
@@ -231,6 +248,7 @@
     align-self: flex-end;
     margin-bottom: 20px;
     text-align: center;
+    max-width: 600px;
     .copyright {
       margin: 0;
       font-family: $font-title-regular;

@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import GSAP from 'gsap';
 import {CustomEase} from '../../../utils/CustomEase';
 import {store} from '../../../store/store';
+import {snoise} from '../Shaders/functions/noise';
 
 GSAP.registerPlugin(CustomEase);
 
@@ -27,11 +28,9 @@ export class LoadingManager {
 
              uniform float u_moveY;
        
-       
              void main() {
-
-              float strength = step(0.5, distance(uv, vec2(0.5)) + 0.25);
               vec3 customPosition = vec3(position.x,position.y - u_moveY,position.z);
+
                gl_Position = vec4(customPosition, 1.0);
              }
              `,
@@ -41,7 +40,7 @@ export class LoadingManager {
              uniform float u_alpha;
        
              void main() {
-               gl_FragColor = vec4(1.0, 0.676, 0.1, u_alpha);
+               gl_FragColor = vec4(0.95, 0.56, 0.295, u_alpha);
              }
              `,
       transparent: true
@@ -58,7 +57,7 @@ export class LoadingManager {
   }
 
   private onLoadedAssets(material: THREE.RawShaderMaterial): void {
-    GSAP.to(material.uniforms.u_alpha, {duration: 3, value: 0.7});
+    GSAP.to(material.uniforms.u_alpha, {duration: 3, value: 0.0});
     GSAP.to(material.uniforms.u_moveY, {
       duration: 3,
       ease: CustomEase.create(
