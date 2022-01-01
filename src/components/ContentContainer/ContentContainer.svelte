@@ -161,7 +161,7 @@
       <p class="copyright">
         INSPIRED BY <Link href="https://shutdown.gallery/">THE SHUTDOWN.GALLERY</Link>. MADE WITH <Link
           href="https://svelte.dev/">SVELTE</Link
-        > AND
+        >, <Link href="https://www.blender.org/">BLENDER</Link> AND
         <Link href="https://threejs.org/">THREEJS.</Link> CREATED BY <Link
           href="https://github.com/bbawuah/the-next-gallery">BRIAN BAWUAH</Link
         >
