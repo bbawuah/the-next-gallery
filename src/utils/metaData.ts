@@ -126,7 +126,7 @@ A lady who working hard on her dreams to become an news editor.
     description: `
     Creative director at Llandro Gyako
     `,
-    coordinates: new THREE.Vector3(-7.115854867939999, 5.8, -1.4409451323676359)
+    coordinates: new THREE.Vector3(-7.115854867939999, 5.81, -1.4409451323676359)
   },
   {
     slug: 'kenneth',
@@ -135,7 +135,7 @@ A lady who working hard on her dreams to become an news editor.
     An artist who studies the positioning of dark-skinned people in society through film, paintings, drawings and video installations.
     `,
     instagram: 'https://www.instagram.com/kennethjames/?hl=nl',
-    coordinates: new THREE.Vector3(-8.403389710785191, 5.8, 2.981797360254574)
+    coordinates: new THREE.Vector3(-8.403389710785191, 5.81, 2.981797360254574)
   },
   {
     slug: 'junior',
@@ -144,7 +144,7 @@ A lady who working hard on her dreams to become an news editor.
     An entrepeneur and co-founder of THE NEW ORIGINALS clothing brand.
     `,
     instagram: 'https://www.instagram.com/juniorappiah/?hl=nl',
-    coordinates: new THREE.Vector3(-8.110173797429065, 5.8, 9.00672137486944)
+    coordinates: new THREE.Vector3(-8.110173797429065, 5.81, 9.00672137486944)
   },
   {
     slug: 'porchia',
@@ -153,7 +153,7 @@ A lady who working hard on her dreams to become an news editor.
     Owner of PAB Design & Atarah Chai.
     `,
     instagram: 'https://www.instagram.com/porchiaab/?hl=nl',
-    coordinates: new THREE.Vector3(-3.3782399803866245, 5.8, 11.798093011474574)
+    coordinates: new THREE.Vector3(-3.3782399803866245, 5.81, 11.798093011474574)
   },
   {
     slug: 'mirella',
@@ -162,7 +162,7 @@ A lady who working hard on her dreams to become an news editor.
     `,
     name: 'Mirella Agyemann',
     instagram: 'https://www.instagram.com/mirellaabn/?hl=nl',
-    coordinates: new THREE.Vector3(2.906722722641966, 5.8, 8.961690212363647)
+    coordinates: new THREE.Vector3(2.906722722641966, 5.81, 8.961690212363647)
   },
   {
     slug: 'eboafo',
@@ -171,7 +171,7 @@ A lady who working hard on her dreams to become an news editor.
     An award winning Actor in films and series.
     `,
     instagram: 'https://www.instagram.com/eoboafo/?hl=nl',
-    coordinates: new THREE.Vector3(-8.796496384646455, 5.8, -7.311549121881263)
+    coordinates: new THREE.Vector3(-8.796496384646455, 5.81, -7.311549121881263)
   },
   {
     slug: 'denitio',
@@ -180,7 +180,7 @@ A lady who working hard on her dreams to become an news editor.
     description: `
     A driven model and creative.
     `,
-    coordinates: new THREE.Vector3(-3.6183742041848066, 5.8, -10.106474159702637)
+    coordinates: new THREE.Vector3(-3.6183742041848066, 5.81, -10.106474159702637)
   },
   {
     slug: 'churchbwoygram',
@@ -189,6 +189,6 @@ A lady who working hard on her dreams to become an news editor.
     description: `
     A talented music producer and mixer. Who has worked for numerous well known artists.
     `,
-    coordinates: new THREE.Vector3(2.4798396318405023, 5.8, -8.044154207276335)
+    coordinates: new THREE.Vector3(2.4798396318405023, 5.81, -8.044154207276335)
   }
 ];
