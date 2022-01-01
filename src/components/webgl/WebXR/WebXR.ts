@@ -3,7 +3,6 @@ import {VRButton} from './VRButton';
 import type {ButtonStates, LeftController, RightController} from './types';
 import {XRControllerModelFactory} from 'three/examples/jsm/webxr/XRControllerModelFactory.js';
 import {TeleportMesh} from './TeleportMesh';
-import {teleportLocations} from './teleportLocations';
 import {portraitNames} from '../../../utils/metaData';
 import {store} from '../../../store/store';
 interface Props {
