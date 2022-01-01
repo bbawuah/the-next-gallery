@@ -48,6 +48,7 @@
 
   :global(body) {
     padding: 0;
+    background-color: #ffe7d3;
     width: 100vw;
     user-select: none;
     touch-action: pan-y;
