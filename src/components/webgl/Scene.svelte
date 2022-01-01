@@ -8,7 +8,7 @@
   import Icon from '../Icon/Icon.svelte';
   import {store} from '../../store/store';
   import {onExit} from '../../utils/onEnter';
-  import MetaComponent from '../MetaComponent/MetaComponent.svelte';
+  import CreativeDetail from '../CreativeDetail/CreativeDetail.svelte';
 
   let isMobileDevice: boolean;
 
@@ -69,7 +69,7 @@
 </script>
 
 <div class="canvas-container" bind:this={canvasContainerRef}>
-  <MetaComponent />
+  <CreativeDetail />
   <canvas class="webgl__canvas" bind:this={canvasElement} />
 
   <div class="scene-header">
