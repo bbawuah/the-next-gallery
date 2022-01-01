@@ -1,6 +1,6 @@
 <script lang="ts">
   import type {Navigator} from 'webxr';
-  import Container from './components/Container/Container.svelte';
+  import ContentContainer from './components/ContentContainer/ContentContainer.svelte';
   import Scene from './components/webgl/Scene.svelte';
   import {store} from './store/store';
 
@@ -35,7 +35,7 @@
 </script>
 
 <main>
-  <Container />
+  <ContentContainer />
   <Scene />
 </main>
 
