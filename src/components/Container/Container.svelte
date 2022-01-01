@@ -264,10 +264,6 @@
     bottom: 0;
   }
 
-  .text.styled-text.impact {
-    color: $color-dark-grey;
-  }
-
   .outro {
     z-index: 1;
     align-self: flex-end;
