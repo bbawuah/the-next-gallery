@@ -3,7 +3,6 @@ import {VRButton} from './VRButton';
 import type {ButtonStates, LeftController, RightController} from './types';
 import {XRControllerModelFactory} from 'three/examples/jsm/webxr/XRControllerModelFactory.js';
 import {TeleportMesh} from './TeleportMesh';
-import {teleportLocations} from './teleportLocations';
 import {portraitNames} from '../../../utils/metaData';
 import {store} from '../../../store/store';
 interface Props {
@@ -54,6 +53,7 @@ export class WebXR {
     this.dolly = new THREE.Object3D();
     this.dolly.add(this.camera);
     this.dolly.position.y = 0.8;
+    this.dolly.position.x = 3;
 
     this.scene.add(this.dolly);
 
