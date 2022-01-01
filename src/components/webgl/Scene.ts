@@ -129,8 +129,6 @@ export class Scene {
     this.particles = new LightParticles(this.scene);
 
     this.camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 1000);
-    this.camera.position.z = 0;
-    this.camera.position.y = 0.5;
     this.camera.position.x = 3;
 
     this.camera.rotateY(135);

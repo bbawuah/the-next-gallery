@@ -54,6 +54,13 @@ export class WebXR {
     this.dolly.add(this.camera);
     this.dolly.position.y = 0.8;
 
+    store.vrSession.subscribe(v => {
+      if (v) {
+        this.dolly.position.x = 3;
+        this.dolly.position.z = 3;
+      }
+    });
+
     this.scene.add(this.dolly);
 
     this.dummyCam = new THREE.Object3D();

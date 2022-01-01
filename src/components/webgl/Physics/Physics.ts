@@ -36,7 +36,7 @@ export class PhysicsWorld {
     this.sphereBody = new CANNON.Body({
       mass: 1,
       type: CANNON.Body.DYNAMIC,
-      position: new CANNON.Vec3(0, 2, -5),
+      position: new CANNON.Vec3(0, 1, -5),
       shape: new CANNON.Sphere(0.7)
     });
 
