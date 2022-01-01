@@ -57,7 +57,7 @@ export class LoadingManager {
   }
 
   private onLoadedAssets(material: THREE.RawShaderMaterial): void {
-    GSAP.to(material.uniforms.u_alpha, {duration: 3, value: 0.0});
+    GSAP.to(material.uniforms.u_alpha, {duration: 6, value: 0.75});
     GSAP.to(material.uniforms.u_moveY, {
       duration: 3,
       ease: CustomEase.create(
