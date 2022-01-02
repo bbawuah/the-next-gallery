@@ -2,11 +2,13 @@
   import classNames from 'classnames';
 
   export let hasBackground: boolean = false;
+  export let transparent: boolean = false;
   export let hasWhole: boolean = false;
 
   const classes = classNames('content-section', {
     ['background']: hasBackground,
-    ['whole']: hasWhole
+    ['whole']: hasWhole,
+    ['transparent']: transparent
   });
 </script>
 
@@ -14,7 +16,8 @@
   <slot />
 </section>
 
-<style>
+<style type="text/scss">
+  @import '../../styles/styles.scss';
   .content-section {
     width: 100vw;
     min-height: 100vh;
@@ -30,6 +33,10 @@
     background-color: #ffe7d3;
     min-height: 100vh;
     height: 100%;
+
+    &.transparent {
+      background-color: rgba(255, 231, 211, 0.6);
+    }
   }
 
   .content-section.whole {

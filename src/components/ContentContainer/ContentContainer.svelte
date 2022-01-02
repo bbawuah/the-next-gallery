@@ -135,7 +135,7 @@
     </svg>
   </ParagraphContainer>
 
-  <ParagraphContainer>
+  <ParagraphContainer hasBackground={true} transparent={true}>
     <div class="outro">
       <p class="text styled-text">IMPACT</p>
       <p class="text">
