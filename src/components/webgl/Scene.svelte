@@ -174,7 +174,7 @@
         </div>
 
         {#if !isMobileDevice}
-          <p>Use the arrows to navigate</p>
+          <p class="arrow-text">Use the arrows to navigate</p>
         {/if}
       </Keys>
 
@@ -206,6 +206,10 @@
       top: 0;
       left: 0;
       z-index: 0;
+    }
+
+    .arrow-text {
+      font-family: $font-text-light;
     }
 
     .scene-header {

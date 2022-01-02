@@ -108,7 +108,6 @@ export class PhysicsWorld {
         (event.bodyB === this.sphereBody && this.collissions.includes(event.bodya))
       ) {
         store.creativeIndex.update(() => null);
-        console.log('The sphere exited the trigger!', event);
       }
     });
 
