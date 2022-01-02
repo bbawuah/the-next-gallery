@@ -2,7 +2,6 @@ import * as THREE from 'three';
 import GSAP from 'gsap';
 import {CustomEase} from '../../../utils/CustomEase';
 import {store} from '../../../store/store';
-import {snoise} from '../Shaders/functions/noise';
 
 GSAP.registerPlugin(CustomEase);
 
