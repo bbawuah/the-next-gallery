@@ -17,7 +17,8 @@
 <style>
   .content-section {
     width: 100vw;
-    height: 100vh;
+    min-height: 100vh;
+    height: 100%;
     padding: 25px;
     display: grid;
     justify-items: center;
@@ -27,7 +28,8 @@
 
   .background {
     background-color: #ffe7d3;
-    height: 100vh;
+    min-height: 100vh;
+    height: 100%;
   }
 
   .content-section.whole {

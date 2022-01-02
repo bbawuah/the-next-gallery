@@ -271,7 +271,7 @@
 
   .footer {
     align-self: flex-end;
-    margin-bottom: 20px;
+    margin-top: 20px;
     text-align: center;
     max-width: 600px;
     .copyright {
