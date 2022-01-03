@@ -26,7 +26,8 @@
       const rect = svgElement.getBoundingClientRect();
       const pathLength = pathElement.getTotalLength();
       const scrollPercentage = rect.y / window.innerHeight;
-      updateTextPathOffset(scrollPercentage * 0.1 * pathLength);
+
+      updateTextPathOffset(scrollPercentage * 0.09 * pathLength);
     });
   };
 
@@ -51,21 +52,19 @@
       store.layoutContainer.update(() => layoutContainer);
 
       if (!isMobile) {
+        layoutContainer.style.position = 'fixed';
         const scroll = new LocomotiveScroll({
           el: document.querySelector('[data-scroll-container]'),
           smooth: true,
-          lerp: 0.099999999,
+          lerp: 0.135,
           getSpeed: true
         });
 
         scroll.on('scroll', ev => {
           const speed = ev.speed < 0.1 && ev.speed > -0.1 ? 0.0 : ev.speed;
+          onScroll();
           store.scrollSpeed.update(() => speed);
         });
-      }
-
-      if (svgElement && textPathElement && pathElement) {
-        window.addEventListener('scroll', onScroll);
       }
     }
   });
@@ -244,18 +243,18 @@
   .text-path {
     position: absolute;
     left: 0;
-    bottom: 50%;
+    bottom: 10%;
     width: 100vw;
     height: 50%;
     transform: translate(0, 50%);
-    opacity: 0.2;
+    opacity: 0.245;
   }
 
   textPath {
     font-family: $font-title-regular;
     font-size: 4rem;
     text-transform: uppercase;
-    fill: #88725f;
+    fill: #8b6039;
   }
 
   .text.styled-text.landing:nth-of-type(2) {
@@ -295,7 +294,7 @@
     }
 
     .text-path {
-      bottom: 50%;
+      bottom: 15%;
     }
 
     textPath {
@@ -303,8 +302,8 @@
     }
 
     .text.styled-text {
-      font-size: 5.5rem;
-      margin: 0;
+      font-size: 4.5rem;
+      margin-top: 25px;
     }
   }
 
