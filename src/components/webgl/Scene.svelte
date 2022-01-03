@@ -174,7 +174,7 @@
         </div>
 
         {#if !isMobileDevice}
-          <p class="arrow-text">Use the arrows to navigate</p>
+          <p class="arrow-text">Use these keys to navigate</p>
         {/if}
       </Keys>
 
